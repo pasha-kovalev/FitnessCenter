@@ -1,4 +1,4 @@
-package com.epam.jwd.fitnessCenter.db;
+package com.epam.jwd.fitness_center.db;
 
 import java.sql.Connection;
 
