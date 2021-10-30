@@ -1,6 +1,7 @@
 package com.epam.jwd.fitness_center.db;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
@@ -8,10 +9,20 @@ import java.util.concurrent.Executor;
 public class ProxyConnection implements Connection {
     private final Connection connection;
     private final ConnectionPool pool;
+    private LocalDateTime lastTakeDate;
 
     ProxyConnection(Connection connection, ConnectionPool pool) {
         this.connection = connection;
         this.pool = pool;
+        lastTakeDate = LocalDateTime.now();
+    }
+
+    public LocalDateTime getLastTakeDate() {
+        return lastTakeDate;
+    }
+
+    public void setLastTakeDate(LocalDateTime lastTakeDate) {
+        this.lastTakeDate = lastTakeDate;
     }
 
     ConnectionPool getPool() {

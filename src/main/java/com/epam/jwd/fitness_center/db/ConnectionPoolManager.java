@@ -7,7 +7,10 @@ import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.*;
 
 import org.apache.logging.log4j.LogManager;
@@ -34,18 +37,19 @@ public class ConnectionPoolManager implements ConnectionPool {
     private final List<ProxyConnection> usedConnections = new ArrayList<>();
 
     private final ReentrantLock lock = new ReentrantLock(true);
-    private final ReentrantLock collectionChangerLock = new ReentrantLock(true);
     private final ReentrantReadWriteLock rwl = new ReentrantReadWriteLock(true);
     private final Lock readLock = rwl.readLock();
     private final Lock writeLock = rwl.writeLock();
 
     private final Condition hasAvailableConnections = writeLock.newCondition();
-    private final Condition needToCreateConnections = collectionChangerLock.newCondition();
-    private final Condition needToRemoveConnections = collectionChangerLock.newCondition();
+    private final Condition needToCreateConnections = lock.newCondition();
+    private final Condition needToRemoveConnections = lock.newCondition();
 
     private boolean initialized = false;
     private boolean isShutDown = false;
-    private PoolIncreaseThread poolIncreaseThread;
+    private IncreasePoolThread increasePoolThread;
+    private CleanPoolThread cleanPoolThread;
+
     static {
         InputStream is = null;
         try {
@@ -73,6 +77,14 @@ public class ConnectionPoolManager implements ConnectionPool {
         DB_USER = props.getProperty("db.login");
         DB_PASSWORD = props.getProperty("db.password");
     }
+
+    //todo: read
+    // about
+    // threading
+    // in
+    // Effective
+    // Java
+
 
     private ConnectionPoolManager() {
     }
@@ -116,8 +128,10 @@ public class ConnectionPoolManager implements ConnectionPool {
                 throw new SQLException("Database is shutdown");
             }
             else if (!initialized) {
-                poolIncreaseThread = new PoolIncreaseThread();
-                poolIncreaseThread.start();
+                increasePoolThread = new IncreasePoolThread();
+                cleanPoolThread = new CleanPoolThread();
+                increasePoolThread.start();
+                cleanPoolThread.start();
                 initializeConnections();
                 initialized = true;
                 return true;
@@ -195,7 +209,7 @@ public class ConnectionPoolManager implements ConnectionPool {
             }
             final ProxyConnection connection = availableConnections.poll();
             usedConnections.add(connection);
-            poolIncreaseThread.checkIncreaseCondition();
+            increasePoolThread.checkIncreaseCondition();
             return connection;
         } finally {
             writeLock.unlock();
@@ -209,6 +223,7 @@ public class ConnectionPoolManager implements ConnectionPool {
         try {
             if (usedConnections.remove(connection)) {
                 availableConnections.add((ProxyConnection) connection);
+                ((ProxyConnection) connection).setLastTakeDate(LocalDateTime.now());
                 hasAvailableConnections.signalAll();
                 return true;
             }
@@ -222,16 +237,16 @@ public class ConnectionPoolManager implements ConnectionPool {
     public boolean shutDown() {
         if (initialized && !isShutDown) {
             LOG.trace("Connection Pool is closing...");
-            closeConnections();
+            isShutDown = true;
+            closeAllConnections();
             deregisterDrivers();
-            isShutDown = false;
             initialized = false;
             return true;
         }
         return false;
     }
 
-    private void closeConnections() {
+    private void closeAllConnections() {
             closeConnections(this.availableConnections);
             closeConnections(this.usedConnections);
     }
@@ -267,17 +282,17 @@ public class ConnectionPoolManager implements ConnectionPool {
     }
 
     //todo: ? interrupt thread
-    class PoolIncreaseThread extends Thread {
+    class IncreasePoolThread extends Thread {
         private boolean isToIncrease = false;
 
-        public PoolIncreaseThread() {
+        public IncreasePoolThread() {
             setDaemon(true);
         }
 
         @Override
         public void run() {
             while(!isShutDown) {
-                collectionChangerLock.lock();
+                lock.lock();
                 try {
                     while (!isToIncrease) {
                         needToCreateConnections.await();
@@ -286,7 +301,7 @@ public class ConnectionPoolManager implements ConnectionPool {
                 } catch (InterruptedException ignore) {
                     //todo what to do
                 } finally {
-                    collectionChangerLock.unlock();
+                    lock.unlock();
                 }
             }
         }
@@ -298,14 +313,73 @@ public class ConnectionPoolManager implements ConnectionPool {
         }
 
         private void checkIncreaseCondition() {
+            //todo usedCon.size() to readLock
             if(usedConnections.size() >= INCREASE_COEFF * ConnectionPoolManager.this.getCurrentSize()) {
-                collectionChangerLock.lock();
+                lock.lock();
                 try {
                     isToIncrease = true;
                     needToCreateConnections.signalAll();
                 } finally {
-                    collectionChangerLock.unlock();
+                    lock.unlock();
                 }
+            }
+        }
+    }
+
+    class CleanPoolThread extends Thread {
+        //todo:
+        // set normal interval and add setters/getters
+        // and in test use set method
+        private long cleaningInterval = 5;
+        private long maxDownTime = 1;
+
+        public CleanPoolThread() {
+            setDaemon(true);
+        }
+
+        @Override
+        public void run() {
+            while(!isShutDown) {
+                try {
+                    TimeUnit.SECONDS.sleep(cleaningInterval);
+                } catch (InterruptedException ignore) {
+                    //todo
+                }
+                cleanByDownTime();
+            }
+        }
+
+        private void cleanByDownTime() {
+            if (!isShutDown && getCurrentSize() > ConnectionPoolManager.MIN_POOL_SIZE) {
+                readLock.lock();
+                try {
+                    for (ProxyConnection conn : availableConnections) {
+                        long timePassed = Duration.between(conn.getLastTakeDate(), LocalDateTime.now()).getSeconds();
+                        if (getCurrentSize() == ConnectionPoolManager.MIN_POOL_SIZE) {
+                            break;
+                        }
+                        if(timePassed > maxDownTime) {
+                            deleteConnection(conn);
+                        }
+                    }
+                } finally {
+                    readLock.unlock();
+                }
+            }
+        }
+
+        private void deleteConnection(ProxyConnection conn) {
+            readLock.unlock();
+            writeLock.lock();
+            try {
+                if(availableConnections.remove(conn)) {
+                    conn.realClose();
+                }
+            } catch (SQLException e) {
+                LOG.error("Unable to close connection", e);
+            } finally {
+                writeLock.unlock();
+                readLock.lock();
             }
         }
     }

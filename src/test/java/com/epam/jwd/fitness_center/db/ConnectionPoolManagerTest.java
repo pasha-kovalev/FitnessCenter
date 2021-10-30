@@ -47,16 +47,23 @@ public class ConnectionPoolManagerTest {
     }
 
     @Test
-    public void releaseConnection_shouldReturnTrue_whenUsedConnectionsNotEmpty() throws InterruptedException {
+    public void releaseConnection_shouldReturnTrue_whenUsedConnectionsNotEmpty() throws Exception {
         Connection conn = cp.takeConnection();
         assertTrue(cp.releaseConnection(conn));
     }
 
     @Test
-    public void releaseConnection_shouldReturnFalse_whenConnectionNotInUsedConnections() throws InterruptedException {
+    public void releaseConnection_shouldReturnFalse_whenConnectionNotInUsedConnections() throws Exception {
         Connection conn = cp.takeConnection();
         cp.releaseConnection(conn);
         assertFalse(cp.releaseConnection(conn));
+    }
+
+    @Test
+    public void cleanPoolThread_run_shouldCleanPool_whenConnectionLastUseTimeMoreThanDowntime() throws Exception {
+        Thread.sleep(6000);
+        assertEquals(4, cp.getCurrentSize());
+        Thread.sleep(6000);
     }
 
 }
