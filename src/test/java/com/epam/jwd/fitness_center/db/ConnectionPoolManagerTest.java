@@ -20,13 +20,25 @@ public class ConnectionPoolManagerTest {
     }
 
     @Test
+    public void takeConnection_shouldSignalNeedToCreateConnectionsCondition_whenUsedConditionAmountMoreThanEstablished() throws Exception {
+        int expected = cp.getCurrentSize() + 1;
+        while (!(cp.getUsedConnectionsSize() >= (ConnectionPoolManager.INCREASE_COEFF * ((expected - 1))))) {
+            cp.takeConnection();
+        }
+        //todo: use mocks
+        Thread.sleep(3000);
+        int actual = cp.getCurrentSize();
+        assertEquals(expected, actual);
+    }
+
+    @Test
     public void isInitialized_shouldReturnTrue_afterInit() {
         assertTrue(cp.isInitialized());
     }
 
     @Test
     public void getNumOfConnections_shouldReturnInitialPoolSize_afterInit() {
-        assertEquals(ConnectionPoolManager.INITIAL_POOL_SIZE, cp.getNumOfConnections());
+        assertEquals(ConnectionPoolManager.INITIAL_POOL_SIZE, cp.getCurrentSize());
     }
 
     @Test
