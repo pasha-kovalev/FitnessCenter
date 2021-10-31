@@ -1,13 +1,14 @@
 package com.epam.jwd.fitness_center.db;
 
-
 import org.junit.jupiter.api.Test;
 import java.sql.Connection;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ConnectionPoolManagerTest {
+    //todo use mocks
     public static final int TIMEOUT = 1;
+
     ConnectionPoolManager cp = ConnectionPoolManager.getInstance();
 
     {
@@ -20,25 +21,22 @@ public class ConnectionPoolManagerTest {
     }
 
     @Test
-    public void takeConnection_shouldSignalNeedToCreateConnectionsCondition_whenUsedConditionAmountMoreThanEstablished() throws Exception {
-        int expected = cp.getCurrentSize() + 1;
-        while (!(cp.getUsedConnectionsSize() >= (ConnectionPoolManager.INCREASE_COEFF * ((expected - 1))))) {
+    public void takeConnection_shouldSignalNeedToCreateConnectionsCondition_whenUsedConditionAmountMoreThanEstablished()
+            throws Exception {
+        int sizeBefore = cp.getCurrentSize();
+        while (!(cp.getUsedConnectionsSize() >= ConnectionPoolManager.INCREASE_COEFF * sizeBefore)) {
             cp.takeConnection();
         }
+        cp.takeConnection();
         //todo: use mocks
         Thread.sleep(3000);
-        int actual = cp.getCurrentSize();
-        assertEquals(expected, actual);
+        int sizeAfter = cp.getCurrentSize();
+        assertTrue(sizeBefore < sizeAfter);
     }
 
     @Test
     public void isInitialized_shouldReturnTrue_afterInit() {
         assertTrue(cp.isInitialized());
-    }
-
-    @Test
-    public void getNumOfConnections_shouldReturnInitialPoolSize_afterInit() {
-        assertEquals(ConnectionPoolManager.INITIAL_POOL_SIZE, cp.getCurrentSize());
     }
 
     @Test
@@ -61,8 +59,10 @@ public class ConnectionPoolManagerTest {
 
     @Test
     public void cleanPoolThread_run_shouldCleanPool_whenConnectionLastUseTimeMoreThanDowntime() throws Exception {
+        //todo use mocks
+        int expected = Math.max(cp.getUsedConnectionsSize(), ConnectionPoolManager.MIN_POOL_SIZE);
         Thread.sleep(6000);
-        assertEquals(4, cp.getCurrentSize());
+        assertEquals(expected, cp.getCurrentSize());
         Thread.sleep(6000);
     }
 

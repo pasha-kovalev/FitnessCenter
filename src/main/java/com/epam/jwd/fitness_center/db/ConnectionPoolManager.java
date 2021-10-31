@@ -30,7 +30,6 @@ public class ConnectionPoolManager implements ConnectionPool {
     private static final String DB_USER;
     private static final String DB_PASSWORD;
 
-
     private static Properties props;
 
     private final Queue<ProxyConnection> availableConnections = new ArrayDeque<>();
@@ -44,6 +43,10 @@ public class ConnectionPoolManager implements ConnectionPool {
     private final Condition hasAvailableConnections = writeLock.newCondition();
     private final Condition needToCreateConnections = lock.newCondition();
     private final Condition needToRemoveConnections = lock.newCondition();
+
+    //In seconds
+    private long cleaningInterval = 60;
+    private long maxConnectionDownTime = 60;
 
     private boolean initialized = false;
     private boolean isShutDown = false;
@@ -97,6 +100,30 @@ public class ConnectionPoolManager implements ConnectionPool {
         return ConnectionPoolManagerHolder.instance;
     }
 
+    public long getCleaningInterval() {
+        return cleaningInterval;
+    }
+
+    public void setCleaningInterval(long cleaningInterval) {
+        if(cleaningInterval < 0) {
+            //todo: throw your exception
+            throw new IllegalArgumentException();
+        }
+        this.cleaningInterval = cleaningInterval;
+    }
+
+    public long getMaxConnectionDownTime() {
+        return maxConnectionDownTime;
+    }
+
+    public void setMaxConnectionDownTime(long maxConnectionDownTime) {
+        if(maxConnectionDownTime < 0) {
+            //todo: throw your exception
+            throw new IllegalArgumentException();
+        }
+        this.maxConnectionDownTime = maxConnectionDownTime;
+    }
+
     @Override
     public boolean isInitialized() {
         return initialized;
@@ -110,10 +137,20 @@ public class ConnectionPoolManager implements ConnectionPool {
             readLock.unlock();
         }
     }
+
     public int getUsedConnectionsSize() {
         readLock.lock();
         try {
             return usedConnections.size();
+        } finally {
+            readLock.unlock();
+        }
+    }
+
+    public int getAvailableConnectionsSize() {
+        readLock.lock();
+        try {
+            return availableConnections.size();
         } finally {
             readLock.unlock();
         }
@@ -154,33 +191,40 @@ public class ConnectionPoolManager implements ConnectionPool {
 
     private boolean addConnection() {
         if (getCurrentSize() < MAX_POOL_SIZE) {
-            try {
+            Optional<ProxyConnection> optionalProxyConnection = createProxyConnection();
+            if(optionalProxyConnection.isPresent()) {
                 writeLock.lock();
-                Optional<ProxyConnection> optionalProxyConnection = createProxyConnection();
-                if(optionalProxyConnection.isPresent()) {
+                try {
                     availableConnections.add(optionalProxyConnection.get());
+                    hasAvailableConnections.signalAll();
+                    LOG.trace("added a new connection: {}", optionalProxyConnection.get());
                     return true;
+                } finally {
+                    writeLock.unlock();
                 }
-            } finally {
-                writeLock.unlock();
             }
-            }
+        }
         return false;
 
     }
 
     private boolean addConnection(ProxyConnection proxyConnection) {
         if (getCurrentSize() < MAX_POOL_SIZE) {
+            writeLock.lock();
             try {
-                writeLock.lock();
                 availableConnections.add(proxyConnection);
-                LOG.trace("add new connection. Current pool size: {}", getCurrentSize());
+                hasAvailableConnections.signalAll();
+                LOG.trace("added existing connection: {}", proxyConnection);
                 return true;
             } finally {
                 writeLock.unlock();
             }
         }
         return false;
+    }
+
+    private void addConnections(List<ProxyConnection> proxyConnections) {
+        proxyConnections.forEach(this::addConnection);
     }
 
     private Optional<ProxyConnection> createProxyConnection() {
@@ -198,18 +242,15 @@ public class ConnectionPoolManager implements ConnectionPool {
     //todo !! throw your own exeptions
     @Override
     public Connection takeConnection() throws InterruptedException {
-        //todo: ? if waiting timeout expired
-        // or is too long
-        // -> check connections
-        // or -> increase pool size
-        writeLock.lock();
+       writeLock.lock();
         try {
+            increasePoolThread.checkIncreaseCondition();
             while (availableConnections.isEmpty()) {
                 hasAvailableConnections.await();
             }
             final ProxyConnection connection = availableConnections.poll();
             usedConnections.add(connection);
-            increasePoolThread.checkIncreaseCondition();
+            LOG.trace("Connection taken: {}", connection);
             return connection;
         } finally {
             writeLock.unlock();
@@ -225,6 +266,7 @@ public class ConnectionPoolManager implements ConnectionPool {
                 availableConnections.add((ProxyConnection) connection);
                 ((ProxyConnection) connection).setLastTakeDate(LocalDateTime.now());
                 hasAvailableConnections.signalAll();
+                LOG.trace("Connection released: {}", connection);
                 return true;
             }
             return false;
@@ -307,14 +349,19 @@ public class ConnectionPoolManager implements ConnectionPool {
         }
 
         private void increase() {
-            Optional<ProxyConnection> optionalProxyConnection = createProxyConnection();
-            optionalProxyConnection.ifPresent(ConnectionPoolManager.this::addConnection);
+            LOG.trace("In Increase()");
+            List<ProxyConnection> proxyConnections = new ArrayList<>();
+            Optional<ProxyConnection> optionalProxyConnection1 = createProxyConnection();
+            Optional<ProxyConnection> optionalProxyConnection2 = createProxyConnection();
+            optionalProxyConnection1.ifPresent(proxyConnections::add);
+            optionalProxyConnection2.ifPresent(proxyConnections::add);
+            addConnections(proxyConnections);
             isToIncrease = false;
         }
 
         private void checkIncreaseCondition() {
-            //todo usedCon.size() to readLock
-            if(usedConnections.size() >= INCREASE_COEFF * ConnectionPoolManager.this.getCurrentSize()) {
+            LOG.trace("In checkIncreaseCondition()");
+            if(getUsedConnectionsSize() >= INCREASE_COEFF * ConnectionPoolManager.this.getCurrentSize()) {
                 lock.lock();
                 try {
                     isToIncrease = true;
@@ -330,8 +377,6 @@ public class ConnectionPoolManager implements ConnectionPool {
         //todo:
         // set normal interval and add setters/getters
         // and in test use set method
-        private long cleaningInterval = 5;
-        private long maxDownTime = 1;
 
         public CleanPoolThread() {
             setDaemon(true);
@@ -343,12 +388,14 @@ public class ConnectionPoolManager implements ConnectionPool {
                 try {
                     TimeUnit.SECONDS.sleep(cleaningInterval);
                 } catch (InterruptedException ignore) {
-                    //todo
+                    //todo doto
                 }
                 cleanByDownTime();
             }
         }
 
+
+        //todo make a copy  of availableConnections
         private void cleanByDownTime() {
             if (!isShutDown && getCurrentSize() > ConnectionPoolManager.MIN_POOL_SIZE) {
                 readLock.lock();
@@ -358,7 +405,7 @@ public class ConnectionPoolManager implements ConnectionPool {
                         if (getCurrentSize() == ConnectionPoolManager.MIN_POOL_SIZE) {
                             break;
                         }
-                        if(timePassed > maxDownTime) {
+                        if(timePassed > maxConnectionDownTime) {
                             deleteConnection(conn);
                         }
                     }
