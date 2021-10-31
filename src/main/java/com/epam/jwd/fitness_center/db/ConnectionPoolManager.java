@@ -13,6 +13,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.*;
 
+import com.epam.jwd.fitness_center.exception.FitnessCenterStoreException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -106,8 +107,9 @@ public class ConnectionPoolManager implements ConnectionPool {
 
     public void setCleaningInterval(long cleaningInterval) {
         if(cleaningInterval < 0) {
-            //todo: throw your exception
-            throw new IllegalArgumentException();
+            //todo ? need to throw exception
+            LOG.warn("Trying to assign a negative value to DB cleanInterval: {}", cleaningInterval);
+            return;
         }
         this.cleaningInterval = cleaningInterval;
     }
@@ -118,8 +120,9 @@ public class ConnectionPoolManager implements ConnectionPool {
 
     public void setMaxConnectionDownTime(long maxConnectionDownTime) {
         if(maxConnectionDownTime < 0) {
-            //todo: throw your exception
-            throw new IllegalArgumentException();
+            //todo ? need to throw exception
+            LOG.warn("Trying to assign a negative value to maxConnectionDownTime: {}", maxConnectionDownTime);
+            return;
         }
         this.maxConnectionDownTime = maxConnectionDownTime;
     }
@@ -161,8 +164,7 @@ public class ConnectionPoolManager implements ConnectionPool {
         lock.lock();
         try {
             if (isShutDown) {
-                //todo throw your exception
-                throw new SQLException("Database is shutdown");
+                LOG.error("Not able to init connections in pool because of pool is shut down");
             }
             else if (!initialized) {
                 increasePoolThread = new IncreasePoolThread();
@@ -173,8 +175,6 @@ public class ConnectionPoolManager implements ConnectionPool {
                 initialized = true;
                 return true;
             }
-        } catch (SQLException e) {
-            LOG.error("Not able to init connections in pool", e);
         } finally {
             lock.unlock();
         }
@@ -233,13 +233,12 @@ public class ConnectionPoolManager implements ConnectionPool {
                     .getConnection(DB_URL, DB_USER, DB_PASSWORD);
             return Optional.of(new ProxyConnection(connection, this));
         } catch (SQLException e) {
+            //todo ? need to throw exception
             LOG.error("Unable to create connection", e);
-            //todo: throw your exception
         }
         return Optional.empty();
     }
 
-    //todo !! throw your own exeptions
     @Override
     public Connection takeConnection() throws InterruptedException {
        writeLock.lock();
@@ -308,6 +307,7 @@ public class ConnectionPoolManager implements ConnectionPool {
             conn.realClose();
             LOG.info("Connection {} closed", conn);
         } catch (SQLException e) {
+            //todo ? need to throw exception
             LOG.error("Could not close connection", e);
         }
     }
@@ -318,12 +318,12 @@ public class ConnectionPoolManager implements ConnectionPool {
             try {
                 DriverManager.deregisterDriver(drivers.nextElement());
             } catch (SQLException e) {
+                //todo ? need to throw exception
                 LOG.error("could not deregister driver", e);
             }
         }
     }
 
-    //todo: ? interrupt thread
     class IncreasePoolThread extends Thread {
         private boolean isToIncrease = false;
 
@@ -340,8 +340,9 @@ public class ConnectionPoolManager implements ConnectionPool {
                         needToCreateConnections.await();
                     }
                     increase();
-                } catch (InterruptedException ignore) {
-                    //todo what to do
+                } catch (InterruptedException e) {
+                    LOG.warn("CleanPoolThread interrupted", e);
+                    Thread.currentThread().interrupt();
                 } finally {
                     lock.unlock();
                 }
@@ -374,10 +375,6 @@ public class ConnectionPoolManager implements ConnectionPool {
     }
 
     class CleanPoolThread extends Thread {
-        //todo:
-        // set normal interval and add setters/getters
-        // and in test use set method
-
         public CleanPoolThread() {
             setDaemon(true);
         }
@@ -387,15 +384,16 @@ public class ConnectionPoolManager implements ConnectionPool {
             while(!isShutDown) {
                 try {
                     TimeUnit.SECONDS.sleep(cleaningInterval);
-                } catch (InterruptedException ignore) {
-                    //todo doto
+                } catch (InterruptedException e) {
+                    LOG.warn("CleanPoolThread interrupted", e);
+                    Thread.currentThread().interrupt();
                 }
                 cleanByDownTime();
             }
         }
 
 
-        //todo make a copy  of availableConnections
+        //todo ? make a copy  of availableConnections
         private void cleanByDownTime() {
             if (!isShutDown && getCurrentSize() > ConnectionPoolManager.MIN_POOL_SIZE) {
                 readLock.lock();
