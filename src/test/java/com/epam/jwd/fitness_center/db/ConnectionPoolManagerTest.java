@@ -1,10 +1,14 @@
 package com.epam.jwd.fitness_center.db;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+
 import java.sql.Connection;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ConnectionPoolManagerTest {
     //todo use mocks
     public static final int TIMEOUT = 1;
@@ -15,6 +19,11 @@ public class ConnectionPoolManagerTest {
         cp.setCleaningInterval(3);
         cp.setMaxConnectionDownTime(2);
         cp.init();
+    }
+
+    @AfterAll
+    public void teardown() {
+        cp.shutDown();
     }
 
     @Test

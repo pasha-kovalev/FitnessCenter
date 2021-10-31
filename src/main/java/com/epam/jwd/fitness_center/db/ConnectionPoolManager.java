@@ -13,7 +13,6 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.*;
 
-import com.epam.jwd.fitness_center.exception.FitnessCenterStoreException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -43,7 +42,6 @@ public class ConnectionPoolManager implements ConnectionPool {
 
     private final Condition hasAvailableConnections = writeLock.newCondition();
     private final Condition needToCreateConnections = lock.newCondition();
-    private final Condition needToRemoveConnections = lock.newCondition();
 
     //In seconds
     private long cleaningInterval = 60;
@@ -84,7 +82,7 @@ public class ConnectionPoolManager implements ConnectionPool {
 
     //todo: read
     // about
-    // threading
+    // threading, exception
     // in
     // Effective
     // Java
@@ -245,6 +243,7 @@ public class ConnectionPoolManager implements ConnectionPool {
         try {
             increasePoolThread.checkIncreaseCondition();
             while (availableConnections.isEmpty()) {
+                //todo ? if for a  long time
                 hasAvailableConnections.await();
             }
             final ProxyConnection connection = availableConnections.poll();
@@ -339,6 +338,9 @@ public class ConnectionPoolManager implements ConnectionPool {
                     while (!isToIncrease) {
                         needToCreateConnections.await();
                     }
+
+                    if(isShutDown) break;
+
                     increase();
                 } catch (InterruptedException e) {
                     LOG.warn("CleanPoolThread interrupted", e);
@@ -361,7 +363,6 @@ public class ConnectionPoolManager implements ConnectionPool {
         }
 
         private void checkIncreaseCondition() {
-            LOG.trace("In checkIncreaseCondition()");
             if(getUsedConnectionsSize() >= INCREASE_COEFF * ConnectionPoolManager.this.getCurrentSize()) {
                 lock.lock();
                 try {
@@ -388,10 +389,12 @@ public class ConnectionPoolManager implements ConnectionPool {
                     LOG.warn("CleanPoolThread interrupted", e);
                     Thread.currentThread().interrupt();
                 }
+
+                if(isShutDown) break;
+
                 cleanByDownTime();
             }
         }
-
 
         //todo ? make a copy  of availableConnections
         private void cleanByDownTime() {
