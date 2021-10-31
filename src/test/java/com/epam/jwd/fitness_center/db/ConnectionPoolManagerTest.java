@@ -12,6 +12,8 @@ public class ConnectionPoolManagerTest {
     ConnectionPoolManager cp = ConnectionPoolManager.getInstance();
 
     {
+        cp.setCleaningInterval(3);
+        cp.setMaxConnectionDownTime(2);
         cp.init();
     }
 
@@ -60,10 +62,9 @@ public class ConnectionPoolManagerTest {
     @Test
     public void cleanPoolThread_run_shouldCleanPool_whenConnectionLastUseTimeMoreThanDowntime() throws Exception {
         //todo use mocks
+        Thread.sleep(6000);
         int expected = Math.max(cp.getUsedConnectionsSize(), ConnectionPoolManager.MIN_POOL_SIZE);
-        Thread.sleep(6000);
         assertEquals(expected, cp.getCurrentSize());
-        Thread.sleep(6000);
     }
 
 }
