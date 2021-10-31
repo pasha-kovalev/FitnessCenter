@@ -243,7 +243,7 @@ public class ConnectionPoolManager implements ConnectionPool {
         try {
             increasePoolThread.checkIncreaseCondition();
             while (availableConnections.isEmpty()) {
-                //todo ? if for a  long time
+                //todo ? if for a long time
                 hasAvailableConnections.await();
             }
             final ProxyConnection connection = availableConnections.poll();
