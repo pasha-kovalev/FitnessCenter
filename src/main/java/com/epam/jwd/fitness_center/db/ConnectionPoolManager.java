@@ -1,6 +1,5 @@
 package com.epam.jwd.fitness_center.db;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
@@ -11,26 +10,28 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.*;
 
+import com.epam.jwd.fitness_center.exception.DatabaseConnectionException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class ConnectionPoolManager implements ConnectionPool {
     private static final Logger LOG = LogManager.getLogger(ConnectionPoolManager.class);
 
-    public static final int INITIAL_POOL_SIZE = 5;
-    public static final int MIN_POOL_SIZE = 4;
-    public static final int MAX_POOL_SIZE = 8;
-    public static final double INCREASE_COEFF = 0.75;
+    private static ConnectionPoolManager instance;
+    private static AtomicBoolean hasInstance = new AtomicBoolean(false);
 
-    //todo ? should be encrypted
-    private static final String CONFIG_PATH = "/config.properties";
-    private static final String DB_URL;
-    private static final String DB_USER;
-    private static final String DB_PASSWORD;
+    private static final String POOL_CONFIG_PATH = "database/pool.properties";
+    private static final int DEFAULT_POOL_SIZE = 8;
+    private static final int DEFAULT_MIN_POOL_SIZE = 4;
+    private static final int DEFAULT_MAX_POOL_SIZE = 15;
+    private static final double DEFAULT_INCREASE_COEFF = 0.75;
 
-    private static Properties props;
+    //In seconds
+    private static final int DEFAULT_CLEANING_INTERVAL = 60;
+    private static final int DEFAULT_MAX_CONNECTION_DOWNTIME = 60;
 
     private final Queue<ProxyConnection> availableConnections = new ArrayDeque<>();
     private final List<ProxyConnection> usedConnections = new ArrayList<>();
@@ -43,91 +44,60 @@ public class ConnectionPoolManager implements ConnectionPool {
     private final Condition hasAvailableConnections = writeLock.newCondition();
     private final Condition needToCreateConnections = lock.newCondition();
 
-    //In seconds
-    private long cleaningInterval = 60;
-    private long maxConnectionDownTime = 60;
+    private int poolSize;
+    private int minPoolSize;
+    private int maxPoolSize;
+    private double increaseCoeff;
+    private int cleaningInterval;
+    private int maxConnectionDowntime;
 
-    private boolean initialized = false;
-    private boolean isShutDown = false;
+    private AtomicBoolean isInitialized = new AtomicBoolean(false);
+    private AtomicBoolean isShutDown = new AtomicBoolean(false);
+
     private IncreasePoolThread increasePoolThread;
-    private CleanPoolThread cleanPoolThread;
-
-    static {
-        InputStream is = null;
-        try {
-            is = ClassLoader.class.getResourceAsStream(CONFIG_PATH);
-            props = new Properties();
-            props.load(is);
-            LOG.info("DB property file load success");
-        } catch (FileNotFoundException e) {
-            LOG.fatal("Data base Property file not found", e);
-            System.exit(-1);
-        } catch (IOException e) {
-            LOG.fatal("Unable to open data base property file", e);
-            System.exit(-1);
-        } finally {
-            if(is != null) {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    LOG.warn("Unable to close InputStream in db connection pool", e);
-                }
-            }
-        }
-
-        DB_URL = props.getProperty("db.host");
-        DB_USER = props.getProperty("db.login");
-        DB_PASSWORD = props.getProperty("db.password");
-    }
-
-    //todo: read
-    // about
-    // threading, exception
-    // in
-    // Effective
-    // Java
-
 
     private ConnectionPoolManager() {
-    }
+        try(InputStream is = ConnectionPool.class.getClassLoader().getResourceAsStream(POOL_CONFIG_PATH)) {
+            if(is == null) {
+                LOG.warn("Unable to find connection pool property file");
+                assignDefault();
+            }
+            Properties poolProperties =  new Properties();
+            poolProperties.load(is);
+            poolSize = Integer.parseInt(poolProperties.getProperty("size"));
+            minPoolSize = Integer.parseInt(poolProperties.getProperty("minSize"));
+            maxPoolSize = Integer.parseInt(poolProperties.getProperty("maxSize"));
+            increaseCoeff = Double.parseDouble(poolProperties.getProperty("increaseCoefficient"));
+            cleaningInterval = Integer.parseInt(poolProperties.getProperty("cleanInterval"));
+            maxConnectionDowntime = Integer.parseInt(poolProperties.getProperty("maxConnectionDowntime"));
+            LOG.info("Connection pool property file loaded");
+        } catch (IOException e) {
+            LOG.warn("Unable to open connection pool property file", e);
+            assignDefault();
+        } catch (NumberFormatException e) {
+            LOG.warn("Incorrect connection pool property file. Unable to parse value", e);
+            assignDefault();
+        }
 
-    private static class ConnectionPoolManagerHolder {
-        private static final ConnectionPoolManager instance = new ConnectionPoolManager();
+        if (minPoolSize < 0 || minPoolSize > maxPoolSize || poolSize > maxPoolSize || poolSize < minPoolSize
+                || cleaningInterval < 0 || maxConnectionDowntime < 0 || increaseCoeff < 0 || increaseCoeff > 1) {
+            LOG.warn("Incorrect values of properties in connection pool property file");
+            assignDefault();
+        }
     }
 
     public static ConnectionPoolManager getInstance() {
-        return ConnectionPoolManagerHolder.instance;
-    }
-
-    public long getCleaningInterval() {
-        return cleaningInterval;
-    }
-
-    public void setCleaningInterval(long cleaningInterval) {
-        if(cleaningInterval < 0) {
-            //todo ? need to throw exception
-            LOG.warn("Trying to assign a negative value to DB cleanInterval: {}", cleaningInterval);
-            return;
+        while (instance == null) {
+            if(hasInstance.compareAndSet(false, true)) {
+                instance = new ConnectionPoolManager();
+            }
         }
-        this.cleaningInterval = cleaningInterval;
-    }
-
-    public long getMaxConnectionDownTime() {
-        return maxConnectionDownTime;
-    }
-
-    public void setMaxConnectionDownTime(long maxConnectionDownTime) {
-        if(maxConnectionDownTime < 0) {
-            //todo ? need to throw exception
-            LOG.warn("Trying to assign a negative value to maxConnectionDownTime: {}", maxConnectionDownTime);
-            return;
-        }
-        this.maxConnectionDownTime = maxConnectionDownTime;
+        return instance;
     }
 
     @Override
     public boolean isInitialized() {
-        return initialized;
+        return isInitialized.get();
     }
 
     public int getCurrentSize() {
@@ -148,103 +118,44 @@ public class ConnectionPoolManager implements ConnectionPool {
         }
     }
 
-    public int getAvailableConnectionsSize() {
-        readLock.lock();
-        try {
-            return availableConnections.size();
-        } finally {
-            readLock.unlock();
-        }
-    }
-
     @Override
     public boolean init() {
         lock.lock();
         try {
-            if (isShutDown) {
-                LOG.error("Not able to init connections in pool because of pool is shut down");
+            if (isShutDown.get()) {
+                LOG.error("Unable to init connections in pool because of pool is shut down");
             }
-            else if (!initialized) {
+            else if (!isInitialized.get()) {
                 increasePoolThread = new IncreasePoolThread();
-                cleanPoolThread = new CleanPoolThread();
                 increasePoolThread.start();
-                cleanPoolThread.start();
-                initializeConnections();
-                initialized = true;
+                new CleanPoolThread().start();
+                for (int i = 0; i < poolSize; i++) {
+                    addConnection();
+                }
+                isInitialized.set(true);
                 return true;
             }
+        } catch (DatabaseConnectionException e) {
+            LOG.fatal("Unable to initialize connection pool", e);
+            throw new RuntimeException("Unable to initialize connection pool");
         } finally {
             lock.unlock();
         }
         return false;
     }
 
-    //todo: ? why NMikle in initializeConnections(int amount, boolean failOnConnectionException)
-    // use boolean parameter
-    private void initializeConnections() {
-        for (int i = 0; i < INITIAL_POOL_SIZE; i++) {
-            addConnection();
-        }
-    }
-
-    private boolean addConnection() {
-        if (getCurrentSize() < MAX_POOL_SIZE) {
-            Optional<ProxyConnection> optionalProxyConnection = createProxyConnection();
-            if(optionalProxyConnection.isPresent()) {
-                writeLock.lock();
-                try {
-                    availableConnections.add(optionalProxyConnection.get());
-                    hasAvailableConnections.signalAll();
-                    LOG.trace("added a new connection: {}", optionalProxyConnection.get());
-                    return true;
-                } finally {
-                    writeLock.unlock();
-                }
-            }
-        }
-        return false;
-
-    }
-
-    private boolean addConnection(ProxyConnection proxyConnection) {
-        if (getCurrentSize() < MAX_POOL_SIZE) {
-            writeLock.lock();
-            try {
-                availableConnections.add(proxyConnection);
-                hasAvailableConnections.signalAll();
-                LOG.trace("added existing connection: {}", proxyConnection);
-                return true;
-            } finally {
-                writeLock.unlock();
-            }
-        }
-        return false;
-    }
-
-    private void addConnections(List<ProxyConnection> proxyConnections) {
-        proxyConnections.forEach(this::addConnection);
-    }
-
-    private Optional<ProxyConnection> createProxyConnection() {
-        try {
-            final Connection connection = DriverManager
-                    .getConnection(DB_URL, DB_USER, DB_PASSWORD);
-            return Optional.of(new ProxyConnection(connection, this));
-        } catch (SQLException e) {
-            //todo ? need to throw exception
-            LOG.error("Unable to create connection", e);
-        }
-        return Optional.empty();
-    }
-
     @Override
-    public Connection takeConnection() throws InterruptedException {
+    public Connection takeConnection() {
        writeLock.lock();
         try {
             increasePoolThread.checkIncreaseCondition();
             while (availableConnections.isEmpty()) {
-                //todo ? if for a long time
-                hasAvailableConnections.await();
+                try {
+                    hasAvailableConnections.await();
+                } catch (InterruptedException e) {
+                    LOG.warn("Interrupted!", e);
+                    Thread.currentThread().interrupt();
+                }
             }
             final ProxyConnection connection = availableConnections.poll();
             usedConnections.add(connection);
@@ -255,59 +166,93 @@ public class ConnectionPoolManager implements ConnectionPool {
         }
     }
 
-    @SuppressWarnings("SuspiciousMethodCalls")
     @Override
     public boolean releaseConnection(Connection connection) {
-        writeLock.lock();
-        try {
-            if (usedConnections.remove(connection)) {
-                availableConnections.add((ProxyConnection) connection);
-                ((ProxyConnection) connection).setLastTakeDate(LocalDateTime.now());
-                hasAvailableConnections.signalAll();
-                LOG.trace("Connection released: {}", connection);
-                return true;
+        if(connection instanceof ProxyConnection) {
+            writeLock.lock();
+            try {
+                if (usedConnections.remove(connection)) {
+                    availableConnections.add((ProxyConnection) connection);
+                    ((ProxyConnection) connection).setLastTakeDate(LocalDateTime.now());
+                    hasAvailableConnections.signalAll();
+                    LOG.trace("Connection released: {}", connection);
+                    return true;
+                }
+            } finally {
+                writeLock.unlock();
             }
-            return false;
-        } finally {
-            writeLock.unlock();
         }
+        return false;
     }
 
     @Override
     public boolean shutDown() {
-        if (initialized && !isShutDown) {
-            LOG.trace("Connection Pool is closing...");
-            isShutDown = true;
-            closeAllConnections();
+        if (isInitialized.get() && !isShutDown.get()) {
+            LOG.info("Connection Pool is closing...");
+            isShutDown.set(true);
+            closeConnections();
             deregisterDrivers();
-            initialized = false;
+            isInitialized.set(false);
+            LOG.info("Connection Pool is closed");
             return true;
         }
         return false;
     }
 
-    private void closeAllConnections() {
-            closeConnections(this.availableConnections);
-            closeConnections(this.usedConnections);
+    private void assignDefault() {
+        poolSize = DEFAULT_POOL_SIZE;
+        minPoolSize = DEFAULT_MIN_POOL_SIZE;
+        maxPoolSize = DEFAULT_MAX_POOL_SIZE;
+        increaseCoeff = DEFAULT_INCREASE_COEFF;
+        cleaningInterval = DEFAULT_CLEANING_INTERVAL;
+        maxConnectionDowntime = DEFAULT_MAX_CONNECTION_DOWNTIME;
     }
 
-    private void closeConnections(Collection<ProxyConnection> collection) {
+    private void addConnection() throws DatabaseConnectionException {
         writeLock.lock();
         try {
-            collection.forEach(this::closeConnection);
-            collection.clear();
+            if (getCurrentSize() < maxPoolSize) {
+                ProxyConnection proxyConnection = ConnectionFactory.createProxyConnection();
+                availableConnections.add(proxyConnection);
+                hasAvailableConnections.signalAll();
+                LOG.trace("added a new connection: {}", proxyConnection);
+            }
         } finally {
             writeLock.unlock();
         }
     }
 
-    private void closeConnection(ProxyConnection conn) {
+    private void addConnection(ProxyConnection proxyConnection) {
+        writeLock.lock();
         try {
-            conn.realClose();
-            LOG.info("Connection {} closed", conn);
+            if(getCurrentSize() < maxPoolSize) {
+                availableConnections.add(proxyConnection);
+                hasAvailableConnections.signalAll();
+                LOG.trace("added existing connection: {}", proxyConnection);
+            }
+        } finally {
+            writeLock.unlock();
+        }
+    }
+
+    private void closeConnections() {
+            closeConnections(availableConnections);
+            closeConnections(usedConnections);
+    }
+
+    private void closeConnections(Collection<ProxyConnection> collection) {
+        writeLock.lock();
+        try {
+            for (ProxyConnection proxyConnection : collection) {
+                proxyConnection.realClose();
+                LOG.trace("Connection {} closed", proxyConnection);
+            }
+            collection.clear();
         } catch (SQLException e) {
-            //todo ? need to throw exception
-            LOG.error("Could not close connection", e);
+            LOG.error("Unable to close connection", e);
+        }
+        finally {
+            writeLock.unlock();
         }
     }
 
@@ -317,30 +262,28 @@ public class ConnectionPoolManager implements ConnectionPool {
             try {
                 DriverManager.deregisterDriver(drivers.nextElement());
             } catch (SQLException e) {
-                //todo ? need to throw exception
-                LOG.error("could not deregister driver", e);
+                LOG.error("Unable to deregister driver", e);
             }
         }
     }
 
-    class IncreasePoolThread extends Thread {
+    private class IncreasePoolThread extends Thread {
         private boolean isToIncrease = false;
 
-        public IncreasePoolThread() {
+        IncreasePoolThread() {
             setDaemon(true);
         }
 
         @Override
         public void run() {
-            while(!isShutDown) {
+            while(!isShutDown.get()) {
                 lock.lock();
                 try {
                     while (!isToIncrease) {
                         needToCreateConnections.await();
                     }
 
-                    if(isShutDown) break;
-
+                    if(isShutDown.get()) break;
                     increase();
                 } catch (InterruptedException e) {
                     LOG.warn("CleanPoolThread interrupted", e);
@@ -352,37 +295,46 @@ public class ConnectionPoolManager implements ConnectionPool {
         }
 
         private void increase() {
-            LOG.trace("In Increase()");
+            LOG.trace("In increase()");
             List<ProxyConnection> proxyConnections = new ArrayList<>();
-            Optional<ProxyConnection> optionalProxyConnection1 = createProxyConnection();
-            Optional<ProxyConnection> optionalProxyConnection2 = createProxyConnection();
-            optionalProxyConnection1.ifPresent(proxyConnections::add);
-            optionalProxyConnection2.ifPresent(proxyConnections::add);
-            addConnections(proxyConnections);
-            isToIncrease = false;
+            try {
+                ProxyConnection proxyConnection1 = ConnectionFactory.createProxyConnection();
+                ProxyConnection proxyConnection2 = ConnectionFactory.createProxyConnection();
+                proxyConnections.add(proxyConnection1);
+                proxyConnections.add(proxyConnection2);
+                addConnections(proxyConnections);
+            } catch (DatabaseConnectionException e) {
+                LOG.error("Unable to increase connection pool size", e);
+            } finally {
+                isToIncrease = false;
+            }
         }
 
         private void checkIncreaseCondition() {
-            if(getUsedConnectionsSize() >= INCREASE_COEFF * ConnectionPoolManager.this.getCurrentSize()) {
-                lock.lock();
-                try {
+            lock.lock();
+            try {
+                if(getUsedConnectionsSize() >= increaseCoeff * ConnectionPoolManager.this.getCurrentSize()) {
                     isToIncrease = true;
                     needToCreateConnections.signalAll();
-                } finally {
-                    lock.unlock();
                 }
+            } finally {
+                lock.unlock();
             }
+        }
+
+        private void addConnections(List<ProxyConnection> proxyConnections) {
+            proxyConnections.forEach(ConnectionPoolManager.this::addConnection);
         }
     }
 
-    class CleanPoolThread extends Thread {
-        public CleanPoolThread() {
+    private class CleanPoolThread extends Thread {
+        CleanPoolThread() {
             setDaemon(true);
         }
 
         @Override
         public void run() {
-            while(!isShutDown) {
+            while(!isShutDown.get()) {
                 try {
                     TimeUnit.SECONDS.sleep(cleaningInterval);
                 } catch (InterruptedException e) {
@@ -390,29 +342,27 @@ public class ConnectionPoolManager implements ConnectionPool {
                     Thread.currentThread().interrupt();
                 }
 
-                if(isShutDown) break;
-
+                if(isShutDown.get()) break;
                 cleanByDownTime();
             }
         }
 
-        //todo ? make a copy  of availableConnections
         private void cleanByDownTime() {
-            if (!isShutDown && getCurrentSize() > ConnectionPoolManager.MIN_POOL_SIZE) {
-                readLock.lock();
-                try {
+            readLock.lock();
+            try {
+                if (!isShutDown.get() && getCurrentSize() > minPoolSize) {
                     for (ProxyConnection conn : availableConnections) {
                         long timePassed = Duration.between(conn.getLastTakeDate(), LocalDateTime.now()).getSeconds();
-                        if (getCurrentSize() == ConnectionPoolManager.MIN_POOL_SIZE) {
+                        if (getCurrentSize() == minPoolSize) {
                             break;
                         }
-                        if(timePassed > maxConnectionDownTime) {
+                        if (timePassed > maxConnectionDowntime) {
                             deleteConnection(conn);
                         }
                     }
-                } finally {
-                    readLock.unlock();
                 }
+            } finally {
+                readLock.unlock();
             }
         }
 

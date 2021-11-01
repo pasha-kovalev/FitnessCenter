@@ -8,12 +8,10 @@ import java.util.concurrent.Executor;
 
 public class ProxyConnection implements Connection {
     private final Connection connection;
-    private final ConnectionPool pool;
     private LocalDateTime lastTakeDate;
 
-    ProxyConnection(Connection connection, ConnectionPool pool) {
+    ProxyConnection(Connection connection) {
         this.connection = connection;
-        this.pool = pool;
         lastTakeDate = LocalDateTime.now();
     }
 
@@ -23,10 +21,6 @@ public class ProxyConnection implements Connection {
 
     public void setLastTakeDate(LocalDateTime lastTakeDate) {
         this.lastTakeDate = lastTakeDate;
-    }
-
-    ConnectionPool getPool() {
-        return pool;
     }
 
     @Override
@@ -71,7 +65,7 @@ public class ProxyConnection implements Connection {
 
     @Override
     public void close() {
-        pool.releaseConnection(this);
+        ConnectionPoolManager.getInstance().releaseConnection(this);
     }
 
     void realClose() throws SQLException {

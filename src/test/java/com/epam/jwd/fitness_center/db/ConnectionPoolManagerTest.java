@@ -1,9 +1,8 @@
 package com.epam.jwd.fitness_center.db;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 
+import java.lang.reflect.Field;
 import java.sql.Connection;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -12,12 +11,19 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ConnectionPoolManagerTest {
     //todo use mocks
     public static final int TIMEOUT = 1;
-
+    public static final double INCREASE_COEFF = 0.75;
+    public static final int MIN_POOL_SIZE = 4;
     ConnectionPoolManager cp = ConnectionPoolManager.getInstance();
 
-    {
-        cp.setCleaningInterval(3);
-        cp.setMaxConnectionDownTime(2);
+    @BeforeAll
+    public void init() throws Exception {
+        Field ci = ConnectionPoolManager.class.getDeclaredField("cleaningInterval");
+        Field mcd = ConnectionPoolManager.class.getDeclaredField("maxConnectionDowntime");
+        ci.setAccessible(true);
+        mcd.setAccessible(true);
+        ci.setInt(cp, 3);
+        mcd.setInt(cp, 2);
+
         cp.init();
     }
 
@@ -35,7 +41,7 @@ public class ConnectionPoolManagerTest {
     public void takeConnection_shouldSignalNeedToCreateConnectionsCondition_whenUsedConditionAmountMoreThanEstablished()
             throws Exception {
         int sizeBefore = cp.getCurrentSize();
-        while (!(cp.getUsedConnectionsSize() >= ConnectionPoolManager.INCREASE_COEFF * sizeBefore)) {
+        while (!(cp.getUsedConnectionsSize() >= INCREASE_COEFF * sizeBefore)) {
             cp.takeConnection();
         }
         cp.takeConnection();
@@ -56,13 +62,13 @@ public class ConnectionPoolManagerTest {
     }
 
     @Test
-    public void releaseConnection_shouldReturnTrue_whenUsedConnectionsNotEmpty() throws Exception {
+    public void releaseConnection_shouldReturnTrue_whenUsedConnectionsNotEmpty()  {
         Connection conn = cp.takeConnection();
         assertTrue(cp.releaseConnection(conn));
     }
 
     @Test
-    public void releaseConnection_shouldReturnFalse_whenConnectionNotInUsedConnections() throws Exception {
+    public void releaseConnection_shouldReturnFalse_whenConnectionNotInUsedConnections()  {
         Connection conn = cp.takeConnection();
         cp.releaseConnection(conn);
         assertFalse(cp.releaseConnection(conn));
@@ -70,9 +76,8 @@ public class ConnectionPoolManagerTest {
 
     @Test
     public void cleanPoolThread_run_shouldCleanPool_whenConnectionLastUseTimeMoreThanDowntime() throws Exception {
-        //todo use mocks
-        Thread.sleep(6000);
-        int expected = Math.max(cp.getUsedConnectionsSize(), ConnectionPoolManager.MIN_POOL_SIZE);
+        Thread.sleep(3000);
+        int expected = Math.max(cp.getUsedConnectionsSize(), MIN_POOL_SIZE);
         assertEquals(expected, cp.getCurrentSize());
     }
 
