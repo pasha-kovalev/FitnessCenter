@@ -9,10 +9,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ConnectionPoolManagerTest {
-    //todo use mocks
     public static final int TIMEOUT = 1;
     public static final double INCREASE_COEFF = 0.75;
-    public static final int MIN_POOL_SIZE = 4;
     ConnectionPoolManager cp = ConnectionPoolManager.getInstance();
 
     @BeforeAll
@@ -28,7 +26,8 @@ public class ConnectionPoolManagerTest {
     }
 
     @AfterAll
-    public void teardown() {
+    public void teardown() throws InterruptedException {
+        Thread.sleep(4000);
         cp.shutDown();
     }
 
@@ -38,17 +37,28 @@ public class ConnectionPoolManagerTest {
     }
 
     @Test
-    public void takeConnection_shouldSignalNeedToCreateConnectionsCondition_whenUsedConditionAmountMoreThanEstablished()
+    public void takeConnection_shouldCallMethodThatCreateNewConnections_whenUsedConditionAmountMoreThanEstablished()
             throws Exception {
         int sizeBefore = cp.getCurrentSize();
         while (!(cp.getUsedConnectionsSize() >= INCREASE_COEFF * sizeBefore)) {
             cp.takeConnection();
         }
         cp.takeConnection();
-        //todo: use mocks
-        Thread.sleep(3000);
+        Thread.sleep(1000);
         int sizeAfter = cp.getCurrentSize();
         assertTrue(sizeBefore < sizeAfter);
+    }
+
+    @Test
+    public void takeConnection_shouldWaitUntilNewConnectionsAppear_whenAvailableConnectionsIsEmpty()
+            throws Exception {
+        int sizeBefore = cp.getCurrentSize() - cp.getUsedConnectionsSize();
+        while (!(cp.getUsedConnectionsSize() == cp.getCurrentSize())) {
+            cp.takeConnection();
+        }
+        assertFalse(cp.getCurrentSize() - cp.getUsedConnectionsSize() > 0);
+        Thread.sleep(1000);
+        assertTrue(cp.getCurrentSize() - cp.getUsedConnectionsSize() > 0);
     }
 
     @Test
@@ -73,20 +83,4 @@ public class ConnectionPoolManagerTest {
         cp.releaseConnection(conn);
         assertFalse(cp.releaseConnection(conn));
     }
-
-    @Test
-    public void cleanPoolThread_run_shouldCleanPool_whenConnectionLastUseTimeMoreThanDowntime() throws Exception {
-        Thread.sleep(3000);
-        int expected = Math.max(cp.getUsedConnectionsSize(), MIN_POOL_SIZE);
-        assertEquals(expected, cp.getCurrentSize());
-        cp.takeConnection();
-        cp.takeConnection();
-        cp.takeConnection();
-        Thread.sleep(4000);
-        int expected2 = Math.max(cp.getUsedConnectionsSize(), MIN_POOL_SIZE);
-        assertEquals(expected2, cp.getCurrentSize());
-
-
-    }
-
 }

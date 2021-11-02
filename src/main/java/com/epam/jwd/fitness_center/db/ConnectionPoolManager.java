@@ -9,7 +9,6 @@ import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.*;
 
@@ -42,7 +41,6 @@ public class ConnectionPoolManager implements ConnectionPool {
     private final Lock writeLock = rwl.writeLock();
 
     private final Condition hasAvailableConnections = writeLock.newCondition();
-    private final Condition needToCreateConnections = lock.newCondition();
 
     private final AtomicBoolean isInitialized = new AtomicBoolean(false);
     private final AtomicBoolean isShutDown = new AtomicBoolean(false);
@@ -126,9 +124,9 @@ public class ConnectionPoolManager implements ConnectionPool {
                 LOG.error("Unable to init connections in pool because of pool is shut down");
             }
             else if (!isInitialized.get()) {
+                new Timer().schedule(new CleanPoolThread(), 0, cleaningInterval * 1000L);
                 increasePoolThread = new IncreasePoolThread();
                 increasePoolThread.start();
-                new CleanPoolThread().start();
                 for (int i = 0; i < poolSize; i++) {
                     addConnection();
                 }
@@ -149,7 +147,7 @@ public class ConnectionPoolManager implements ConnectionPool {
        writeLock.lock();
         try {
             increasePoolThread.checkIncreaseCondition();
-            while (availableConnections.isEmpty()) {
+            while (getUsedConnectionsSize() == maxPoolSize || availableConnections.isEmpty()) {
                 try {
                     hasAvailableConnections.await();
                 } catch (InterruptedException e) {
@@ -159,9 +157,8 @@ public class ConnectionPoolManager implements ConnectionPool {
             }
             final ProxyConnection connection = availableConnections.poll();
             usedConnections.add(connection);
-            LOG.trace("Connection taken: {}", connection);
             return connection;
-        } finally {
+        }  finally {
             writeLock.unlock();
         }
     }
@@ -190,6 +187,7 @@ public class ConnectionPoolManager implements ConnectionPool {
         if (isInitialized.get() && !isShutDown.get()) {
             LOG.info("Connection Pool is closing...");
             isShutDown.set(true);
+            increasePoolThread.shutDown();
             closeConnections();
             deregisterDrivers();
             isInitialized.set(false);
@@ -226,6 +224,7 @@ public class ConnectionPoolManager implements ConnectionPool {
         writeLock.lock();
         try {
             if(getCurrentSize() < maxPoolSize) {
+                if(proxyConnection == null) LOG.error("null");
                 availableConnections.add(proxyConnection);
                 hasAvailableConnections.signalAll();
                 LOG.trace("added existing connection: {}", proxyConnection);
@@ -268,7 +267,9 @@ public class ConnectionPoolManager implements ConnectionPool {
     }
 
     private class IncreasePoolThread extends Thread {
+        private final Condition needToCreateConnections = lock.newCondition();
         private boolean isToIncrease = false;
+
 
         IncreasePoolThread() {
             setDaemon(true);
@@ -279,15 +280,14 @@ public class ConnectionPoolManager implements ConnectionPool {
             while(!isShutDown.get()) {
                 lock.lock();
                 try {
-                    while (!isToIncrease) {
+                    while (!isToIncrease &&  !isShutDown.get()) {
                         needToCreateConnections.await();
                     }
 
                     if(isShutDown.get()) break;
                     increase();
                 } catch (InterruptedException e) {
-                    LOG.warn("CleanPoolThread interrupted", e);
-                    Thread.currentThread().interrupt();
+                    LOG.info("CleanPoolThread interrupted");
                 } finally {
                     lock.unlock();
                 }
@@ -295,7 +295,6 @@ public class ConnectionPoolManager implements ConnectionPool {
         }
 
         private void increase() {
-            LOG.trace("In increase()");
             List<ProxyConnection> proxyConnections = new ArrayList<>();
             try {
                 ProxyConnection proxyConnection1 = ConnectionFactory.createProxyConnection();
@@ -311,40 +310,36 @@ public class ConnectionPoolManager implements ConnectionPool {
         }
 
         private void checkIncreaseCondition() {
-            lock.lock();
-            try {
-                if(getUsedConnectionsSize() >= increaseCoeff * ConnectionPoolManager.this.getCurrentSize()) {
-                    isToIncrease = true;
-                    needToCreateConnections.signalAll();
+            if (!isToIncrease) {
+                lock.lock();
+                try {
+                    if(getUsedConnectionsSize() >= increaseCoeff * ConnectionPoolManager.this.getCurrentSize()) {
+                        isToIncrease = true;
+                        needToCreateConnections.signalAll();
+                    }
+                } finally {
+                    lock.unlock();
                 }
-            } finally {
-                lock.unlock();
             }
         }
 
         private void addConnections(List<ProxyConnection> proxyConnections) {
             proxyConnections.forEach(ConnectionPoolManager.this::addConnection);
         }
+
+        public void shutDown() {
+            if(!isInterrupted()) {
+                this.interrupt();
+            }
+        }
     }
 
-    private class CleanPoolThread extends Thread {
-        CleanPoolThread() {
-            setDaemon(true);
-        }
+    private class CleanPoolThread extends TimerTask {
 
         @Override
         public void run() {
-            while(!isShutDown.get()) {
-                try {
-                    TimeUnit.SECONDS.sleep(cleaningInterval);
-                } catch (InterruptedException e) {
-                    LOG.warn("CleanPoolThread interrupted", e);
-                    Thread.currentThread().interrupt();
-                }
-
-                if(isShutDown.get()) break;
+                if(isShutDown.get()) return;
                 cleanByDownTime();
-            }
         }
 
         private void cleanByDownTime() {
@@ -371,6 +366,7 @@ public class ConnectionPoolManager implements ConnectionPool {
             writeLock.lock();
             try {
                 if(availableConnections.remove(conn)) {
+                    LOG.info("Closing connection in CleanPoolThread: {}", conn);
                     conn.realClose();
                 }
             } catch (SQLException e) {
