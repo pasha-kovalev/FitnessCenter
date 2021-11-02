@@ -21,7 +21,7 @@ public class ConnectionPoolManager implements ConnectionPool {
     private static final Logger LOG = LogManager.getLogger(ConnectionPoolManager.class);
 
     private static ConnectionPoolManager instance;
-    private static AtomicBoolean hasInstance = new AtomicBoolean(false);
+    private static final AtomicBoolean hasInstance = new AtomicBoolean(false);
 
     private static final String POOL_CONFIG_PATH = "database/pool.properties";
     private static final int DEFAULT_POOL_SIZE = 8;
@@ -44,15 +44,15 @@ public class ConnectionPoolManager implements ConnectionPool {
     private final Condition hasAvailableConnections = writeLock.newCondition();
     private final Condition needToCreateConnections = lock.newCondition();
 
+    private final AtomicBoolean isInitialized = new AtomicBoolean(false);
+    private final AtomicBoolean isShutDown = new AtomicBoolean(false);
+
     private int poolSize;
     private int minPoolSize;
     private int maxPoolSize;
     private double increaseCoeff;
     private int cleaningInterval;
     private int maxConnectionDowntime;
-
-    private AtomicBoolean isInitialized = new AtomicBoolean(false);
-    private AtomicBoolean isShutDown = new AtomicBoolean(false);
 
     private IncreasePoolThread increasePoolThread;
 

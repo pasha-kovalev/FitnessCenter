@@ -79,6 +79,14 @@ public class ConnectionPoolManagerTest {
         Thread.sleep(3000);
         int expected = Math.max(cp.getUsedConnectionsSize(), MIN_POOL_SIZE);
         assertEquals(expected, cp.getCurrentSize());
+        cp.takeConnection();
+        cp.takeConnection();
+        cp.takeConnection();
+        Thread.sleep(4000);
+        int expected2 = Math.max(cp.getUsedConnectionsSize(), MIN_POOL_SIZE);
+        assertEquals(expected2, cp.getCurrentSize());
+
+
     }
 
 }
