@@ -16,7 +16,7 @@ import com.epam.jwd.fitness_center.exception.DatabaseConnectionException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class ConnectionPoolManager implements ConnectionPool {
+public final class ConnectionPoolManager implements ConnectionPool {
     private static final Logger LOG = LogManager.getLogger(ConnectionPoolManager.class);
 
     private static ConnectionPoolManager instance;
@@ -32,6 +32,7 @@ public class ConnectionPoolManager implements ConnectionPool {
     private static final int DEFAULT_CLEANING_INTERVAL = 60;
     private static final int DEFAULT_MAX_CONNECTION_DOWNTIME = 60;
 
+    //todo: ? atomic reference or blocking
     private final Queue<ProxyConnection> availableConnections = new ArrayDeque<>();
     private final List<ProxyConnection> usedConnections = new ArrayList<>();
 
@@ -52,6 +53,7 @@ public class ConnectionPoolManager implements ConnectionPool {
     private int cleaningInterval;
     private int maxConnectionDowntime;
 
+    private Timer cleanTimer;
     private IncreasePoolThread increasePoolThread;
 
     private ConnectionPoolManager() {
@@ -93,11 +95,6 @@ public class ConnectionPoolManager implements ConnectionPool {
         return instance;
     }
 
-    @Override
-    public boolean isInitialized() {
-        return isInitialized.get();
-    }
-
     public int getCurrentSize() {
         readLock.lock();
         try {
@@ -117,6 +114,11 @@ public class ConnectionPoolManager implements ConnectionPool {
     }
 
     @Override
+    public boolean isInitialized() {
+        return isInitialized.get();
+    }
+
+    @Override
     public boolean init() {
         lock.lock();
         try {
@@ -124,7 +126,8 @@ public class ConnectionPoolManager implements ConnectionPool {
                 LOG.error("Unable to init connections in pool because of pool is shut down");
             }
             else if (!isInitialized.get()) {
-                new Timer().schedule(new CleanPoolThread(), 0, cleaningInterval * 1000L);
+                cleanTimer = new Timer();
+                cleanTimer.schedule(new CleanPoolThread(), 0, cleaningInterval * 1000L);
                 increasePoolThread = new IncreasePoolThread();
                 increasePoolThread.start();
                 for (int i = 0; i < poolSize; i++) {
@@ -178,6 +181,8 @@ public class ConnectionPoolManager implements ConnectionPool {
             } finally {
                 writeLock.unlock();
             }
+        } else {
+            LOG.error("Trying to release not a ProxyConnection: {}", connection);
         }
         return false;
     }
@@ -187,6 +192,8 @@ public class ConnectionPoolManager implements ConnectionPool {
         if (isInitialized.get() && !isShutDown.get()) {
             LOG.info("Connection Pool is closing...");
             isShutDown.set(true);
+            cleanTimer.cancel();
+            cleanTimer.purge();
             increasePoolThread.shutDown();
             closeConnections();
             deregisterDrivers();
@@ -269,7 +276,6 @@ public class ConnectionPoolManager implements ConnectionPool {
     private class IncreasePoolThread extends Thread {
         private final Condition needToCreateConnections = lock.newCondition();
         private boolean isToIncrease = false;
-
 
         IncreasePoolThread() {
             setDaemon(true);
