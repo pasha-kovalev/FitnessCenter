@@ -36,6 +36,7 @@ public class ConnectionPoolManagerTest {
         assertTrue(cp.takeConnection().isValid(TIMEOUT));
     }
 
+    //fixme loops are undesirable in tests
     @Test
     public void takeConnection_shouldCallMethodThatCreateNewConnections_whenUsedConditionAmountMoreThanEstablished()
             throws Exception {

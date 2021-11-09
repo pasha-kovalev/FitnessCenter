@@ -56,6 +56,7 @@ public final class ConnectionPoolManager implements ConnectionPool {
     private Timer cleanTimer;
     private IncreasePoolThread increasePoolThread;
 
+    //fixme magic to constants
     private ConnectionPoolManager() {
         try(InputStream is = ConnectionPool.class.getClassLoader().getResourceAsStream(POOL_CONFIG_PATH)) {
             if(is == null) {
@@ -126,10 +127,7 @@ public final class ConnectionPoolManager implements ConnectionPool {
                 LOG.error("Unable to init connections in pool because of pool is shut down");
             }
             else if (!isInitialized.get()) {
-                cleanTimer = new Timer();
-                cleanTimer.schedule(new CleanPoolThread(), 0, cleaningInterval * 1000L);
-                increasePoolThread = new IncreasePoolThread();
-                increasePoolThread.start();
+                initDaemonThreads();
                 for (int i = 0; i < poolSize; i++) {
                     addConnection();
                 }
@@ -145,44 +143,59 @@ public final class ConnectionPoolManager implements ConnectionPool {
         return false;
     }
 
+    private void initDaemonThreads() {
+        cleanTimer = new Timer();
+        cleanTimer.schedule(new CleanPoolThread(), 0, cleaningInterval * 1000L);
+        increasePoolThread = new IncreasePoolThread();
+        increasePoolThread.start();
+    }
+
     @Override
-    public Connection takeConnection() {
-       writeLock.lock();
+    public Connection takeConnection() throws DatabaseConnectionException {
+        writeLock.lock();
+        if(!isInitialized.get()) init();
         try {
-            increasePoolThread.checkIncreaseCondition();
-            while (getUsedConnectionsSize() == maxPoolSize || availableConnections.isEmpty()) {
-                try {
-                    hasAvailableConnections.await();
-                } catch (InterruptedException e) {
-                    LOG.warn("Interrupted!", e);
-                    Thread.currentThread().interrupt();
-                }
-            }
+            checkCondition();
             final ProxyConnection connection = availableConnections.poll();
             usedConnections.add(connection);
+            LOG.trace("Connection taken: {}", connection);
             return connection;
-        }  finally {
+        }
+        finally {
             writeLock.unlock();
+        }
+    }
+
+    private void checkCondition() throws DatabaseConnectionException {
+        increasePoolThread.checkIncreaseCondition();
+        while (getUsedConnectionsSize() == maxPoolSize || availableConnections.isEmpty()) {
+            try {
+                hasAvailableConnections.await();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new DatabaseConnectionException("Thread is interrupted", e);
+            }
         }
     }
 
     @Override
     public boolean releaseConnection(Connection connection) {
-        if(connection instanceof ProxyConnection) {
-            writeLock.lock();
-            try {
-                if (usedConnections.remove(connection)) {
-                    availableConnections.add((ProxyConnection) connection);
-                    ((ProxyConnection) connection).setLastTakeDate(LocalDateTime.now());
-                    hasAvailableConnections.signalAll();
-                    LOG.trace("Connection released: {}", connection);
-                    return true;
-                }
-            } finally {
-                writeLock.unlock();
+        writeLock.lock();
+        try {
+            if(connection instanceof ProxyConnection && isInitialized.get()) {
+                    if (usedConnections.remove(connection)) {
+                        availableConnections.add((ProxyConnection) connection);
+                        ((ProxyConnection) connection).setLastTakeDate(LocalDateTime.now());
+                        hasAvailableConnections.signalAll();
+                        LOG.trace("Connection released: {}", connection);
+                        return true;
+                    }
             }
-        } else {
-            LOG.error("Trying to release not a ProxyConnection: {}", connection);
+            else {
+                LOG.error("Unable to release connection: {}, pool initialized: {}", connection, isInitialized.get());
+            }
+        } finally {
+            writeLock.unlock();
         }
         return false;
     }
@@ -341,7 +354,6 @@ public final class ConnectionPoolManager implements ConnectionPool {
     }
 
     private class CleanPoolThread extends TimerTask {
-
         @Override
         public void run() {
                 if(isShutDown.get()) return;

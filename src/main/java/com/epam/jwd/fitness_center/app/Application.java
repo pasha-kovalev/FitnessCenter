@@ -61,23 +61,19 @@ public class Application {
             "SET user_status_id = (SELECT id FROM user_status WHERE status = ?)\n" +
             "WHERE user.id = ?";
 
+   /* public static void main(String[] args) {
+        extractUsersFromDb().forEach(System.out::println);
+    }*/
 
-    public static void main(String[] args) {
-        try {
-            ConnectionPoolManager.getInstance().init();
-            List<User> users = fetchUsersFromDb();
-            users.forEach(System.out::println);
-        } finally {
-            ConnectionPoolManager.getInstance().shutDown();
-        }
-
-    }
+    /*public static List<User> extractUsersFromDb() {
+        return fetchUsersFromDb();
+    }*/
 
     //fixme magic values to constants
     private static User extractUser(ResultSet resultSet) throws DaoException {
         try {
             return new User(
-                    (long) resultSet.getInt("id"),
+                    resultSet.getLong("id"),
                     resultSet.getString("email"),
                     resultSet.getString("password_hash"),
                     resultSet.getString("first_name"),
@@ -90,35 +86,9 @@ public class Application {
         }
     }
 
-    private static List<User> fetchUsersFromDb() {
-        return executeStatement(SELECT_ALL_USERS, Application::extractUser);
-    }
+    /*private static List<User> fetchUsersFromDb() {
+        return executeStatement(SELECT_ALL_USERS, BaseDao::extractUser);
+    }*/
 
-    private static <T extends Entity> List<T> executePrepared(String sql,
-                                                              ResultSetExtractor<T> extractor,
-                                                              StatementPreparator statementPreparator)  {
-        try(final Connection conn = ConnectionPoolManager.getInstance().takeConnection();
-            final PreparedStatement statement = conn.prepareStatement(sql)) {
-            if(statementPreparator != null) {
-                statementPreparator.accept(statement);
-            }
-            final ResultSet resultSet = statement.executeQuery();
-            return extractor.extractAll(resultSet);
-        } catch (DaoException | SQLException e) {
-            LOG.error("Unable to execute prepared statement", e);
-        }
-        return Collections.emptyList();
-    }
 
-    private static <T extends Entity> List<T> executeStatement(String sql,
-                                                              ResultSetExtractor<T> extractor) {
-        try(final Connection conn = ConnectionPoolManager.getInstance().takeConnection();
-            final Statement statement = conn.createStatement();
-            final ResultSet resultSet = statement.executeQuery(sql)) {
-            return extractor.extractAll(resultSet);
-        } catch (DaoException | SQLException e) {
-            LOG.error("Unable to execute statement", e);
-        }
-        return Collections.emptyList();
-    }
 }
