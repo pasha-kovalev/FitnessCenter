@@ -10,6 +10,7 @@ todelete/
 target/
 .idea/
 *.iml
+app/Application.java
 
 .idea/**/workspace.xml
 .idea/**/tasks.xml

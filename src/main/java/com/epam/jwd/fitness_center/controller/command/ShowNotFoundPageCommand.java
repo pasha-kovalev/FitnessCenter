@@ -1,11 +1,9 @@
-package com.epam.jwd.fitness_center.command;
-
-import com.epam.jwd.fitness_center.app.Application;
+package com.epam.jwd.fitness_center.controller.command;
 
 public enum ShowNotFoundPageCommand implements Command {
     INSTANCE;
 
-    public static final CommandResponse FORWARD_TO_MAIN_PAGE_RESPONSE = new CommandResponse() {
+    public static final CommandResponse FORWARD_TO_NOT_FOUND_PAGE_RESPONSE = new CommandResponse() {
         @Override
         public boolean isRedirect() {
             return false;
@@ -16,8 +14,9 @@ public enum ShowNotFoundPageCommand implements Command {
             return "/WEB-INF/jsp/not_found.jsp";
         }
     };
+
     @Override
     public CommandResponse execute(CommandRequest request) {
-        return FORWARD_TO_MAIN_PAGE_RESPONSE;
+        return FORWARD_TO_NOT_FOUND_PAGE_RESPONSE;
     }
 }

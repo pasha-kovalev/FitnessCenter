@@ -1,6 +1,7 @@
-package com.epam.jwd.fitness_center.dao;
+package com.epam.jwd.fitness_center.model.dao;
 
 import com.epam.jwd.fitness_center.exception.DaoException;
+import com.epam.jwd.fitness_center.model.entity.Entity;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

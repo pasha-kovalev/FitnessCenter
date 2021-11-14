@@ -1,4 +1,4 @@
-package com.epam.jwd.fitness_center.db;
+package com.epam.jwd.fitness_center.model.connection;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,6 +18,11 @@ import org.apache.logging.log4j.Logger;
 
 public final class ConnectionPoolManager implements ConnectionPool {
     private static final Logger LOG = LogManager.getLogger(ConnectionPoolManager.class);
+    public static final String POOL_SIZE_PROPERTY = "size";
+    public static final String POOL_MIN_SIZE_PROPERTY = "minSize";
+    public static final String POOL_MAX_SIZE_PROPERTY = "maxSize";
+    public static final String POOL_INCREASE_COEFFICIENT_PROPERTY = "increaseCoefficient";
+    public static final String POOL_CLEAN_INTERVAL_PROPERTY = "cleanInterval";
 
     private static ConnectionPoolManager instance;
     private static final AtomicBoolean hasInstance = new AtomicBoolean(false);
@@ -65,11 +70,11 @@ public final class ConnectionPoolManager implements ConnectionPool {
             }
             Properties poolProperties =  new Properties();
             poolProperties.load(is);
-            poolSize = Integer.parseInt(poolProperties.getProperty("size"));
-            minPoolSize = Integer.parseInt(poolProperties.getProperty("minSize"));
-            maxPoolSize = Integer.parseInt(poolProperties.getProperty("maxSize"));
-            increaseCoeff = Double.parseDouble(poolProperties.getProperty("increaseCoefficient"));
-            cleaningInterval = Integer.parseInt(poolProperties.getProperty("cleanInterval"));
+            poolSize = Integer.parseInt(poolProperties.getProperty(POOL_SIZE_PROPERTY));
+            minPoolSize = Integer.parseInt(poolProperties.getProperty(POOL_MIN_SIZE_PROPERTY));
+            maxPoolSize = Integer.parseInt(poolProperties.getProperty(POOL_MAX_SIZE_PROPERTY));
+            increaseCoeff = Double.parseDouble(poolProperties.getProperty(POOL_INCREASE_COEFFICIENT_PROPERTY));
+            cleaningInterval = Integer.parseInt(poolProperties.getProperty(POOL_CLEAN_INTERVAL_PROPERTY));
             maxConnectionDowntime = Integer.parseInt(poolProperties.getProperty("maxConnectionDowntime"));
             LOG.info("Connection pool property file loaded");
         } catch (IOException e) {

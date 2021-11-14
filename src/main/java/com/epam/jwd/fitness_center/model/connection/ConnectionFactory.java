@@ -1,4 +1,4 @@
-package com.epam.jwd.fitness_center.db;
+package com.epam.jwd.fitness_center.model.connection;
 
 import com.epam.jwd.fitness_center.exception.DatabaseConnectionException;
 import org.apache.logging.log4j.LogManager;
@@ -19,6 +19,9 @@ class ConnectionFactory {
 
     private static final Properties databaseProperties;
 
+    public static final String DB_URL_PROPERTY = "url";
+    public static final String DB_DRIVER_PROPERTY = "driver";
+
     static {
         try(InputStream is = ConnectionFactory.class.getClassLoader().getResourceAsStream(DATABASE_CONFIG_PATH)) {
             if(is == null) {
@@ -28,16 +31,20 @@ class ConnectionFactory {
             databaseProperties =  new Properties();
             databaseProperties.load(is);
             LOG.info("Data base property file loaded");
+            DB_URL = databaseProperties.getProperty(ConnectionFactory.DB_URL_PROPERTY);
+//            final String driver = databaseProperties.getProperty(DB_DRIVER_PROPERTY);
+            if(DB_URL == null /*|| driver == null*/) {
+                LOG.fatal("Database url in configuration file is not correct");
+                throw new RuntimeException("Database configuration file is not correct");
+            }
+           /* Class.forName(driver);*/
         }  catch (IOException e) {
             LOG.fatal("Unable to open data base property file", e);
             throw new RuntimeException("Unable to open data base property file");
-        }
-        DB_URL = databaseProperties.getProperty("url");
-
-        if(DB_URL == null) {
-            LOG.fatal("Database url in configuration file is not correct");
-            throw new RuntimeException("Database configuration file is not correct");
-        }
+        } /*catch (ClassNotFoundException e) {
+            LOG.fatal("Driver class not found", e);
+            throw new RuntimeException("Driver class not found");
+        }*/
     }
 
     private ConnectionFactory() {

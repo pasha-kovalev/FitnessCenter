@@ -1,4 +1,4 @@
-package com.epam.jwd.fitness_center.dao;
+package com.epam.jwd.fitness_center.model.entity;
 
 import java.io.Serializable;
 

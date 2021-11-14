@@ -1,16 +1,16 @@
-package com.epam.jwd.fitness_center.dao;
+package com.epam.jwd.fitness_center.model.entity;
 
 public class User implements Entity {
 
     private static final long serialVersionUID = 6836283217175179238L;
 
-    private Long id;
-    private String email;
-    private String password;
-    private String firstName;
-    private String secondName;
-    private UserRole role;
-    private UserStatus status;
+    protected Long id;
+    protected String email;
+    protected String password;
+    protected String firstName;
+    protected String secondName;
+    protected UserRole role;
+    protected UserStatus status;
 
     public User(Long id, String email, String password, String firstName, String secondName,
                 UserRole role, UserStatus status) {

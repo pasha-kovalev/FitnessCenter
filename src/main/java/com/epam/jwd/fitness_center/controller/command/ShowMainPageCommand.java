@@ -1,4 +1,4 @@
-package com.epam.jwd.fitness_center.command;
+package com.epam.jwd.fitness_center.controller.command;
 
 public enum ShowMainPageCommand implements Command {
     INSTANCE;
@@ -13,6 +13,7 @@ public enum ShowMainPageCommand implements Command {
             return "/WEB-INF/jsp/main.jsp";
         }
     };
+
     @Override
     public CommandResponse execute(CommandRequest request) {
         return FORWARD_TO_MAIN_PAGE_RESPONSE;

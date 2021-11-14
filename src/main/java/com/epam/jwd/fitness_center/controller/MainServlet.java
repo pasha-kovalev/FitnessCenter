@@ -1,8 +1,8 @@
 package com.epam.jwd.fitness_center.controller;
 
-import com.epam.jwd.fitness_center.command.Command;
-import com.epam.jwd.fitness_center.command.CommandResponse;
-import com.epam.jwd.fitness_center.db.ConnectionPoolManager;
+import com.epam.jwd.fitness_center.controller.command.Command;
+import com.epam.jwd.fitness_center.controller.command.CommandResponse;
+import com.epam.jwd.fitness_center.model.connection.ConnectionPoolManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -36,7 +36,6 @@ public class MainServlet extends HttpServlet {
         final Command command = Command.of(commandName);
         final CommandResponse commandResponse = command.execute(req::setAttribute);
         proceedWithResponse(req, resp, commandResponse);
-
 
     }
 

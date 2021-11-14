@@ -1,7 +1,9 @@
-package com.epam.jwd.fitness_center.command;
+package com.epam.jwd.fitness_center.controller.command;
 
 import com.epam.jwd.fitness_center.app.Application;
-import com.epam.jwd.fitness_center.dao.User;
+import com.epam.jwd.fitness_center.exception.ServiceException;
+import com.epam.jwd.fitness_center.model.entity.User;
+import com.epam.jwd.fitness_center.model.service.impl.ServiceProvider;
 
 import java.util.List;
 
@@ -20,10 +22,15 @@ public enum ShowUsersPageCommand implements Command {
             return "/WEB-INF/jsp/users.jsp";
         }
     };
+
     @Override
     public CommandResponse execute(CommandRequest request) {
-        List<User> users = Application.extractUsersFromDb();
-
+        List<User> users;
+        try {
+            users = ServiceProvider.getInstance().getUserService().findAll();
+        } catch (ServiceException e) {
+            return ShowNotFoundPageCommand.INSTANCE.execute(request);
+        }
         request.addAttributeToJsp(USERS_ATTRIBUTE_NAME, users);
         return FORWARD_TO_USERS_PAGE;
     }

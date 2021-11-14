@@ -1,4 +1,4 @@
-package com.epam.jwd.fitness_center.db;
+package com.epam.jwd.fitness_center.model.connection;
 
 import java.sql.*;
 import java.time.LocalDateTime;

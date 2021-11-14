@@ -1,5 +1,6 @@
-package com.epam.jwd.fitness_center.db;
+package com.epam.jwd.fitness_center.model.connection;
 
+import com.epam.jwd.fitness_center.exception.DatabaseConnectionException;
 import org.junit.jupiter.api.*;
 
 import java.lang.reflect.Field;
@@ -73,13 +74,13 @@ public class ConnectionPoolManagerTest {
     }
 
     @Test
-    public void releaseConnection_shouldReturnTrue_whenUsedConnectionsNotEmpty()  {
+    public void releaseConnection_shouldReturnTrue_whenUsedConnectionsNotEmpty() throws DatabaseConnectionException {
         Connection conn = cp.takeConnection();
         assertTrue(cp.releaseConnection(conn));
     }
 
     @Test
-    public void releaseConnection_shouldReturnFalse_whenConnectionNotInUsedConnections()  {
+    public void releaseConnection_shouldReturnFalse_whenConnectionNotInUsedConnections() throws DatabaseConnectionException {
         Connection conn = cp.takeConnection();
         cp.releaseConnection(conn);
         assertFalse(cp.releaseConnection(conn));
