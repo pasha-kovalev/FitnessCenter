@@ -4,8 +4,8 @@ public enum CommandType {
     DEFAULT,
     LOGIN,
     MAIN_PAGE,
-    USERS_PAGE,
-    SHOW_LOGIN_PAGE;
+    SHOW_USERS,
+    SHOW_LOGIN;
 
 
     public static CommandType of(String name) {

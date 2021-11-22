@@ -17,9 +17,9 @@ public class CommandProvider {
     private CommandProvider() {
         commands.put(DEFAULT, new ShowMainPageCommand());
         commands.put(MAIN_PAGE, commands.get(DEFAULT));
-        commands.put(USERS_PAGE, new ShowUsersPageCommand());
+        commands.put(SHOW_USERS, new ShowUsersPageCommand());
         commands.put(LOGIN, new LoginCommand(requestFactory, propertyContext));
-        commands.put(SHOW_LOGIN_PAGE, new ShowLoginPageCommand(requestFactory, propertyContext));
+        commands.put(SHOW_LOGIN, new ShowLoginPageCommand(requestFactory, propertyContext));
     }
     public Command of(String name) {
         return commands.get(CommandType.of(name));
