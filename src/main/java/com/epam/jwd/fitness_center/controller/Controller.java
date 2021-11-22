@@ -1,8 +1,8 @@
 package com.epam.jwd.fitness_center.controller;
 
-import com.epam.jwd.fitness_center.controller.command.Command;
-import com.epam.jwd.fitness_center.controller.command.CommandResponse;
-import com.epam.jwd.fitness_center.model.connection.ConnectionPoolManager;
+import com.epam.jwd.fitness_center.command.Command;
+import com.epam.jwd.fitness_center.command.CommandRequest;
+import com.epam.jwd.fitness_center.command.CommandResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,28 +15,34 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @WebServlet("/controller")
-public class MainServlet extends HttpServlet {
+public class Controller extends HttpServlet {
     private static final long serialVersionUID = -5223997271791449828L;
-    private static final Logger LOG = LogManager.getLogger(MainServlet.class);
 
-    @Override
-    public void init() {
-        ConnectionPoolManager.getInstance().init();
-    }
+    private static final Logger LOG = LogManager.getLogger(Controller.class);
 
-    @Override
-    public void destroy() {
-        ConnectionPoolManager.getInstance().shutDown();
-    }
+    public static final String COMMAND_NAME_PARAM = "command";
+
+    private final RequestFactory requestFactory = RequestFactory.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
         LOG.trace("req and resp in doGet");
-        final String commandName = req.getParameter("command");
-        final Command command = Command.of(commandName);
-        final CommandResponse commandResponse = command.execute(req::setAttribute);
-        proceedWithResponse(req, resp, commandResponse);
+        processRequest(req, resp);
 
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)  {
+        LOG.trace("req and resp in doPost");
+        processRequest(req, resp);
+    }
+
+    private void processRequest(HttpServletRequest req, HttpServletResponse resp) {
+        final String commandName = req.getParameter(COMMAND_NAME_PARAM);
+        final Command command = Command.of(commandName);
+        final CommandRequest commandRequest = requestFactory.createRequest(req);
+        final CommandResponse commandResponse = command.execute(commandRequest);
+        proceedWithResponse(req, resp, commandResponse);
     }
 
     private void proceedWithResponse(HttpServletRequest req, HttpServletResponse resp,

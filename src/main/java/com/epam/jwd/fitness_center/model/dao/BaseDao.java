@@ -12,6 +12,7 @@ import java.util.Optional;
 
 public abstract class BaseDao<T extends Entity> implements EntityDao<T>{
 
+    //todo make %s [string join getFields()] insteadOf *
     protected static final String SELECT_ALL_FROM = "select * from ";
     protected static final String UPDATE = "update ";
     protected static final String SET = "set ";

@@ -1,7 +1,10 @@
-package com.epam.jwd.fitness_center.controller.command;
+package com.epam.jwd.fitness_center.command.impl;
 
-public enum ShowMainPageCommand implements Command {
-    INSTANCE;
+import com.epam.jwd.fitness_center.command.Command;
+import com.epam.jwd.fitness_center.command.CommandRequest;
+import com.epam.jwd.fitness_center.command.CommandResponse;
+
+public class ShowMainPageCommand implements Command {
     public static final CommandResponse FORWARD_TO_MAIN_PAGE_RESPONSE = new CommandResponse() {
         @Override
         public boolean isRedirect() {

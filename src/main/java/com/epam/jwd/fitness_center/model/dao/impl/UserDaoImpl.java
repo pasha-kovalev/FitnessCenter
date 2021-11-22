@@ -14,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 
@@ -88,13 +89,16 @@ public class UserDaoImpl extends BaseDao<User> {
             "SET user_status_id = (SELECT id FROM user_status WHERE status = ?)\n" +
             "WHERE user.id = ?";
 
-    UserDaoImpl(ConnectionPool pool) {
-        super(pool, LOG);
-
+    //todo ? do them private and set
+    {
         selectAllQuery = SELECT_ALL_USERS;
         insertQuery = INSERT_NEW_USER;
         selectByIdQuery = SELECT_USER_BY_ID;
         updateQuery = UPDATE_USER_BY_ID;
+    }
+
+    UserDaoImpl(ConnectionPool pool) {
+        super(pool, LOG);
     }
 
     @Override
@@ -148,6 +152,7 @@ public class UserDaoImpl extends BaseDao<User> {
         return executeStatement(SELECT_ACTIVE_TRAINERS, this::extractResult);
     }
 
+    //todo make roleOf [instead of valueOf] like nmikle did
     @Override
     protected User extractResult(ResultSet rs) throws DaoException {
         try {
@@ -157,8 +162,8 @@ public class UserDaoImpl extends BaseDao<User> {
                     rs.getString(PASSWORD_HASH_FIELD_NAME),
                     rs.getString(FIRST_NAME_FIELD_NAME),
                     rs.getString(SECOND_NAME_FIELD_NAME),
-                    UserRole.valueOf(rs.getString(ACCOUNT_ROLE_FIELD_NAME).toUpperCase()),
-                    UserStatus.valueOf(rs.getString(STATUS_FIELD_NAME).toUpperCase())
+                    UserRole.valueOf(rs.getString(ACCOUNT_ROLE_FIELD_NAME).toUpperCase(Locale.ENGLISH)),
+                    UserStatus.valueOf(rs.getString(STATUS_FIELD_NAME).toUpperCase(Locale.ENGLISH))
             );
         } catch (SQLException e) {
             throw new DaoException("Unable to extract user", e);

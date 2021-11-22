@@ -1,94 +1,33 @@
 package com.epam.jwd.fitness_center.app;
 
-import com.epam.jwd.fitness_center.dao.*;
-import com.epam.jwd.fitness_center.db.ConnectionPoolManager;
-import com.epam.jwd.fitness_center.exception.DaoException;
+import com.epam.jwd.fitness_center.exception.ServiceException;
+import com.epam.jwd.fitness_center.model.connection.ConnectionPoolManager;
+import com.epam.jwd.fitness_center.model.service.UserService;
+import com.epam.jwd.fitness_center.model.service.impl.ServiceProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.sql.*;
-import java.util.Collections;
-import java.util.List;
 
 public class Application {
     private static final Logger LOG = LogManager.getLogger(Application.class);
 
-    public static final String SELECT_ALL_USERS = "SELECT  user.id,  email, second_name, first_name, password_hash, account_role, status\n" +
-            "FROM user\n" +
-            "JOIN user_role r on r.id = user.role_id\n" +
-            "JOIN user_status us on us.id = user.user_status_id\n" +
-            "ORDER BY second_name";
+    public static void main(String[] args) throws ServiceException {
+        UserService us = ServiceProvider.getInstance().getUserService();
 
-    public static final String SELECT_CORPORATE_USERS = "SELECT  user.id,  email, second_name, first_name, password_hash, account_role, status\n" +
-            "FROM user\n" +
-            "JOIN user_role r on r.id = user.role_id\n" +
-            "JOIN user_status us on us.id = user.user_status_id\n" +
-            "WHERE account_role = 'corporate_user'";
+        //works
+        /*us.findAll().forEach(System.out::println);
+        us.confirmUser(5);
+        us.findUserById(5L);
+        System.err.println(us.findUserById(5L));
+        us.updateUserStatus(UserStatus.INACTIVE, 5L);
+        System.err.println(us.findUserById(5L));
+        System.err.println(us.isEmailRegistered("vitivanov@gmail.com"));
+        System.err.println(us.isEmailRegistered("12@gmail.com"));
+        System.err.println((us.findUserById((
+                us.register("a@a.com", "pass", "new", "new",
+                        UserRole.ADMIN, UserStatus.BANNED)
+        ).getId())));*/
 
-    public static final String SELECT_REGULAR_USERS = "SELECT  user.id,  email, second_name, first_name, password_hash, account_role, status\n" +
-            "FROM user\n" +
-            "JOIN user_role r on r.id = user.role_id\n" +
-            "JOIN user_status us on us.id = user.user_status_id\n" +
-            "WHERE account_role = 'regular_user'";
-
-    public static final String SELECT_ACTIVE_TRAINERS = "SELECT  user.id,  email, second_name, first_name, password_hash, account_role, status\n" +
-            "FROM user\n" +
-            "JOIN user_role r on r.id = user.role_id\n" +
-            "JOIN user_status us on us.id = user.user_status_id\n" +
-            "WHERE account_role = 'trainer' AND status = 'active'";
-    public static final String SELECT_USER_BY_ID = "SELECT  user.id,  email, second_name, first_name, password_hash, account_role, status\n" +
-            "FROM user\n" +
-            "JOIN user_role r on r.id = user.role_id\n" +
-            "JOIN user_status us on us.id = user.user_status_id\n" +
-            "WHERE user.id = ?";
-    public static final String SELECT_USER_BY_EMAIL = "SELECT  user.id,  email, second_name, first_name, password_hash, account_role, status\n" +
-            "FROM user\n" +
-            "JOIN user_role r on r.id = user.role_id\n" +
-            "JOIN user_status us on us.id = user.user_status_id\n" +
-            "WHERE email = ?";
-    public static final String INSERT_NEW_USER = "INSERT INTO user (id, email, password_hash, first_name, second_name, role_id, user_status_id)\n" +
-            "VALUE (NULL, ?,?,?,?,\n" +
-            "        (SELECT id FROM user_role WHERE account_role=?),\n" +
-            "        (SELECT id FROM user_status WHERE status=?))";
-
-    public static final String UPDATE_USER_BY_ID = "UPDATE user\n" +
-            "SET email = ?, second_name = ?, first_name = ?, password_hash = ?,\n" +
-            "    role_id = (SELECT id FROM user_role WHERE account_role = ?),\n" +
-            "    user_status_id = (SELECT id FROM user_status WHERE status = ?)\n" +
-            "WHERE user.id = ?";
-
-    public static final String UPDATE_USER_STATUS_BY_ID = "UPDATE user\n" +
-            "SET user_status_id = (SELECT id FROM user_status WHERE status = ?)\n" +
-            "WHERE user.id = ?";
-
-   /* public static void main(String[] args) {
-        extractUsersFromDb().forEach(System.out::println);
-    }*/
-
-    /*public static List<User> extractUsersFromDb() {
-        return fetchUsersFromDb();
-    }*/
-
-    //fixme magic values to constants
-    private static User extractUser(ResultSet resultSet) throws DaoException {
-        try {
-            return new User(
-                    resultSet.getLong("id"),
-                    resultSet.getString("email"),
-                    resultSet.getString("password_hash"),
-                    resultSet.getString("first_name"),
-                    resultSet.getString("second_name"),
-                    UserRole.valueOf(resultSet.getString("account_role").toUpperCase()),
-                    UserStatus.valueOf(resultSet.getString("status").toUpperCase())
-            );
-        } catch (SQLException e) {
-            throw new DaoException("Unable to extract user", e);
-        }
+        ConnectionPoolManager.getInstance().shutDown();
     }
-
-    /*private static List<User> fetchUsersFromDb() {
-        return executeStatement(SELECT_ALL_USERS, BaseDao::extractUser);
-    }*/
-
 
 }

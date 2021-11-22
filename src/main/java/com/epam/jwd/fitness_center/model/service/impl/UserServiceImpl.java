@@ -17,10 +17,10 @@ import java.util.Optional;
 
 public class UserServiceImpl implements UserService {
     private static final Logger LOG = LogManager.getLogger(UserServiceImpl.class);
-
-    private final UserDaoImpl userDao = DaoProvider.getInstance().getUserDao();
+    private final UserDaoImpl userDao;
 
     UserServiceImpl() {
+        userDao = DaoProvider.getInstance().getUserDao();
     }
 
     @Override

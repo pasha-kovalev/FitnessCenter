@@ -19,4 +19,5 @@ public class ServiceProvider {
     private static class ServiceProviderHolder {
         private static final ServiceProvider instance = new ServiceProvider();
     }
+
 }

@@ -55,7 +55,7 @@ class ConnectionFactory {
         try {
             connection = DriverManager.getConnection(DB_URL, databaseProperties);
         } catch (SQLException e) {
-            throw new DatabaseConnectionException("Unable to create connection to database: " + DB_URL);
+            throw new DatabaseConnectionException("Unable to create connection to database: " + DB_URL, e);
         }
         return new ProxyConnection(connection);
     }

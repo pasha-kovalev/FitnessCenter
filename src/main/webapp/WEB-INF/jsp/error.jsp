@@ -11,6 +11,6 @@
     <title>Title</title>
 </head>
 <body>
-<p>NOT FOUND</p>
+<p>SOMETHING WENT WRONG</p>
 </body>
 </html>
