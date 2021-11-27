@@ -4,27 +4,26 @@ public class User implements Entity {
 
     private static final long serialVersionUID = 6836283217175179238L;
 
-    protected Long id;
-    protected String email;
-    protected String password;
-    protected String firstName;
-    protected String secondName;
-    protected UserRole role;
-    protected UserStatus status;
+    private Long id;
+    private String email;
+    private String password;
+    private String firstName;
+    private String secondName;
+    private UserRole role;
+    private UserStatus status;
+    private String description;
+    private String photoPath;
 
-    public User(Long id, String email, String password, String firstName, String secondName,
-                UserRole role, UserStatus status) {
-        this.id = id;
-        this.email = email;
-        this.password = password;
-        this.firstName = firstName;
-        this.secondName = secondName;
-        this.role = role;
-        this.status = status;
-    }
-
-    public User(String email, String password, String firstName, String secondName, UserRole role, UserStatus status) {
-        this(null, email,password,firstName, secondName, role, status);
+    public User(Builder builder) {
+        this.id = builder.id;
+        this.email = builder.email;
+        this.password = builder.password;
+        this.firstName = builder.firstName;
+        this.secondName = builder.secondName;
+        this.role = builder.role;
+        this.status = builder.status;
+        this.description = builder.description;
+        this.photoPath = builder.photoPath;
     }
 
     public String getEmail() {
@@ -125,4 +124,66 @@ public class User implements Entity {
         sb.append('}');
         return sb.toString();
     }
+
+    public static class Builder {
+        private Long id;
+        private String email;
+        private String password;
+        private String firstName;
+        private String secondName;
+        private UserRole role;
+        private UserStatus status;
+        private String description;
+        private String photoPath;
+
+        public Builder setId(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder setEmail(String email) {
+            this.email = email;
+            return this;
+        }
+
+        public Builder setPassword(String password) {
+            this.password = password;
+            return this;
+        }
+
+        public Builder setFirstName(String firstName) {
+            this.firstName = firstName;
+            return this;
+        }
+
+        public Builder setSecondName(String secondName) {
+            this.secondName = secondName;
+            return this;
+        }
+
+        public Builder setRole(UserRole role) {
+            this.role = role;
+            return this;
+        }
+
+        public Builder setStatus(UserStatus status) {
+            this.status = status;
+            return this;
+        }
+
+        public Builder setDescription(String description) {
+            this.description = description;
+            return this;
+        }
+
+        public Builder setPhotoPath(String photoPath) {
+            this.photoPath = photoPath;
+            return this;
+        }
+
+        public User build() {
+            return new User(this);
+        }
+    }
+
 }

@@ -18,11 +18,11 @@ import org.apache.logging.log4j.Logger;
 
 public final class ConnectionPoolManager implements ConnectionPool {
     private static final Logger LOG = LogManager.getLogger(ConnectionPoolManager.class);
-    public static final String POOL_SIZE_PROPERTY = "size";
-    public static final String POOL_MIN_SIZE_PROPERTY = "minSize";
-    public static final String POOL_MAX_SIZE_PROPERTY = "maxSize";
-    public static final String POOL_INCREASE_COEFFICIENT_PROPERTY = "increaseCoefficient";
-    public static final String POOL_CLEAN_INTERVAL_PROPERTY = "cleanInterval";
+    private static final String POOL_SIZE_PROPERTY = "size";
+    private static final String POOL_MIN_SIZE_PROPERTY = "minSize";
+    private static final String POOL_MAX_SIZE_PROPERTY = "maxSize";
+    private static final String POOL_INCREASE_COEFFICIENT_PROPERTY = "increaseCoefficient";
+    private static final String POOL_CLEAN_INTERVAL_PROPERTY = "cleanInterval";
 
     private static ConnectionPoolManager instance;
     private static final AtomicBoolean hasInstance = new AtomicBoolean(false);

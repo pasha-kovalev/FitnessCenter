@@ -5,7 +5,12 @@ public enum PagePath {
     MAIN("/WEB-INF/jsp/main.jsp"),
     USERS("/WEB-INF/jsp/users.jsp"),
     LOGIN("/WEB-INF/jsp/login.jsp"),
-    ERROR("/WEB-INF/jsp/error.jsp");
+    LOGIN_REDIRECT("/controller?command=show_login"),
+    SIGNUP("/WEB-INF/jsp/signup.jsp"),
+    SIGNUP_REDIRECT("/controller?command=show_signup"),
+    ERROR("/WEB-INF/jsp/error.jsp"),
+    ERROR404("/WEB-INF/jsp/error404.jsp"),
+    ERROR500("/WEB-INF/jsp/error500.jsp");
 
     private final String path;
 

@@ -20,11 +20,14 @@ public class CommandProvider {
         commands.put(SHOW_USERS, new ShowUsersPageCommand());
         commands.put(LOGIN, new LoginCommand(requestFactory, propertyContext));
         commands.put(SHOW_LOGIN, new ShowLoginPageCommand(requestFactory, propertyContext));
+        commands.put(LOG_OUT, new LogOutCommand(requestFactory, propertyContext));
+        commands.put(SHOW_SIGNUP, new ShowSignupCommand(requestFactory, propertyContext));
+        commands.put(SIGNUP, new SignupCommand(requestFactory, propertyContext));
     }
+
     public Command of(String name) {
         return commands.get(CommandType.of(name));
     }
-
 
     public static CommandProvider getInstance() {
         return CommandProviderHolder.INSTANCE;
@@ -34,3 +37,4 @@ public class CommandProvider {
         private static final CommandProvider INSTANCE = new CommandProvider();
     }
 }
+

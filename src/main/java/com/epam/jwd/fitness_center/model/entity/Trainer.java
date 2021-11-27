@@ -1,6 +1,10 @@
+/*
 package com.epam.jwd.fitness_center.model.entity;
 
 public class Trainer extends User {
+   */
+/* //todo delete trainer add this fields to user
+    // OR make inner class userMeta
     private String description;
     private String photoPath;
 
@@ -53,5 +57,7 @@ public class Trainer extends User {
         sb.append(", photoPath='").append(photoPath).append('\'');
         sb.append('}');
         return sb.toString();
-    }
+    }*//*
+
 }
+*/

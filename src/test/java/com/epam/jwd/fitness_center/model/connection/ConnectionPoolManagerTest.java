@@ -1,11 +1,19 @@
 package com.epam.jwd.fitness_center.model.connection;
 
+import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.epam.jwd.fitness_center.exception.DatabaseConnectionException;
+import com.epam.jwd.fitness_center.exception.ServiceException;
+import com.epam.jwd.fitness_center.model.entity.User;
+import com.epam.jwd.fitness_center.model.service.impl.ServiceProvider;
+import com.epam.jwd.fitness_center.model.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.*;
 
 import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
+import java.util.Optional;
 
+import static at.favre.lib.crypto.bcrypt.BCrypt.MIN_COST;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -79,10 +87,25 @@ public class ConnectionPoolManagerTest {
         assertTrue(cp.releaseConnection(conn));
     }
 
+
     @Test
-    public void releaseConnection_shouldReturnFalse_whenConnectionNotInUsedConnections() throws DatabaseConnectionException {
-        Connection conn = cp.takeConnection();
-        cp.releaseConnection(conn);
-        assertFalse(cp.releaseConnection(conn));
+    public void deletemeplease() throws DatabaseConnectionException, ServiceException {
+        final BCrypt.Hasher hasher = BCrypt.withDefaults();
+        final BCrypt.Verifyer verifier = BCrypt.verifyer();
+        Optional<User> user = ServiceProvider.getInstance().getUserService().findUserById(4L);
+
+        String password_db = user.get().getPassword();
+        String password_entered = "kova";
+
+        final byte[] enteredPassword = password_entered.getBytes(StandardCharsets.UTF_8);
+        final String passStr = hasher.hashToString(MIN_COST,password_db.toCharArray());
+        final byte[] hashedPassword = passStr.getBytes(StandardCharsets.UTF_8);
+
+        System.out.println((verifier.verify(enteredPassword,
+                "$2a$04$iat8wqHwg8ciM7mH0fMae.m3XplXA3okdJFw1mEtFM1gN3Qw1O3iO".getBytes(StandardCharsets.UTF_8))
+                .verified));
+        System.out.println((verifier.verify(enteredPassword,
+                password_db.getBytes(StandardCharsets.UTF_8))
+                .verified));
     }
 }

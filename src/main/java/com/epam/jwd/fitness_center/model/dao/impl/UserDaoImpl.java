@@ -156,15 +156,14 @@ public class UserDaoImpl extends BaseDao<User> {
     @Override
     protected User extractResult(ResultSet rs) throws DaoException {
         try {
-            return new User(
-                    rs.getLong(ID_FIELD_NAME),
-                    rs.getString(EMAIL_FIELD_NAME),
-                    rs.getString(PASSWORD_HASH_FIELD_NAME),
-                    rs.getString(FIRST_NAME_FIELD_NAME),
-                    rs.getString(SECOND_NAME_FIELD_NAME),
-                    UserRole.valueOf(rs.getString(ACCOUNT_ROLE_FIELD_NAME).toUpperCase(Locale.ENGLISH)),
-                    UserStatus.valueOf(rs.getString(STATUS_FIELD_NAME).toUpperCase(Locale.ENGLISH))
-            );
+            return new User.Builder()
+                    .setId(rs.getLong(ID_FIELD_NAME))
+                    .setEmail(rs.getString(EMAIL_FIELD_NAME))
+                    .setPassword(rs.getString(PASSWORD_HASH_FIELD_NAME))
+                    .setFirstName(rs.getString(FIRST_NAME_FIELD_NAME))
+                    .setRole(UserRole.valueOf(rs.getString(ACCOUNT_ROLE_FIELD_NAME).toUpperCase())).setSecondName(rs.getString(SECOND_NAME_FIELD_NAME))
+                    .setStatus( UserStatus.valueOf(rs.getString(STATUS_FIELD_NAME).toUpperCase()))
+                    .build();
         } catch (SQLException e) {
             throw new DaoException("Unable to extract user", e);
         }

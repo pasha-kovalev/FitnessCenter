@@ -5,7 +5,10 @@ public enum CommandType {
     LOGIN,
     MAIN_PAGE,
     SHOW_USERS,
-    SHOW_LOGIN;
+    SHOW_LOGIN,
+    LOG_OUT,
+    SHOW_SIGNUP,
+    SIGNUP;
 
 
     public static CommandType of(String name) {

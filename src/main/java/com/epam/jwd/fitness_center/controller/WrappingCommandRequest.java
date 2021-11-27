@@ -45,6 +45,12 @@ public class WrappingCommandRequest implements CommandRequest {
     }
 
     @Override
+    public void removeFromSession(String name) {
+        final HttpSession session = request.getSession(false);
+        session.removeAttribute(name);
+    }
+
+    @Override
     public void clearSession() {
         final HttpSession session = request.getSession(false);
         if (session != null) {

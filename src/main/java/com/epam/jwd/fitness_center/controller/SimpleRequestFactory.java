@@ -25,7 +25,7 @@ public class SimpleRequestFactory implements RequestFactory {
 
     @Override
     public CommandResponse createForwardResponse(String path) {
-        return forwardResponseCache.computeIfAbsent(path, PlainCommandResponse::new );
+        return forwardResponseCache.computeIfAbsent(path, PlainCommandResponse::new);
     }
 
     @Override

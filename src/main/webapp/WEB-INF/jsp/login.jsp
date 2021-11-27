@@ -1,20 +1,20 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
 <html>
 <head>
     <title>Login</title>
-    <link href="style/style.css" type="text/css" rel="stylesheet">
+    <link href="style/login.css" type="text/css" rel="stylesheet">
 </head>
 <body>
-<div class="container" id="container">
-    <div class="form-container sign-in-container">
-        <form name="login-form" action="/controller?command=login" method="post">
-            <h1 id="log-in-text">Log In</h1>
-            <p id="incorrect">${errorLoginMsg}</p>
-            <input id="login-input" type="text" name="login" placeholder="Username"/>
-            <input id="password-input" type="password" name="pass" placeholder="Password" />
-            <input type="submit" name="login" value="Log in" class="login-button"/>
-        </form>
-    </div>
+<div class="background">
+    <form name="login-form" action="${pageContext.request.contextPath}/controller?command=login" method="post">
+        <h3>Login Here</h3>
+        <p id="incorrect">${sessionScope.errorLoginMsg}</p>
+        <label for="email">Email</label>
+        <input id="email" type="text" name="login" placeholder="Email" >
+        <label for="password">Password</label>
+        <input id="password" type="password" name="password" placeholder="Password" >
+        <input id="login-button" type="submit" value="Log in" />
+    </form>
 </div>
 </body>
 </html>

@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 @WebServlet("/controller")
 public class Controller extends HttpServlet {
@@ -21,6 +22,7 @@ public class Controller extends HttpServlet {
     private static final Logger LOG = LogManager.getLogger(Controller.class);
 
     public static final String COMMAND_NAME_PARAM = "command";
+    public static final String CHARACTER_ENCODING = "UTF-8";
 
     private final RequestFactory requestFactory = RequestFactory.getInstance();
 
@@ -38,6 +40,11 @@ public class Controller extends HttpServlet {
     }
 
     private void processRequest(HttpServletRequest req, HttpServletResponse resp) {
+        try {
+            req.setCharacterEncoding(CHARACTER_ENCODING);
+        } catch (UnsupportedEncodingException e) {
+            LOG.error("Unable to set encoding to request", e);
+        }
         final String commandName = req.getParameter(COMMAND_NAME_PARAM);
         final Command command = Command.of(commandName);
         final CommandRequest commandRequest = requestFactory.createRequest(req);

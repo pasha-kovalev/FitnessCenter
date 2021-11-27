@@ -3,6 +3,7 @@ package com.epam.jwd.fitness_center.command.impl;
 import com.epam.jwd.fitness_center.command.Command;
 import com.epam.jwd.fitness_center.command.CommandRequest;
 import com.epam.jwd.fitness_center.command.CommandResponse;
+import com.epam.jwd.fitness_center.controller.PagePath;
 
 public class ShowMainPageCommand implements Command {
     public static final CommandResponse FORWARD_TO_MAIN_PAGE_RESPONSE = new CommandResponse() {
@@ -13,7 +14,7 @@ public class ShowMainPageCommand implements Command {
 
         @Override
         public String getPath() {
-            return "/WEB-INF/jsp/main.jsp";
+            return PagePath.MAIN.getPath();
         }
     };
 
