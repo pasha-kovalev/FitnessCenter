@@ -4,15 +4,19 @@ import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.epam.jwd.fitness_center.exception.DaoException;
 import com.epam.jwd.fitness_center.exception.ServiceException;
 import com.epam.jwd.fitness_center.model.dao.impl.DaoProvider;
+import com.epam.jwd.fitness_center.model.dao.impl.TokenDaoImpl;
 import com.epam.jwd.fitness_center.model.dao.impl.UserDaoImpl;
+import com.epam.jwd.fitness_center.model.entity.Token;
 import com.epam.jwd.fitness_center.model.entity.User;
 import com.epam.jwd.fitness_center.model.entity.UserRole;
 import com.epam.jwd.fitness_center.model.entity.UserStatus;
+import com.epam.jwd.fitness_center.model.service.MailService;
 import com.epam.jwd.fitness_center.model.service.UserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +24,7 @@ import static at.favre.lib.crypto.bcrypt.BCrypt.MIN_COST;
 
 public class UserServiceImpl implements UserService {
     private static final Logger LOG = LogManager.getLogger(UserServiceImpl.class);
+    public static final int TOKEN_EXPIRATION_DAYS = 1;
 
     private final UserDaoImpl userDao;
     private final BCrypt.Hasher hasher = BCrypt.withDefaults();
@@ -65,14 +70,19 @@ public class UserServiceImpl implements UserService {
     public Optional<User> register(String email, String password, String firstName, String secondName,
                          UserRole role, UserStatus status) throws ServiceException {
         if(isEmailRegistered(email)) return Optional.empty();
-        //todo send message
+
         User user = new User.Builder().setEmail(email)
                 .setPassword(password)
                 .setFirstName(firstName)
                 .setRole(role)
                 .setSecondName(secondName)
                 .setStatus(status).build();
-        return Optional.of(insert(user));
+        User userFromDb = insert(user);
+        long userId = userFromDb.getId();
+        MailService mailService = ServiceProvider.getInstance().getMailService();
+        //todo locale
+        mailService.sendConfirmationEmail(userId, email, null);
+        return Optional.of(userFromDb);
     }
 
     @Override
@@ -115,6 +125,8 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+
+
     @Override
     public void updateUserStatus(UserStatus status, long id) throws ServiceException {
         try {
@@ -131,12 +143,31 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void confirmUser(long id) throws ServiceException {
-        if (!findUserById(id).isPresent()) {
-            LOG.error("Unable to confirm user because user not found. ID: {}", id);
-            throw new ServiceException("Unable to confirm user because user not found. ID: " + id);
+    public boolean confirmUser(long tokenId, String tokenValue) throws ServiceException {
+        final Token token = retrieveToken(tokenId);
+        if(token.getValue().equals(tokenValue) &&
+           token.getCreationDate().isBefore(LocalDateTime.now().plusDays(TOKEN_EXPIRATION_DAYS)))
+        {
+            updateUserStatus(UserStatus.ACTIVE, token.getUserId());
+            return true;
         }
-        updateUserStatus(UserStatus.ACTIVE, id);
+        return false;
+    }
+
+    private Token retrieveToken(long tokenId) throws ServiceException {
+        final TokenDaoImpl tokenDao = DaoProvider.getInstance().getTokenDao();
+        final Optional<Token> token;
+        try {
+            token = tokenDao.read(tokenId);
+        } catch (DaoException e) {
+            throw new ServiceException("Unable to find token", e);
+        }
+
+        if (!token.isPresent()) {
+            LOG.error("Unable to confirm user because token not found. Token ID: {}", tokenId);
+            throw new ServiceException("Unable to confirm user because user not found. ID: " + tokenId);
+        }
+        return token.get();
     }
 
     @Override

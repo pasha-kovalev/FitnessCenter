@@ -4,6 +4,7 @@ import com.epam.jwd.fitness_center.model.connection.ConnectionPoolManager;
 
 public class DaoProvider {
     private final UserDaoImpl userDao = new UserDaoImpl(ConnectionPoolManager.getInstance());
+    private final TokenDaoImpl tokenDao = new TokenDaoImpl(ConnectionPoolManager.getInstance());
 
     private DaoProvider() {
     }
@@ -14,6 +15,9 @@ public class DaoProvider {
 
     public UserDaoImpl getUserDao() {
         return userDao;
+    }
+    public TokenDaoImpl getTokenDao() {
+        return tokenDao;
     }
 
     private static class DaoProviderHolder {

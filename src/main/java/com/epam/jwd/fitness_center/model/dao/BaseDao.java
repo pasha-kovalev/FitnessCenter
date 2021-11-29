@@ -13,7 +13,7 @@ import java.util.Optional;
 public abstract class BaseDao<T extends Entity> implements EntityDao<T>{
 
     //todo make %s [string join getFields()] insteadOf *
-    protected static final String SELECT_ALL_FROM = "select * from ";
+    protected static final String SELECT_ALL_FROM = ("select %s from ");
     protected static final String UPDATE = "update ";
     protected static final String SET = "set ";
     protected static final String WHERE_ID = "where id = ?";
@@ -39,7 +39,7 @@ public abstract class BaseDao<T extends Entity> implements EntityDao<T>{
         this.logger = logger;
 
         insertQuery = String.format(INSERT_INTO, getTableName(), String.join(COMMA, getFields()));
-        selectAllQuery = SELECT_ALL_FROM + getTableName();
+        selectAllQuery = String.format(SELECT_ALL_FROM, String.join(COMMA, getFields())) + getTableName();
         selectByIdQuery = selectAllQuery + SPACE + WHERE_ID;
         updateQuery = UPDATE + getTableName() + SPACE + SET + "%s" + WHERE_ID;
         deleteById = DELETE_FROM + getTableName() + SPACE + WHERE_ID;

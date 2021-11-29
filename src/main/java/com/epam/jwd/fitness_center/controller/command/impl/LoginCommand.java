@@ -1,5 +1,6 @@
 package com.epam.jwd.fitness_center.controller.command.impl;
 
+import com.epam.jwd.fitness_center.controller.PagePath;
 import com.epam.jwd.fitness_center.controller.command.Command;
 import com.epam.jwd.fitness_center.controller.command.CommandRequest;
 import com.epam.jwd.fitness_center.controller.command.CommandResponse;
@@ -10,9 +11,13 @@ import com.epam.jwd.fitness_center.exception.ServiceException;
 import com.epam.jwd.fitness_center.model.entity.User;
 import com.epam.jwd.fitness_center.model.service.UserService;
 import com.epam.jwd.fitness_center.model.service.impl.ServiceProvider;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.Optional;
 
 public class LoginCommand implements Command {
+    private static final Logger LOG = LogManager.getLogger(LoginCommand.class);
     private static final String LOGIN_REQUEST_PARAM_NAME = "login";
     private static final String PASSWORD_REQUEST_PARAM_NAME = "password";
     public static final String ERROR_LOGIN_MSG = "Invalid login or password";
@@ -38,15 +43,16 @@ public class LoginCommand implements Command {
         try {
             user = userService.authenticate(login, password);
         } catch (ServiceException e) {
-            e.printStackTrace();
+            LOG.error("Error during login", e);
+            return requestFactory.createForwardResponse(propertyContext.get(PagePath.ERROR500.toString()));
         }
         if(!user.isPresent() ) {
             request.addToSession(SessionAttribute.ERROR_LOGIN, ERROR_LOGIN_MSG);
-            return requestFactory.createRedirectResponse(propertyContext.get(LOGIN_REDIRECT_PAGE));
+            return requestFactory.createRedirectResponse(propertyContext.get(PagePath.LOGIN_REDIRECT.toString()));
         }
         request.clearSession();
         request.createSession();
         request.addToSession(SessionAttribute.USER, user.get());
-        return requestFactory.createRedirectResponse(propertyContext.get(INDEX_PAGE));
+        return requestFactory.createRedirectResponse(propertyContext.get(PagePath.LOGIN_REDIRECT.toString()));
     }
 }

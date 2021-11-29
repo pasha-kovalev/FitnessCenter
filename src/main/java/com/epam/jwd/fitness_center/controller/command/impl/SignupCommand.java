@@ -48,7 +48,7 @@ public class SignupCommand implements Command {
         final String lastname = request.getParameter(LASTNAME_REQUEST_PARAM_NAME);
         Optional<User> user = Optional.empty();
         try {
-            user = userService.register(login, password, firstName,lastname, UserRole.USER, UserStatus.INACTIVE);
+            user = userService.register(login, password, firstName,lastname, UserRole.USER, UserStatus.UNCONFIRMED);
         } catch (ServiceException e) {
             LOG.error("Error during registering new user", e);
             return requestFactory.createForwardResponse(propertyContext.get(ERROR_500_PAGE_NAME));

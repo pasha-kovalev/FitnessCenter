@@ -3,6 +3,7 @@ package com.epam.jwd.fitness_center.model.dao.impl;
 import com.epam.jwd.fitness_center.exception.DaoException;
 import com.epam.jwd.fitness_center.model.connection.ConnectionPool;
 import com.epam.jwd.fitness_center.model.dao.BaseDao;
+import com.epam.jwd.fitness_center.model.dao.UserDao;
 import com.epam.jwd.fitness_center.model.entity.User;
 import com.epam.jwd.fitness_center.model.entity.UserRole;
 import com.epam.jwd.fitness_center.model.entity.UserStatus;
@@ -18,7 +19,7 @@ import java.util.Locale;
 import java.util.Optional;
 
 
-public class UserDaoImpl extends BaseDao<User> {
+public class UserDaoImpl extends BaseDao<User> implements UserDao {
     private static final Logger LOG = LogManager.getLogger(UserDaoImpl.class);
 
     private static final String USER_TABLE_NAME = "user";
@@ -124,11 +125,6 @@ public class UserDaoImpl extends BaseDao<User> {
         statement.setString( 6,entity.getSecondName());
     }
 
-    private void fillUserToken(PreparedStatement statement, Long userId, String token) throws SQLException {
-        statement.setLong(1, userId);
-        statement.setString(2, token);
-    }
-
     @Override
     public boolean update(User entity) throws DaoException {
         int rows =  executeUpdate(updateQuery, st -> {
@@ -138,6 +134,7 @@ public class UserDaoImpl extends BaseDao<User> {
         return rows > 0;
     }
 
+    @Override
     public boolean updateStatus(UserStatus status, long id) throws DaoException {
         int rows =  executeUpdate(UPDATE_USER_STATUS_BY_ID, st -> {
             st.setString(1, status.toString().toLowerCase());
@@ -146,13 +143,10 @@ public class UserDaoImpl extends BaseDao<User> {
         return rows > 0;
     }
 
+    @Override
     public Optional<User> findByEmail(String email) throws DaoException {
         return executePreparedForEntity(SELECT_USER_BY_EMAIL, this::extractResult,
                 st -> st.setString(1, email));
-    }
-
-    public void insertToken(long id, String token) throws DaoException {
-        executeInsert(INSERT_NEW_USER_TOKEN, st -> fillUserToken(st, id, token));
     }
 
     /*public Optional<User> findByRole(UserRole role) throws DaoException {

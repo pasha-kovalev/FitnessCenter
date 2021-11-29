@@ -17,6 +17,6 @@ public interface UserService extends EntityService<User> {
     Optional<User> findUserById(Long id) throws ServiceException;
     void updateUserStatus(UserStatus status, long id) throws ServiceException;
     boolean isEmailRegistered(String email) throws ServiceException;
-    void confirmUser(long userId) throws ServiceException;
+    boolean confirmUser(long tokenId, String tokenValue) throws ServiceException;
     Optional<User> findActiveTrainers() throws ServiceException;
 }

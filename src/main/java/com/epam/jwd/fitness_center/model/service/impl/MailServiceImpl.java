@@ -4,7 +4,9 @@ import com.epam.jwd.fitness_center.controller.command.SessionAttribute;
 import com.epam.jwd.fitness_center.exception.DaoException;
 import com.epam.jwd.fitness_center.exception.ServiceException;
 import com.epam.jwd.fitness_center.model.dao.impl.DaoProvider;
+import com.epam.jwd.fitness_center.model.dao.impl.TokenDaoImpl;
 import com.epam.jwd.fitness_center.model.dao.impl.UserDaoImpl;
+import com.epam.jwd.fitness_center.model.entity.Token;
 import com.epam.jwd.fitness_center.model.service.MailService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,17 +30,18 @@ public class MailServiceImpl implements MailService {
 
     //todo bundle, processing exceptions during reading/writing
     @Override
-    public void sendConfirmationEmail(long id, String email, SessionAttribute locale) throws ServiceException {
+    public long sendConfirmationEmail(long userId, String email, SessionAttribute locale) throws ServiceException {
         Properties mailProperties = takeMailProperties(MAIL_CONFIG_PATH);
-        final String token = UUID.randomUUID().toString();
-        sendToDatabase(id, token);
         String login = mailProperties.getProperty(MAIL_USER_NAME_PROPERTY);
         String password = mailProperties.getProperty(MAIL_USER_PASSWORD_PROPERTY);
         String linkTemplate = mailProperties.getProperty(MAIL_LINK_TEMPLATE_PROPERTY);
+        final String token = UUID.randomUUID().toString();
+        long tokenId = sendToDatabase(userId, token);
         MimeMessage message = new MimeMessage(createMailSession(login, password));
         String messageText = "Welcome to Training Center! Follow the link below (valid for 24 hours):\n" +
-                String.format(linkTemplate,id, token);
-        sendMessage(id, email, message, messageText);
+                String.format(linkTemplate, tokenId, token);
+        sendMessage(userId, email, message, messageText);
+        return tokenId;
     }
 
     private void sendMessage(long id, String email, MimeMessage message, String messageText) throws ServiceException {
@@ -53,12 +56,12 @@ public class MailServiceImpl implements MailService {
         }
     }
 
-    private void sendToDatabase(long id, String token) throws ServiceException {
-        final UserDaoImpl userDao = DaoProvider.getInstance().getUserDao();
+    private long sendToDatabase(long userId, String token) throws ServiceException {
+        final TokenDaoImpl tokenDao = DaoProvider.getInstance().getTokenDao();
         try {
-            userDao.insertToken(id, token);
+            return tokenDao.create(new Token(userId, token)).getId();
         } catch (DaoException e) {
-            LOG.error("Unable to insert user token. User ID: {}", id, e);
+            LOG.error("Unable to insert user token. User ID: {}", userId, e);
             throw new ServiceException("Unable to insert user token", e);
         }
     }
