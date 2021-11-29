@@ -1,9 +1,9 @@
-package com.epam.jwd.fitness_center.command.impl;
+package com.epam.jwd.fitness_center.controller.command.impl;
 
-import com.epam.jwd.fitness_center.command.Command;
-import com.epam.jwd.fitness_center.command.CommandRequest;
-import com.epam.jwd.fitness_center.command.CommandResponse;
-import com.epam.jwd.fitness_center.command.SessionAttribute;
+import com.epam.jwd.fitness_center.controller.command.Command;
+import com.epam.jwd.fitness_center.controller.command.CommandRequest;
+import com.epam.jwd.fitness_center.controller.command.CommandResponse;
+import com.epam.jwd.fitness_center.controller.command.SessionAttribute;
 import com.epam.jwd.fitness_center.controller.PropertyContext;
 import com.epam.jwd.fitness_center.controller.RequestFactory;
 import com.epam.jwd.fitness_center.exception.ServiceException;

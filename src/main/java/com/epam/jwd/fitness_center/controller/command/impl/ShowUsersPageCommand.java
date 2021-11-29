@@ -1,6 +1,6 @@
-package com.epam.jwd.fitness_center.command.impl;
+package com.epam.jwd.fitness_center.controller.command.impl;
 
-import com.epam.jwd.fitness_center.command.*;
+import com.epam.jwd.fitness_center.controller.command.*;
 import com.epam.jwd.fitness_center.controller.PagePath;
 import com.epam.jwd.fitness_center.exception.ServiceException;
 import com.epam.jwd.fitness_center.model.entity.User;

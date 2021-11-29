@@ -78,6 +78,9 @@ public class UserDaoImpl extends BaseDao<User> {
             "        (SELECT id FROM user_status WHERE status=?),\n" +
             "        ?,?)";
 
+    private static final String INSERT_NEW_USER_TOKEN = "INSERT INTO user_token (id, user_id, token, creation_date)\n" +
+            "    VALUE (NULL, ?,?, NULL)";
+
     private static final String UPDATE_USER_BY_ID = "UPDATE user\n" +
             "    SET email = ?, password_hash = ?,\n" +
             "    role_id = (SELECT id FROM user_role WHERE account_role = ?),\n" +
@@ -121,6 +124,11 @@ public class UserDaoImpl extends BaseDao<User> {
         statement.setString( 6,entity.getSecondName());
     }
 
+    private void fillUserToken(PreparedStatement statement, Long userId, String token) throws SQLException {
+        statement.setLong(1, userId);
+        statement.setString(2, token);
+    }
+
     @Override
     public boolean update(User entity) throws DaoException {
         int rows =  executeUpdate(updateQuery, st -> {
@@ -141,6 +149,10 @@ public class UserDaoImpl extends BaseDao<User> {
     public Optional<User> findByEmail(String email) throws DaoException {
         return executePreparedForEntity(SELECT_USER_BY_EMAIL, this::extractResult,
                 st -> st.setString(1, email));
+    }
+
+    public void insertToken(long id, String token) throws DaoException {
+        executeInsert(INSERT_NEW_USER_TOKEN, st -> fillUserToken(st, id, token));
     }
 
     /*public Optional<User> findByRole(UserRole role) throws DaoException {

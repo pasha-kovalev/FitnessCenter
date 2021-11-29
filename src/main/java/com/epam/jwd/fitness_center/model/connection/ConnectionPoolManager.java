@@ -27,7 +27,7 @@ public final class ConnectionPoolManager implements ConnectionPool {
     private static ConnectionPoolManager instance;
     private static final AtomicBoolean hasInstance = new AtomicBoolean(false);
 
-    private static final String POOL_CONFIG_PATH = "database/pool.properties";
+    private static final String POOL_CONFIG_PATH = "properties/database/pool.properties";
     private static final int DEFAULT_POOL_SIZE = 8;
     private static final int DEFAULT_MIN_POOL_SIZE = 4;
     private static final int DEFAULT_MAX_POOL_SIZE = 15;

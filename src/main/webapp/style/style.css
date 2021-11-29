@@ -1,4 +1,5 @@
-/* W3.CSS 4.15 December 2020 by Jan Egil and Borge Refsnes */
+@import "font/font-lato.css";
+@import "font/font-awesome.min.css";
 
 html {
   box-sizing: border-box
@@ -7,11 +8,9 @@ html {
 *,
 *:before,
 *:after {
-  box-sizing: inherit
+  box-sizing: inherit;
+  scrollbar-color: #454a4d #202324;
 }
-
-
-/* Extract from normalize.css by Nicolas Gallagher and Jonathan Neal git.io/normalize */
 
 html {
   -ms-text-size-adjust: 100%;
@@ -19,7 +18,131 @@ html {
 }
 
 body {
+  font-family: "Lato", sans-serif;
+  color: #e8e6e3;
+  background-color: #131516;
   margin: 0
+}
+.error body {
+  background-color: #131516;
+}
+.error img {
+  height:100%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+.form1 *,
+.form1 *:before,
+.form1 *:after{
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+.form1 body {
+  background-color:#1c1e1f
+}
+
+.form1 .background{
+  width: 430px;
+  height: 480px;
+  position: absolute;
+  transform: translate(-50%,-50%);
+  left: 50%;
+  top: 50%;
+}
+
+.form1 form {
+  width: 400px;
+  height: 480px;
+  background-color:#06030d;
+  position: absolute;
+  transform: translate(-50%,-50%);
+  top: 50%;
+  left: 50%;
+  border-radius: 10px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 40px rgba(8,7,16,0.6);
+  padding: 50px 35px;
+}
+#signup {
+  height: 800px;
+}
+
+.form1 form *{
+  font-family: 'Poppins',sans-serif;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+  outline: none;
+  border: none;
+}
+
+.form1 form h3{
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 42px;
+  text-align: center;
+}
+.form1 #incorrect {
+  color: #ff512f;
+  text-align: center;
+}
+.form1 label {
+  display: block;
+  margin-top: 30px;
+  font-size: 16px;
+  font-weight: 500;
+}
+.form1 input{
+  display: block;
+  border: 1px solid gray;
+  height: 50px;
+  width: 100%;
+  background-color: #06030d;
+  border-radius: 3px;
+  padding: 0 10px;
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 300;
+}
+.form1 ::placeholder{
+  color: #e5e5e5;
+}
+
+.form1 #login-button{
+  margin-top: 50px;
+  width: 100%;
+  background-color: #ffffff;
+  color: #080710;
+  padding: 15px 0;
+  font-size: 18px;
+  font-weight: 600;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.form1 #signup-button{
+  margin-top: 50px;
+  width: 100%;
+  background-color: #ffffff;
+  color: #080710;
+  padding: 15px 0;
+  font-size: 18px;
+  font-weight: 600;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.form1 footer {
+  display: block;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+.form1 footer p {
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
 }
 
 article,
@@ -1626,8 +1749,8 @@ a {
 .w3-hover-light-grey:hover,
 .w3-light-gray,
 .w3-hover-light-gray:hover {
-  color: #000!important;
-  background-color: #f1f1f1!important
+  color: #e8e6e3!important;
+  background-color: #2c2f31!important
 }
 
 .w3-dark-grey,

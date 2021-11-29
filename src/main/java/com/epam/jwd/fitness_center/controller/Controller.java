@@ -1,8 +1,8 @@
 package com.epam.jwd.fitness_center.controller;
 
-import com.epam.jwd.fitness_center.command.Command;
-import com.epam.jwd.fitness_center.command.CommandRequest;
-import com.epam.jwd.fitness_center.command.CommandResponse;
+import com.epam.jwd.fitness_center.controller.command.Command;
+import com.epam.jwd.fitness_center.controller.command.CommandRequest;
+import com.epam.jwd.fitness_center.controller.command.CommandResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

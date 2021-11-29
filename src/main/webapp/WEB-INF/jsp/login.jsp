@@ -2,9 +2,10 @@
 <html>
 <head>
     <title>Login</title>
-    <link href="style/login.css" type="text/css" rel="stylesheet">
+    <link href="../../style/style.css" type="text/css" rel="stylesheet">
 </head>
-<body>
+<body class="form1">
+<jsp:include page="component/header.jsp" flush="true"/>
 <div class="background">
     <form name="login-form" action="${pageContext.request.contextPath}/controller?command=login" method="post">
         <h3>Login Here</h3>
@@ -16,5 +17,9 @@
         <input id="login-button" type="submit" value="Log in" />
     </form>
 </div>
+<div style="">
+<jsp:include page="component/footer.jsp" flush="true"/>
+</div>
+
 </body>
 </html>

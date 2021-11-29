@@ -65,6 +65,7 @@ public class UserServiceImpl implements UserService {
     public Optional<User> register(String email, String password, String firstName, String secondName,
                          UserRole role, UserStatus status) throws ServiceException {
         if(isEmailRegistered(email)) return Optional.empty();
+        //todo send message
         User user = new User.Builder().setEmail(email)
                 .setPassword(password)
                 .setFirstName(firstName)

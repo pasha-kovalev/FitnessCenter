@@ -14,7 +14,7 @@ import java.util.Properties;
 class ConnectionFactory {
     private static final Logger LOG = LogManager.getLogger(ConnectionFactory.class);
 
-    private static final String DATABASE_CONFIG_PATH = "database/database.properties";
+    private static final String DATABASE_CONFIG_PATH = "properties/database/database.properties";
     private static final String DB_URL;
 
     private static final Properties databaseProperties;

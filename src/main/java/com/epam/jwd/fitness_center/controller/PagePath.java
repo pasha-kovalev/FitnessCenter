@@ -8,7 +8,8 @@ public enum PagePath {
     LOGIN_REDIRECT("/controller?command=show_login"),
     SIGNUP("/WEB-INF/jsp/signup.jsp"),
     SIGNUP_REDIRECT("/controller?command=show_signup"),
-    ERROR("/WEB-INF/jsp/error.jsp"),
+    ERROR("/controller?command=show_error"),
+    SHOW_ERROR("/WEB-INF/jsp/error.jsp"),
     ERROR404("/WEB-INF/jsp/error404.jsp"),
     ERROR500("/WEB-INF/jsp/error500.jsp");
 

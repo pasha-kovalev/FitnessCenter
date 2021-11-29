@@ -2,11 +2,12 @@
 <html>
 <head>
     <title>Login</title>
-    <link href="style/signup.css" type="text/css" rel="stylesheet">
+    <link href="../../style/style.css" type="text/css" rel="stylesheet">
 </head>
-<body>
-<div class="background">
-    <form name="signup-form" action="${pageContext.request.contextPath}/controller?command=signup" method="post">
+<body class="form1">
+<jsp:include page="component/header.jsp" flush="true"/>
+<div class="background ">
+    <form id="signup" name="signup-form" action="${pageContext.request.contextPath}/controller?command=signup" method="post"">
         <h3>Sign Up</h3>
         <p id="incorrect">${sessionScope.errorSignupMsg}</p>
         <label for="email">Email</label>
@@ -24,7 +25,7 @@
         <input id="signup-button" type="submit" value="Sign Up" />
     </form>
 </div>
-<script src="/script/signup.js"></script>
-
+<jsp:include page="component/footer.jsp" flush="true"/>
+<script src="../../script/signup.js"></script>
 </body>
 </html>

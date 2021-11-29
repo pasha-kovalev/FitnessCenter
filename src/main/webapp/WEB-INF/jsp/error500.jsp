@@ -1,16 +1,11 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: TokyoPashka
-  Date: 27.11.2021
-  Time: 20:13
-  To change this template use File | Settings | File Templates.
---%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page isErrorPage="true" contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Title</title>
+    <title>Error</title>
 </head>
 <body>
-<p>505</p>
+<a href="${pageContext.request.contextPath}/controller">
+    <img src="../../images/500.png" style="height:100%;display: block;margin-left: auto;margin-right: auto;">
+</a>
 </body>
 </html>

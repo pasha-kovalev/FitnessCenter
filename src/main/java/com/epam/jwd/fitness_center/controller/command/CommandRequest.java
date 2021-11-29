@@ -1,4 +1,4 @@
-package com.epam.jwd.fitness_center.command;
+package com.epam.jwd.fitness_center.controller.command;
 
 import java.util.Optional;
 

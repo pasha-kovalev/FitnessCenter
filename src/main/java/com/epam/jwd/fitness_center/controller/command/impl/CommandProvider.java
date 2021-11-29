@@ -1,13 +1,13 @@
-package com.epam.jwd.fitness_center.command.impl;
+package com.epam.jwd.fitness_center.controller.command.impl;
 
-import com.epam.jwd.fitness_center.command.Command;
-import com.epam.jwd.fitness_center.command.CommandType;
+import com.epam.jwd.fitness_center.controller.command.Command;
+import com.epam.jwd.fitness_center.controller.command.CommandType;
 import com.epam.jwd.fitness_center.controller.PropertyContext;
 import com.epam.jwd.fitness_center.controller.RequestFactory;
 
 import java.util.EnumMap;
 
-import static com.epam.jwd.fitness_center.command.CommandType.*;
+import static com.epam.jwd.fitness_center.controller.command.CommandType.*;
 
 public class CommandProvider {
     private final EnumMap<CommandType, Command> commands = new EnumMap(CommandType.class);
@@ -23,6 +23,8 @@ public class CommandProvider {
         commands.put(LOG_OUT, new LogOutCommand(requestFactory, propertyContext));
         commands.put(SHOW_SIGNUP, new ShowSignupCommand(requestFactory, propertyContext));
         commands.put(SIGNUP, new SignupCommand(requestFactory, propertyContext));
+        commands.put(SHOW_ERROR, new ShowErrorCommand(requestFactory, propertyContext));
+
     }
 
     public Command of(String name) {
