@@ -32,19 +32,14 @@ class ConnectionFactory {
             databaseProperties.load(is);
             LOG.info("Data base property file loaded");
             DB_URL = databaseProperties.getProperty(ConnectionFactory.DB_URL_PROPERTY);
-//            final String driver = databaseProperties.getProperty(DB_DRIVER_PROPERTY);
-            if(DB_URL == null /*|| driver == null*/) {
+            if(DB_URL == null ) {
                 LOG.fatal("Database url in configuration file is not correct");
                 throw new RuntimeException("Database configuration file is not correct");
             }
-           /* Class.forName(driver);*/
         }  catch (IOException e) {
             LOG.fatal("Unable to open data base property file", e);
             throw new RuntimeException("Unable to open data base property file");
-        } /*catch (ClassNotFoundException e) {
-            LOG.fatal("Driver class not found", e);
-            throw new RuntimeException("Driver class not found");
-        }*/
+        }
     }
 
     private ConnectionFactory() {
