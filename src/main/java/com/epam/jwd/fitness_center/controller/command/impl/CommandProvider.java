@@ -2,7 +2,6 @@ package com.epam.jwd.fitness_center.controller.command.impl;
 
 import com.epam.jwd.fitness_center.controller.command.Command;
 import com.epam.jwd.fitness_center.controller.command.CommandType;
-import com.epam.jwd.fitness_center.controller.PropertyContext;
 import com.epam.jwd.fitness_center.controller.RequestFactory;
 
 import java.util.EnumMap;
@@ -12,19 +11,22 @@ import static com.epam.jwd.fitness_center.controller.command.CommandType.*;
 public class CommandProvider {
     private final EnumMap<CommandType, Command> commands = new EnumMap(CommandType.class);
     private final RequestFactory requestFactory = RequestFactory.getInstance();
-    private final PropertyContext propertyContext = PropertyContext.getInstance();
 
     private CommandProvider() {
         commands.put(DEFAULT, new ShowMainPageCommand());
         commands.put(MAIN_PAGE, commands.get(DEFAULT));
         commands.put(SHOW_USERS, new ShowUsersPageCommand());
-        commands.put(LOGIN, new LoginCommand(requestFactory, propertyContext));
-        commands.put(SHOW_LOGIN, new ShowLoginPageCommand(requestFactory, propertyContext));
-        commands.put(LOG_OUT, new LogOutCommand(requestFactory, propertyContext));
-        commands.put(SHOW_SIGNUP, new ShowSignupCommand(requestFactory, propertyContext));
-        commands.put(SIGNUP, new SignupCommand(requestFactory, propertyContext));
-        commands.put(SHOW_ERROR, new ShowErrorCommand(requestFactory, propertyContext));
-
+        commands.put(LOGIN, new LoginCommand(requestFactory));
+        commands.put(SHOW_LOGIN, new ShowLoginPageCommand(requestFactory));
+        commands.put(LOG_OUT, new LogOutCommand(requestFactory));
+        commands.put(SHOW_SIGNUP, new ShowSignupCommand(requestFactory));
+        commands.put(SIGNUP, new SignupCommand(requestFactory));
+        commands.put(SHOW_ERROR, new ShowErrorCommand(requestFactory));
+        commands.put(SHOW_MAIL_INFO, new ShowSendMailInfoCommand(requestFactory));
+        commands.put(RESEND_EMAIL, new ResendEmailConfirmationCommand(requestFactory));
+        commands.put(CONFIRM_EMAIL , new ConfirmEmailCommand(requestFactory));
+        commands.put(SHOW_CONFIRM_EMAIL, new ShowEmailConfirmationPageCommand(requestFactory));
+        commands.put(SWITCH_LOCALE, new SwitchLocaleCommand(requestFactory));
     }
 
     public Command of(String name) {

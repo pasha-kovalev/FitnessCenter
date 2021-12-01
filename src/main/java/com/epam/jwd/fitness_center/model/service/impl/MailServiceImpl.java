@@ -7,6 +7,7 @@ import com.epam.jwd.fitness_center.model.dao.impl.DaoProvider;
 import com.epam.jwd.fitness_center.model.dao.impl.TokenDaoImpl;
 import com.epam.jwd.fitness_center.model.dao.impl.UserDaoImpl;
 import com.epam.jwd.fitness_center.model.entity.Token;
+import com.epam.jwd.fitness_center.model.entity.User;
 import com.epam.jwd.fitness_center.model.service.MailService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,16 +29,34 @@ public class MailServiceImpl implements MailService {
     public static final String MAIL_USER_PASSWORD_PROPERTY = "mail.user.password";
     public static final String MAIL_LINK_TEMPLATE_PROPERTY = "mail.link.template";
 
+    private final Properties mailProperties;
+    private final Properties sessionProperties;
+    private final String login;
+    private final String password;
+    private final String linkTemplate;
+    private final Session mailSession;
+
+    {
+        try {
+            sessionProperties = takeSessionProperties(MAIL_SESSION_CONFIG_PATH);
+            mailProperties = takeMailProperties(MAIL_CONFIG_PATH);
+        } catch (ServiceException e) {
+            LOG.fatal("Unable to process mail properties files", e);
+            throw new RuntimeException("Unable to process mail properties files");
+        }
+
+        login = mailProperties.getProperty(MAIL_USER_NAME_PROPERTY);
+        password = mailProperties.getProperty(MAIL_USER_PASSWORD_PROPERTY);
+        linkTemplate = mailProperties.getProperty(MAIL_LINK_TEMPLATE_PROPERTY);
+        mailSession = createMailSession(login, password);
+    }
+
     //todo bundle, processing exceptions during reading/writing
     @Override
     public long sendConfirmationEmail(long userId, String email, SessionAttribute locale) throws ServiceException {
-        Properties mailProperties = takeMailProperties(MAIL_CONFIG_PATH);
-        String login = mailProperties.getProperty(MAIL_USER_NAME_PROPERTY);
-        String password = mailProperties.getProperty(MAIL_USER_PASSWORD_PROPERTY);
-        String linkTemplate = mailProperties.getProperty(MAIL_LINK_TEMPLATE_PROPERTY);
         final String token = UUID.randomUUID().toString();
         long tokenId = sendToDatabase(userId, token);
-        MimeMessage message = new MimeMessage(createMailSession(login, password));
+        MimeMessage message = new MimeMessage(mailSession);
         String messageText = "Welcome to Training Center! Follow the link below (valid for 24 hours):\n" +
                 String.format(linkTemplate, tokenId, token);
         sendMessage(userId, email, message, messageText);
@@ -81,9 +100,8 @@ public class MailServiceImpl implements MailService {
         }
     }
 
-    private Session createMailSession(String login, String password) throws ServiceException {
-
-        return Session.getDefaultInstance(takeSessionProperties(MAIL_SESSION_CONFIG_PATH),
+    private Session createMailSession(String login, String password) {
+        return Session.getDefaultInstance(sessionProperties,
                 new javax.mail.Authenticator() {
                     @Override
                     protected PasswordAuthentication getPasswordAuthentication() {

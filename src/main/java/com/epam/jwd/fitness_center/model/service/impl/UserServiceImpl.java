@@ -93,7 +93,7 @@ public class UserServiceImpl implements UserService {
         final byte[] enteredPassword = password.getBytes(StandardCharsets.UTF_8);
         final Optional<User> readUser = findUserByEmail(email);
 
-        if (readUser.isPresent()) {
+        if (readUser.isPresent() && !(readUser.get().getStatus() == UserStatus.UNCONFIRMED) ) {
             final byte[] hashedPassword = readUser.get()
                     .getPassword()
                     .getBytes(StandardCharsets.UTF_8);
@@ -125,8 +125,6 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-
-
     @Override
     public void updateUserStatus(UserStatus status, long id) throws ServiceException {
         try {
@@ -139,22 +137,71 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean isEmailRegistered(String email) throws ServiceException {
-            return findUserByEmail(email).isPresent();
+        Optional<User> optionalUser = findUserByEmail(email);
+        return optionalUser.isPresent() && hasValidToken(optionalUser.get());
+    }
+
+    private boolean hasValidToken(User user) {
+        if(user.getStatus() == UserStatus.UNCONFIRMED) {
+            try {
+                TokenDaoImpl tokenDao = DaoProvider.getInstance().getTokenDao();
+                tokenDao.removeExpiredToken(TOKEN_EXPIRATION_DAYS);
+                if(!tokenDao.findByUserId(user.getId()).isEmpty()) {
+                    return true;
+                } else {
+                    userDao.delete(user.getId());
+                    return false;
+                }
+            } catch (DaoException e) {
+                LOG.error("Error during updating tokenDao", e);
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public Optional<User> findUserByTokenId(long tokenId) throws ServiceException {
+        Optional<Token> optionalToken = retrieveUserToken(tokenId);
+        return optionalToken.isPresent() ? findUserById(optionalToken.get().getUserId()) : Optional.empty();
     }
 
     @Override
     public boolean confirmUser(long tokenId, String tokenValue) throws ServiceException {
-        final Token token = retrieveToken(tokenId);
-        if(token.getValue().equals(tokenValue) &&
-           token.getCreationDate().isBefore(LocalDateTime.now().plusDays(TOKEN_EXPIRATION_DAYS)))
+        final Optional<Token> optionalToken = retrieveUserToken(tokenId);
+        if(!optionalToken.isPresent()) {
+                LOG.error("Unable to confirm user because token not found. Token ID: {}", tokenId);
+                return false;
+        }
+        Token token = optionalToken.get();
+        Optional<User> optionalUser = findUserByTokenId(tokenId);
+        if(optionalUser.isPresent() && optionalUser.get().getStatus() == UserStatus.UNCONFIRMED
+           && checkToken(token, tokenValue))
         {
-            updateUserStatus(UserStatus.ACTIVE, token.getUserId());
+            updateUserStatus(UserStatus.INACTIVE, token.getUserId());
+            removeUserTokens(optionalUser.get().getId());
             return true;
         }
         return false;
     }
 
-    private Token retrieveToken(long tokenId) throws ServiceException {
+    private boolean checkToken(Token token, String value) {
+        return token.getValue().equals(value) &&
+                token.getCreationDate().isBefore(LocalDateTime.now().plusDays(TOKEN_EXPIRATION_DAYS));
+    }
+
+
+    private void removeUserTokens(Long userId) {
+        final TokenDaoImpl tokenDao = DaoProvider.getInstance().getTokenDao();
+        try {
+            tokenDao.removeByUserId(userId);
+        } catch (DaoException e) {
+            //fixme log e
+            LOG.error("Unable to remove tokens by user id : {}", userId, e);
+        }
+    }
+
+    @Override
+    public Optional<Token> retrieveUserToken(long tokenId) throws ServiceException {
         final TokenDaoImpl tokenDao = DaoProvider.getInstance().getTokenDao();
         final Optional<Token> token;
         try {
@@ -163,11 +210,7 @@ public class UserServiceImpl implements UserService {
             throw new ServiceException("Unable to find token", e);
         }
 
-        if (!token.isPresent()) {
-            LOG.error("Unable to confirm user because token not found. Token ID: {}", tokenId);
-            throw new ServiceException("Unable to confirm user because user not found. ID: " + tokenId);
-        }
-        return token.get();
+        return token;
     }
 
     @Override

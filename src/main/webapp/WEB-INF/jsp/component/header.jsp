@@ -14,9 +14,13 @@
                    class="w3-padding-large w3-hover-red w3-hide-small w3-right">Log out</a>
             </c:when>
             <c:otherwise>
+                <a href="${pageContext.request.contextPath}/controller?command=show_login" class="w3-hide-small w3-right">
+                    <i class="fa fa-user-circle fa-2x" style="padding-top: 8px; padding-right: 12px"></i>
+                </a>
                 <a href="${pageContext.request.contextPath}/controller?command=show_login"
                    class="w3-padding-large w3-hover-red w3-hide-small w3-right">Log in</a>
-                <a href="${pageContext.request.contextPath}/controller?command=show_signup" class="w3-padding-large w3-hover-red w3-hide-small w3-right">Sign Up</a>
+                <a href="${pageContext.request.contextPath}/controller?command=show_signup"
+                   class="w3-padding-large w3-hover-red w3-hide-small w3-right">Sign Up</a>
             </c:otherwise>
         </c:choose>
     </div>

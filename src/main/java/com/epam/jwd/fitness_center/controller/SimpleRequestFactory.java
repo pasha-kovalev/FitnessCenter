@@ -24,13 +24,14 @@ public class SimpleRequestFactory implements RequestFactory {
     }
 
     @Override
-    public CommandResponse createForwardResponse(String path) {
-        return forwardResponseCache.computeIfAbsent(path, PlainCommandResponse::new);
+    public CommandResponse createForwardResponse(PagePath page) {
+        return forwardResponseCache.computeIfAbsent(page.getPath(), PlainCommandResponse::new);
     }
 
     @Override
-    public CommandResponse createRedirectResponse(String path) {
-        return redirectResponseCache.computeIfAbsent(path, p -> new PlainCommandResponse(true, path));
+    public CommandResponse createRedirectResponse(PagePath page) {
+        return redirectResponseCache.computeIfAbsent(page.getPath(), p ->
+                new PlainCommandResponse(true, page.getPath()));
     }
 
     private static class SimpleRequestFactoryHolder {

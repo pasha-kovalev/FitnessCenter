@@ -2,10 +2,11 @@
 <html>
 <head>
     <title>Error</title>
+    <link href="../../style/style.css" type="text/css" rel="stylesheet">
 </head>
-<body>
+<body class="error">
 <a href="${pageContext.request.contextPath}/controller">
-    <img src="../../images/error.png" style="">
+    <img src="../../images/error.png">
 </a>
 </body>
 </html>

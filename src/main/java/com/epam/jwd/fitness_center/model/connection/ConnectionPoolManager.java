@@ -370,20 +370,19 @@ public final class ConnectionPoolManager implements ConnectionPool {
             try {
                 if (!isShutDown.get() && getCurrentSize() > minPoolSize) {
                     boolean needToClean = false;
-                    Set<ProxyConnection> connectionsToCleanSet = new HashSet<>();
-
+                    List<ProxyConnection> connectionsToRemove = new ArrayList<>();
                     for (ProxyConnection conn : availableConnections) {
                         long timePassed = Duration.between(conn.getLastTakeDate(), LocalDateTime.now()).getSeconds();
                         if (getCurrentSize() == minPoolSize) {
                             break;
                         }
                         if (timePassed > maxConnectionDowntime) {
-                            connectionsToCleanSet.add(conn);
+                            connectionsToRemove.add(conn);
                             needToClean = true;
                         }
                     }
                     if(needToClean){
-                        connectionsToCleanSet.forEach(this::deleteConnection);
+                        connectionsToRemove.forEach(this::deleteConnection);
                     }
                 }
             } finally {

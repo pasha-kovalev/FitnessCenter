@@ -12,6 +12,9 @@ public interface CommandRequest {
     boolean addToSession(String name, Object value);
 
     Optional<Object> retrieveFromSession(String name);
+
+    Optional<Object> pullFromSession(String name);
+
     void removeFromSession(String name);
     void clearSession();
 

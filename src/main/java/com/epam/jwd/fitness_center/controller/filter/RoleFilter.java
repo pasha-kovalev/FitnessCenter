@@ -62,5 +62,4 @@ public class RoleFilter implements Filter {
                 .map(User::getRole)
                 .orElse(UserRole.GUEST);
     }
-
 }

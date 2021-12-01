@@ -11,7 +11,10 @@ public enum PagePath {
     ERROR("/controller?command=show_error"),
     SHOW_ERROR("/WEB-INF/jsp/error.jsp"),
     ERROR404("/WEB-INF/jsp/error404.jsp"),
-    ERROR500("/WEB-INF/jsp/error500.jsp");
+    ERROR500("/WEB-INF/jsp/error500.jsp"),
+    MAIL_INFO("/WEB-INF/jsp/send_mail_info.jsp"),
+    MAIL_INFO_REDIRECT("/controller?command=show_mail_info"),
+    EMAIL_CONFIRMED_INFO("/WEB-INF/jsp/email_confirmed_info.jsp");
 
     private final String path;
 

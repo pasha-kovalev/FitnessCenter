@@ -8,9 +8,9 @@ import javax.servlet.http.HttpServletRequest;
 public interface RequestFactory {
     CommandRequest createRequest(HttpServletRequest request);
 
-    CommandResponse createForwardResponse(String path);
+    CommandResponse createForwardResponse(PagePath page);
 
-    CommandResponse createRedirectResponse(String path);
+    CommandResponse createRedirectResponse(PagePath page);
 
     static RequestFactory getInstance() {
         return SimpleRequestFactory.getInstance();

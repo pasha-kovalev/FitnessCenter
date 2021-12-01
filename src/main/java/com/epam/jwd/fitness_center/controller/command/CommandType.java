@@ -10,18 +10,24 @@ import static com.epam.jwd.fitness_center.model.entity.UserRole.*;
 public enum CommandType {
     DEFAULT,
     MAIN_PAGE,
-    LOGIN,
+    LOGIN(GUEST),
     SHOW_USERS(ADMIN),
     SHOW_LOGIN(GUEST),
     SHOW_ERROR,
     LOG_OUT(USER, TRAINER, ADMIN, REGULAR_USER, CORPORATE_USER),
     SHOW_SIGNUP(GUEST),
-    SIGNUP;
+    SIGNUP(GUEST),
+    SHOW_MAIL_INFO(GUEST),
+    RESEND_EMAIL(GUEST),
+    CONFIRM_EMAIL(GUEST),
+    SHOW_CONFIRM_EMAIL(GUEST),
+    SWITCH_LOCALE;
 
     private final List<UserRole> allowedRoles;
 
     CommandType(UserRole... roles) {
         this.allowedRoles = roles != null && roles.length > 0 ? Arrays.asList(roles) : UserRole.valuesAsList();
+        Arrays.asList(USER, TRAINER, ADMIN, REGULAR_USER);
     }
 
     public List<UserRole> getAllowedRoles() {

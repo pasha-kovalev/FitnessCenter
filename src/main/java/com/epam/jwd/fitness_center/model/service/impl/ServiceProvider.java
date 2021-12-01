@@ -4,10 +4,12 @@ import com.epam.jwd.fitness_center.model.service.MailService;
 import com.epam.jwd.fitness_center.model.service.UserService;
 
 public class ServiceProvider {
-    private final UserService userService = new UserServiceImpl();
-    private final MailService mailService = new MailServiceImpl();
+    private final UserService userService;
+    private final MailService mailService;
 
     private ServiceProvider() {
+        mailService = new MailServiceImpl();
+        userService = new UserServiceImpl();
     }
 
     public static ServiceProvider getInstance() {
