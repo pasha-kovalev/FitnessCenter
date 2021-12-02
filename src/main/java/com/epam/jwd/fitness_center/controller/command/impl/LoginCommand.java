@@ -14,7 +14,6 @@ import java.util.Optional;
 
 public class LoginCommand implements Command {
     private static final Logger LOG = LogManager.getLogger(LoginCommand.class);
-    public static final String ERROR_LOGIN_MSG = "Invalid login or password";
 
     private final UserService userService;
     private final RequestFactory requestFactory;
@@ -28,7 +27,7 @@ public class LoginCommand implements Command {
     public CommandResponse execute(CommandRequest request) {
         final String login = request.getParameter(RequestParameter.LOGIN);
         final String password = request.getParameter(RequestParameter.PASSWORD);
-        Optional<User> user = Optional.empty();
+        Optional<User> user;
         try {
             user = userService.authenticate(login, password);
         } catch (ServiceException e) {
@@ -36,7 +35,7 @@ public class LoginCommand implements Command {
             return requestFactory.createForwardResponse(PagePath.ERROR500);
         }
         if(!user.isPresent() ) {
-            request.addToSession(SessionAttribute.ERROR_LOGIN, ERROR_LOGIN_MSG);
+            request.addToSession(SessionAttribute.ERROR_LOGIN_BUNDLE_KEY, ResourceBundleKey.LOGIN_ERROR);
             return requestFactory.createRedirectResponse(PagePath.LOGIN_REDIRECT);
         }
         request.clearSession();

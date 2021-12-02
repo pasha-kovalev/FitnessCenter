@@ -30,9 +30,23 @@ public class SimpleRequestFactory implements RequestFactory {
 
     @Override
     public CommandResponse createRedirectResponse(PagePath page) {
+
         return redirectResponseCache.computeIfAbsent(page.getPath(), p ->
                 new PlainCommandResponse(true, page.getPath()));
     }
+
+    public CommandResponse createRedirectResponse(String path) {
+
+        return redirectResponseCache.computeIfAbsent(path, p ->
+                new PlainCommandResponse(true, path));
+    }
+
+    /*//create refresh
+    @Override
+    public CommandResponse createRedirectResponse(PagePath page) {
+        return redirectResponseCache.computeIfAbsent(page.getPath(), p ->
+                new PlainCommandResponse(true, page.getPath()));
+    }*/
 
     private static class SimpleRequestFactoryHolder {
         private static final SimpleRequestFactory instance = new SimpleRequestFactory();

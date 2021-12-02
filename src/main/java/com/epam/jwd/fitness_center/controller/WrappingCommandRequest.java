@@ -29,13 +29,9 @@ public class WrappingCommandRequest implements CommandRequest {
     }
 
     @Override
-    public boolean addToSession(String name, Object value) {
-        final HttpSession session = request.getSession(false);
-        if (session != null) {
-            session.setAttribute(name, value);
-            return true;
-        }
-        return false;
+    public void addToSession(String name, Object value) {
+        final HttpSession session = request.getSession(true);
+        session.setAttribute(name, value);
     }
 
     @Override

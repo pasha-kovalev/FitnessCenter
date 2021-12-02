@@ -1,8 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-
-<fmt:setLocale value="ru_RU" />
+<fmt:setLocale value="${sessionScope.locale}" />
 <fmt:setBundle basename="locale" />
 <fmt:message var="title" key="brand.name"/>
 <fmt:message var="contactTitle" key="main.contact.title"/>

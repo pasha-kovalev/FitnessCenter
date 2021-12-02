@@ -12,7 +12,6 @@ import java.util.Locale;
 
 @WebListener
 public class HttpSessionListenerImpl implements HttpSessionListener {
-    private static final Logger LOG = LogManager.getLogger(HttpSessionListenerImpl.class);
 
     @Override
     public void sessionCreated(HttpSessionEvent se) {

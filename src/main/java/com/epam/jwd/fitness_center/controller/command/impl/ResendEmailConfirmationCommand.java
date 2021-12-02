@@ -33,10 +33,10 @@ public class ResendEmailConfirmationCommand implements Command {
         Optional<Object> loginObj = request.pullFromSession(SessionAttribute.LOGIN);
         Optional<User> optionalUser;
         if(!loginObj.isPresent()) {
-            return requestFactory.createForwardResponse(PagePath.INDEX);
+            LOG.error("Error during pull login from session");
+            return requestFactory.createForwardResponse(PagePath.ERROR);
         }
         final String login = (String) loginObj.get();
-
         try {
             optionalUser = userService.findUserByEmail(login);
         } catch (ServiceException e) {
@@ -45,15 +45,15 @@ public class ResendEmailConfirmationCommand implements Command {
         }
         if(!optionalUser.isPresent()) {
             //todo add listener to clear error messages
-            request.addToSession(SessionAttribute.ERROR_RESEND_MAIL, "User not found");
-            return requestFactory.createRedirectResponse(PagePath.MAIL_INFO_REDIRECT);
+            request.addToSession(SessionAttribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_ERROR_USER_NOT_FOUND);
+            return requestFactory.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
         }
 
         User user = optionalUser.get();
         if( user.getStatus() != UserStatus.UNCONFIRMED) {
             //todo add listener to clear error messages
-            request.addToSession(SessionAttribute.ERROR_RESEND_MAIL, "User already confirmed");
-            return requestFactory.createRedirectResponse(PagePath.MAIL_INFO_REDIRECT);
+            request.addToSession(SessionAttribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_ERROR_USER_CONFIRMED);
+            return requestFactory.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
         }
 
         try {
@@ -64,7 +64,8 @@ public class ResendEmailConfirmationCommand implements Command {
             return requestFactory.createForwardResponse(PagePath.ERROR500);
         }
         //todo ? add to jsp
-        request.addToSession(SessionAttribute.SUCCESS_RESEND_MAIL, "Email has been resend! Address: " + login);
-        return requestFactory.createForwardResponse(PagePath.MAIL_INFO);
+        request.addToSession(SessionAttribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_EMAIL_RESEND);
+        request.addToSession(SessionAttribute.ADDITIONAL_INFO, login);
+        return requestFactory.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
     }
 }

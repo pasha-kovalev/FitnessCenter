@@ -3,7 +3,7 @@ package com.epam.jwd.fitness_center.model.service.impl;
 import com.epam.jwd.fitness_center.model.service.MailService;
 import com.epam.jwd.fitness_center.model.service.UserService;
 
-public class ServiceProvider {
+public final class ServiceProvider {
     private final UserService userService;
     private final MailService mailService;
 

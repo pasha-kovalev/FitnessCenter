@@ -21,7 +21,8 @@ public enum CommandType {
     RESEND_EMAIL(GUEST),
     CONFIRM_EMAIL(GUEST),
     SHOW_CONFIRM_EMAIL(GUEST),
-    SWITCH_LOCALE;
+    SWITCH_LOCALE,
+    SHOW_INFO;
 
     private final List<UserRole> allowedRoles;
 

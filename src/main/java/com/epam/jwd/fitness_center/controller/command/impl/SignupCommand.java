@@ -16,7 +16,6 @@ import java.util.Optional;
 
 public class SignupCommand implements Command {
     private static final Logger LOG = LogManager.getLogger(SignupCommand.class);
-    public static final String USER_EXISTS_MSG = "user with specified email already exists";
 
     private final UserService userService;
     private final RequestFactory requestFactory;
@@ -40,7 +39,7 @@ public class SignupCommand implements Command {
             return requestFactory.createForwardResponse(PagePath.ERROR500);
         }
         if(!user.isPresent()) {
-            request.addToSession(SessionAttribute.ERROR_SIGNUP, USER_EXISTS_MSG);
+            request.addToSession(SessionAttribute.ERROR_SIGNUP_BUNDLE_KEY, ResourceBundleKey.SIGNUP_ERROR);
             return requestFactory.createRedirectResponse(PagePath.SIGNUP_REDIRECT);
         }
         request.clearSession();

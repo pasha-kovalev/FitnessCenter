@@ -1,5 +1,6 @@
 package com.epam.jwd.fitness_center.controller.command.impl;
 
+import com.epam.jwd.fitness_center.controller.SimpleRequestFactory;
 import com.epam.jwd.fitness_center.controller.command.Command;
 import com.epam.jwd.fitness_center.controller.command.CommandType;
 import com.epam.jwd.fitness_center.controller.RequestFactory;
@@ -26,7 +27,8 @@ public class CommandProvider {
         commands.put(RESEND_EMAIL, new ResendEmailConfirmationCommand(requestFactory));
         commands.put(CONFIRM_EMAIL , new ConfirmEmailCommand(requestFactory));
         commands.put(SHOW_CONFIRM_EMAIL, new ShowEmailConfirmationPageCommand(requestFactory));
-        commands.put(SWITCH_LOCALE, new SwitchLocaleCommand(requestFactory));
+        commands.put(SWITCH_LOCALE, new SwitchLocaleCommand((SimpleRequestFactory) requestFactory));
+        commands.put(SHOW_INFO, new ShowInfoCommand(requestFactory));
     }
 
     public Command of(String name) {

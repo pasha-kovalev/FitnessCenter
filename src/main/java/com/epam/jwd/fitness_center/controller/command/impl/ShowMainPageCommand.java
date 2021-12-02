@@ -22,6 +22,4 @@ public class ShowMainPageCommand implements Command {
     public CommandResponse execute(CommandRequest request) {
         return FORWARD_TO_MAIN_PAGE_RESPONSE;
     }
-
-
 }

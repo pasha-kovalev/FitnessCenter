@@ -1,8 +1,10 @@
 package com.epam.jwd.fitness_center.controller;
 
 public enum PagePath {
-    INDEX("/"),
+    INDEX("/controller?command=main_page"),
+    CONTROLLER("/controller"),
     MAIN("/WEB-INF/jsp/main.jsp"),
+    MAIN_REDIRECT("controller?command=main_page"),
     USERS("/WEB-INF/jsp/users.jsp"),
     LOGIN("/WEB-INF/jsp/login.jsp"),
     LOGIN_REDIRECT("/controller?command=show_login"),
@@ -14,7 +16,9 @@ public enum PagePath {
     ERROR500("/WEB-INF/jsp/error500.jsp"),
     MAIL_INFO("/WEB-INF/jsp/send_mail_info.jsp"),
     MAIL_INFO_REDIRECT("/controller?command=show_mail_info"),
-    EMAIL_CONFIRMED_INFO("/WEB-INF/jsp/email_confirmed_info.jsp");
+    EMAIL_CONFIRMED_INFO("/WEB-INF/jsp/email_confirmed_info.jsp"),
+    SHOW_INFO("/WEB-INF/jsp/info.jsp"),
+    SHOW_INFO_REDIRECT("/controller?command=show_info");
 
     private final String path;
 
@@ -32,6 +36,6 @@ public enum PagePath {
                 return page;
             }
         }
-        return MAIN;
+        return MAIN_REDIRECT;
     }
 }
