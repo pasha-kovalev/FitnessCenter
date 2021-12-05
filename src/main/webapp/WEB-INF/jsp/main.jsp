@@ -8,6 +8,12 @@
 <fmt:message var="location" key="main.contact.location"/>
 <fmt:message var="phone" key="main.contact.phone"/>
 <fmt:message var="email" key="main.contact.email"/>
+<fmt:message var="meetTitle" key="main.meet.title" />
+<fmt:message var="subtitle11" key="main.meet.subtitle1.p1" />
+<fmt:message var="subtitle12" key="main.meet.subtitle1.p2" />
+<fmt:message var="subtitle21" key="main.meet.subtitle2.p1"/>
+<fmt:message var="subtitle22" key="main.meet.subtitle2.p2"/>
+<fmt:message var="seeMore" key="main.meet.button.see"/>
 
 <html>
 <title>${title}</title>
@@ -24,24 +30,24 @@
     <!-- Photo grid (modal) -->
     <div class="w3-main" style="background-color: #F5F5F5; color: black">
         <div class="w3-row-padding" style="text-align: center; padding-bottom: 60px ">
-            <p style="font-size: 48px;  margin-bottom: 0; margin-top: 10px; font-weight: bold; font-family: 'PT serif';">MEET OUR PLANS</p>
+            <p style="font-size: 48px;  margin-bottom: 0; margin-top: 10px; font-weight: bold; font-family: 'PT serif';">${meetTitle}</p>
             <div class="w3-half" style="font-size: 24px; font-weight: 600;font-family: 'Open Sans'; ">
-                <p style="margin-bottom: 0;">PERSONAL ONLINE FITNESS</p>
-                <p style="margin: 0">AND NUTRITION PLAN</p>
+                <p style="margin-bottom: 0;">${subtitle11}</p>
+                <p style="margin: 0">${subtitle12}</p>
                 <img src="../../images/crossfit.jpg" style="width:70%; padding-top: 8px">
             </div>
             <div class="w3-half" style="text-align: center; font-size: 24px; font-weight: 600; font-family: 'Open Sans';">
-                <p style="margin-bottom: 0;">UNIQUE ONE-ON-ONE PROGRAM</p>
-                <p style="margin: 0">CHANGE YOUR LIFE IN 90 DAYS</p>
+                <p style="margin-bottom: 0;">${subtitle21}</p>
+                <p style="margin: 0">${subtitle22}</p>
                 <img src="../../images/beach.jpg" style="width:70%; padding-top: 8px ">
             </div>
             <div class="w3-half" style="padding-top: 32px">
                 <a class="w3-button w3-black w3-padding-large w3-hover-black"
-                   href="${pageContext.request.contextPath}/controller?command=show_programs">See more</a>
+                   href="${pageContext.request.contextPath}/controller?command=show_programs">${seeMore}</a>
             </div>
             <div class="w3-half" style="padding-top: 32px">
                 <a class="w3-button w3-black w3-padding-large w3-hover-black"
-                   href="${pageContext.request.contextPath}/controller?command=show_transform_program">See more</a>
+                   href="${pageContext.request.contextPath}/controller?command=show_transform_program">${seeMore}</a>
             </div>
         </div>
     </div>

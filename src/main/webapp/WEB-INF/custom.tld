@@ -17,4 +17,18 @@
             <required>true</required>
         </attribute>
     </tag>
+
+    <tag>
+        <name>readuserName</name>
+        <tag-class>com.epam.jwd.fitness_center.controller.tag.PullFromSessionTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>attribute</name>
+            <required>true</required>
+        </attribute>
+        <attribute>
+            <name>msg</name>
+            <required>true</required>
+        </attribute>
+    </tag>
 </taglib>

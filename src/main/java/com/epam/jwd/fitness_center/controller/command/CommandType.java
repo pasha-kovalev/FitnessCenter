@@ -25,7 +25,8 @@ public enum CommandType {
     SHOW_INFO,
     SHOW_ABOUT,
     SHOW_PROGRAMS,
-    SHOW_TRANSFORM_PROGRAM;
+    SHOW_TRANSFORM_PROGRAM,
+    USER_CABINET(USER, CORPORATE_USER, REGULAR_USER);
 
     private final List<UserRole> allowedRoles;
 

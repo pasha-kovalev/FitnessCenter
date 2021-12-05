@@ -21,7 +21,8 @@ public enum PagePath {
     SHOW_INFO_REDIRECT("/controller?command=show_info"),
     SHOW_ABOUT("/WEB-INF/jsp/about.jsp"),
     SHOW_PROGRAMS("/WEB-INF/jsp/programs.jsp"),
-    SHOW_TRANSFORM_PROGRAM("/WEB-INF/jsp/transformation.jsp");
+    SHOW_TRANSFORM_PROGRAM("/WEB-INF/jsp/transformation.jsp"),
+    USER_CABINET("/WEB-INF/jsp/user/cabinet.jsp");
 
     private final String path;
 

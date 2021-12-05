@@ -32,6 +32,7 @@ public class CommandProvider {
         commands.put(SHOW_ABOUT, new ShowAboutCommand(requestFactory));
         commands.put(SHOW_PROGRAMS, new ShowProgramsCommand(requestFactory));
         commands.put(SHOW_TRANSFORM_PROGRAM, new ShowTransformProgramCommand(requestFactory));
+        commands.put(USER_CABINET, new ShowUserCabinetCommand(requestFactory));
     }
 
     public Command of(String name) {
