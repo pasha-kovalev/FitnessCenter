@@ -9,6 +9,7 @@
 <fmt:message var="button" key="login.button"/>
 <html>
 <head>
+    <meta charset="UTF-8">
     <title>${title}</title>
     <link href="../../style/style.css" type="text/css" rel="stylesheet">
 </head>

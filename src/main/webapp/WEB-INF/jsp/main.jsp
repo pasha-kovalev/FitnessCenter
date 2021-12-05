@@ -21,6 +21,30 @@
         <img src="../../images/gym2.png" style="width:100%">
     </div>
 
+    <!-- Photo grid (modal) -->
+    <div class="w3-main" style="background-color: #F5F5F5; color: black">
+        <div class="w3-row-padding" style="text-align: center; padding-bottom: 60px ">
+            <p style="font-size: 48px;  margin-bottom: 0; margin-top: 10px; font-weight: bold; font-family: 'PT serif';">MEET OUR PLANS</p>
+            <div class="w3-half" style="font-size: 24px; font-weight: 600;font-family: 'Open Sans'; ">
+                <p style="margin-bottom: 0;">PERSONAL ONLINE FITNESS</p>
+                <p style="margin: 0">AND NUTRITION PLAN</p>
+                <img src="../../images/crossfit.jpg" style="width:70%; padding-top: 8px">
+            </div>
+            <div class="w3-half" style="text-align: center; font-size: 24px; font-weight: 600; font-family: 'Open Sans';">
+                <p style="margin-bottom: 0;">UNIQUE ONE-ON-ONE PROGRAM</p>
+                <p style="margin: 0">CHANGE YOUR LIFE IN 90 DAYS</p>
+                <img src="../../images/beach.jpg" style="width:70%; padding-top: 8px ">
+            </div>
+            <div class="w3-half" style="padding-top: 32px">
+                <a class="w3-button w3-black w3-padding-large w3-hover-black"
+                   href="${pageContext.request.contextPath}/controller?command=show_programs">See more</a>
+            </div>
+            <div class="w3-half" style="padding-top: 32px">
+                <a class="w3-button w3-black w3-padding-large w3-hover-black"
+                   href="${pageContext.request.contextPath}/controller?command=show_transform_program">See more</a>
+            </div>
+        </div>
+    </div>
     <div class="w3-container w3-content w3-padding-32" style="max-width:800px" id="contact">
         <h2 class="w3-wide w3-center">${contactTitle}</h2>
         <div class="w3-row w3-padding-8">
@@ -32,6 +56,7 @@
         </div>
     </div>
 </div>
+
 <jsp:include page="component/footer.jsp" flush="true"/>
 </body>
 </html>

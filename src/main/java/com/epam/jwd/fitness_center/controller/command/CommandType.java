@@ -22,7 +22,10 @@ public enum CommandType {
     CONFIRM_EMAIL(GUEST),
     SHOW_CONFIRM_EMAIL(GUEST),
     SWITCH_LOCALE,
-    SHOW_INFO;
+    SHOW_INFO,
+    SHOW_ABOUT,
+    SHOW_PROGRAMS,
+    SHOW_TRANSFORM_PROGRAM;
 
     private final List<UserRole> allowedRoles;
 

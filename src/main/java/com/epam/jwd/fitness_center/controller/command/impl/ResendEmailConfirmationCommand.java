@@ -12,6 +12,7 @@ import com.epam.jwd.fitness_center.model.service.impl.ServiceProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Locale;
 import java.util.Optional;
 
 public class ResendEmailConfirmationCommand implements Command {
@@ -57,8 +58,9 @@ public class ResendEmailConfirmationCommand implements Command {
         }
 
         try {
-            //todo
-            mailService.sendConfirmationEmail(user.getId(), user.getEmail(), null);
+            mailService.sendConfirmationEmail(user.getId(), user.getEmail(),
+                    (String) request.retrieveFromSession(SessionAttribute.LOCALE)
+                                    .orElse(Locale.getDefault().toString()));
         } catch (ServiceException e) {
             LOG.error("Error during sendConfirmationEmail", e);
             return requestFactory.createForwardResponse(PagePath.ERROR500);

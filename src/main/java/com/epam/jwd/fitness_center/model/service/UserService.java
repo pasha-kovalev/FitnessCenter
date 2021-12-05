@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface UserService extends EntityService<User> {
 
     Optional<User> register(String email, String password, String firstName, String secondName,
-                  UserRole role, UserStatus status) throws ServiceException;
+                  UserRole role, UserStatus status, String locale) throws ServiceException;
 
     Optional<User> authenticate(String login, String password) throws ServiceException;
     Optional<User> findUserByEmail(String email) throws ServiceException;

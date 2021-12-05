@@ -17,17 +17,22 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Locale;
 import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.UUID;
 
 public class MailServiceImpl implements MailService {
     private static final Logger LOG = LogManager.getLogger(MailServiceImpl.class);
     private static final String MAIL_CONFIG_PATH = "properties/mail/config.properties";
-    public static final String MAIL_SESSION_CONFIG_PATH = "properties/mail/session.properties";
-    public static final String CONTENT_TYPE = "text/plain; charset=UTF-8";
-    public static final String MAIL_USER_NAME_PROPERTY = "mail.user.name";
-    public static final String MAIL_USER_PASSWORD_PROPERTY = "mail.user.password";
-    public static final String MAIL_LINK_TEMPLATE_PROPERTY = "mail.link.template";
+    private static final String MAIL_SESSION_CONFIG_PATH = "properties/mail/session.properties";
+    private static final String CONTENT_TYPE = "text/plain; charset=UTF-8";
+    private static final String MAIL_USER_NAME_PROPERTY = "mail.user.name";
+    private static final String MAIL_USER_PASSWORD_PROPERTY = "mail.user.password";
+    private static final String MAIL_LINK_TEMPLATE_PROPERTY = "mail.link.template";
+    private static final String BUNDLE_NAME = "locale";
+    private static final String MAIL_MESSAGE_SUBJECT_KEY = "mail.message.subject";
+    private static final String MAIL_MESSAGE_TEXT_KEY = "mail.message.text";
 
     private final Properties mailProperties;
     private final Properties sessionProperties;
@@ -41,8 +46,8 @@ public class MailServiceImpl implements MailService {
             sessionProperties = takeSessionProperties(MAIL_SESSION_CONFIG_PATH);
             mailProperties = takeMailProperties(MAIL_CONFIG_PATH);
         } catch (ServiceException e) {
-            LOG.fatal("Unable to process mail properties files", e);
-            throw new RuntimeException("Unable to process mail properties files");
+            LOG.fatal("Unable to process mail property files", e);
+            throw new RuntimeException("Unable to process mail property files");
         }
 
         login = mailProperties.getProperty(MAIL_USER_NAME_PROPERTY);
@@ -53,24 +58,26 @@ public class MailServiceImpl implements MailService {
 
     //todo bundle, processing exceptions during reading/writing
     @Override
-    public long sendConfirmationEmail(long userId, String email, SessionAttribute locale) throws ServiceException {
+    public long sendConfirmationEmail(long userId, String email, String localeStr) throws ServiceException {
         final String token = UUID.randomUUID().toString();
         long tokenId = sendToDatabase(userId, token);
-        MimeMessage message = new MimeMessage(mailSession);
-        String messageText = "Welcome to Training Center! Follow the link below (valid for 24 hours):\n" +
+        Locale locale = new Locale(localeStr);
+        ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, locale);
+        String messageText = bundle.getString(MAIL_MESSAGE_TEXT_KEY) + "\n" +
                 String.format(linkTemplate, tokenId, token);
-        sendMessage(userId, email, message, messageText);
+        sendMessage(email, messageText, bundle.getString(MAIL_MESSAGE_SUBJECT_KEY));
         return tokenId;
     }
 
-    private void sendMessage(long id, String email, MimeMessage message, String messageText) throws ServiceException {
+    private void sendMessage(String email, String messageText, String subject) throws ServiceException {
+        MimeMessage message = new MimeMessage(mailSession);
         try {
-            message.setSubject("Email confirmation");
+            message.setSubject(subject);
             message.setContent(messageText, CONTENT_TYPE);
             message.setRecipient(Message.RecipientType.TO, new InternetAddress(email));
             Transport.send(message);
         } catch (MessagingException e) {
-            LOG.error("Unable to send message. User id:{}", id, e);
+            LOG.error("Unable to send message. User id:{}", e);
             throw new ServiceException("Unable to send message", e);
         }
     }

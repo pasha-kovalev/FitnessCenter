@@ -9,6 +9,7 @@
 <fmt:message var="resendEmail" key="sendEmailInfo.msg.resend"/>
 <html>
 <head>
+    <meta charset="UTF-8">
     <title>${title}</title>
     <link href="../../style/style.css" type="text/css" rel="stylesheet">
 </head>

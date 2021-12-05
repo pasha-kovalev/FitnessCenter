@@ -12,6 +12,7 @@ import com.epam.jwd.fitness_center.model.service.impl.ServiceProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Locale;
 import java.util.Optional;
 
 public class SignupCommand implements Command {
@@ -33,7 +34,9 @@ public class SignupCommand implements Command {
         final String lastname = request.getParameter(RequestParameter.LASTNAME);
         Optional<User> user;
         try {
-            user = userService.register(login, password, firstName,lastname, UserRole.USER, UserStatus.UNCONFIRMED);
+            user = userService.register(login, password, firstName,lastname, UserRole.USER, UserStatus.UNCONFIRMED,
+                    (String) request.retrieveFromSession(SessionAttribute.LOCALE)
+                            .orElse(Locale.getDefault().toString()));
         } catch (ServiceException e) {
             LOG.error("Error during registering new user", e);
             return requestFactory.createForwardResponse(PagePath.ERROR500);

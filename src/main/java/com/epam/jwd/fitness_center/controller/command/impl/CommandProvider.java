@@ -29,6 +29,9 @@ public class CommandProvider {
         commands.put(SHOW_CONFIRM_EMAIL, new ShowEmailConfirmationPageCommand(requestFactory));
         commands.put(SWITCH_LOCALE, new SwitchLocaleCommand((SimpleRequestFactory) requestFactory));
         commands.put(SHOW_INFO, new ShowInfoCommand(requestFactory));
+        commands.put(SHOW_ABOUT, new ShowAboutCommand(requestFactory));
+        commands.put(SHOW_PROGRAMS, new ShowProgramsCommand(requestFactory));
+        commands.put(SHOW_TRANSFORM_PROGRAM, new ShowTransformProgramCommand(requestFactory));
     }
 
     public Command of(String name) {

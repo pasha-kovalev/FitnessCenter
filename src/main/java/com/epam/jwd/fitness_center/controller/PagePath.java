@@ -18,7 +18,10 @@ public enum PagePath {
     MAIL_INFO_REDIRECT("/controller?command=show_mail_info"),
     EMAIL_CONFIRMED_INFO("/WEB-INF/jsp/email_confirmed_info.jsp"),
     SHOW_INFO("/WEB-INF/jsp/info.jsp"),
-    SHOW_INFO_REDIRECT("/controller?command=show_info");
+    SHOW_INFO_REDIRECT("/controller?command=show_info"),
+    SHOW_ABOUT("/WEB-INF/jsp/about.jsp"),
+    SHOW_PROGRAMS("/WEB-INF/jsp/programs.jsp"),
+    SHOW_TRANSFORM_PROGRAM("/WEB-INF/jsp/transformation.jsp");
 
     private final String path;
 

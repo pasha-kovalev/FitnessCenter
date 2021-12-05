@@ -68,7 +68,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<User> register(String email, String password, String firstName, String secondName,
-                         UserRole role, UserStatus status) throws ServiceException {
+                         UserRole role, UserStatus status, String locale) throws ServiceException {
         if(isEmailRegistered(email)) return Optional.empty();
 
         User user = new User.Builder().setEmail(email)
@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
         long userId = userFromDb.getId();
         MailService mailService = ServiceProvider.getInstance().getMailService();
         //todo locale
-        mailService.sendConfirmationEmail(userId, email, null);
+        mailService.sendConfirmationEmail(userId, email, locale);
         return Optional.of(userFromDb);
     }
 

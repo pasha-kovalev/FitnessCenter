@@ -6,24 +6,15 @@ import java.io.IOException;
 
 @WebFilter(urlPatterns = "/*")
 public class EncodingFilter implements Filter {
-    private static final String DEFAULT_ENCODING = "UTF-8";
-    private String encoding;
-
-    @Override
-    public void init(FilterConfig filterConfig) {
-        encoding = filterConfig.getInitParameter("encoding");
-        if (encoding == null) {
-            encoding = DEFAULT_ENCODING;
-        }
-    }
+    private static final String ENCODING = "UTF-8";
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
             throws IOException, ServletException {
-        String requestEncoding = servletRequest.getCharacterEncoding();
-        if (!encoding.equalsIgnoreCase(requestEncoding)) {
-            servletRequest.setCharacterEncoding(encoding);
-            servletResponse.setCharacterEncoding(encoding);
+        String responseEncoding = servletRequest.getCharacterEncoding();
+
+        if(!ENCODING.equalsIgnoreCase(responseEncoding)) {
+                servletResponse.setCharacterEncoding(ENCODING);
         }
         filterChain.doFilter(servletRequest, servletResponse);
     }
