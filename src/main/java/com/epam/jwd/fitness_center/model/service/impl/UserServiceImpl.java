@@ -12,6 +12,7 @@ import com.epam.jwd.fitness_center.model.entity.UserRole;
 import com.epam.jwd.fitness_center.model.entity.UserStatus;
 import com.epam.jwd.fitness_center.model.service.MailService;
 import com.epam.jwd.fitness_center.model.service.UserService;
+import com.epam.jwd.fitness_center.model.validator.UserValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -44,11 +45,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean update(User entity) throws ServiceException {
+    public boolean update(User user) throws ServiceException {
         try {
-            return userDao.update(entity);
+            return UserValidator.isValidUser(user, false) && userDao.update(user);
         } catch (DaoException e) {
-            LOG.error("Unable to update user with id: {}", entity.getId(), e);
+            LOG.error("Unable to update user with id: {}", user.getId(), e);
             throw new ServiceException("Unable to update user", e);
         }
     }
