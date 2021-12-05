@@ -6,6 +6,7 @@ import com.epam.jwd.fitness_center.controller.command.*;
 import com.epam.jwd.fitness_center.exception.ServiceException;
 import com.epam.jwd.fitness_center.model.service.UserService;
 import com.epam.jwd.fitness_center.model.service.impl.ServiceProvider;
+import com.epam.jwd.fitness_center.model.validator.NumberValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -24,7 +25,10 @@ public class ConfirmEmailCommand implements Command {
         //todo unconfirmed user cant access
         String tokenIdStr = request.getParameter(RequestParameter.TOKEN_ID);
         String tokenValue = request.getParameter(RequestParameter.TOKEN);
-            //todo validator
+        if(!NumberValidator.isPositiveInteger(tokenIdStr)) {
+            request.addToSession(SessionAttribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_ERROR_LINK);
+            return requestFactory.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
+        }
         int tokenId = Integer.parseInt(tokenIdStr);
         try {
             if (!userService.confirmUser(tokenId, tokenValue)) {
@@ -38,5 +42,4 @@ public class ConfirmEmailCommand implements Command {
         request.addToSession(SessionAttribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_VALID_LINK);
         return requestFactory.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
     }
-
 }
