@@ -1,5 +1,6 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="ct" uri="customtag" %>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
 <fmt:setLocale value="${sessionScope.locale}" />
 <fmt:setBundle basename="locale" />
@@ -18,9 +19,11 @@
 <div class="background">
     <form name="login-form" action="${pageContext.request.contextPath}/controller?command=login" method="post">
         <h3>${title}</h3>
+
         <p id="incorrect">
-            <c:if test="${sessionScope.errorLoginMsg != null}">
-                <fmt:message key="${sessionScope.errorLoginMsg}"/>
+            <ct:pullSessionAttribute attribute="errorLoginMsg" msg="msg"/>
+            <c:if test="${pageScope.msg != null}">
+                <fmt:message key="${msg}"/>
             </c:if>
         </p>
         <label for="email">${loginLabel}</label>
