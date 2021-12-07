@@ -1,10 +1,7 @@
 package com.epam.jwd.fitness_center.model.service;
 
 import com.epam.jwd.fitness_center.exception.ServiceException;
-import com.epam.jwd.fitness_center.model.entity.Token;
-import com.epam.jwd.fitness_center.model.entity.User;
-import com.epam.jwd.fitness_center.model.entity.UserRole;
-import com.epam.jwd.fitness_center.model.entity.UserStatus;
+import com.epam.jwd.fitness_center.model.entity.*;
 
 import java.util.Optional;
 
@@ -22,4 +19,5 @@ public interface UserService extends EntityService<User> {
     Optional<Token> retrieveUserToken(long tokenId) throws ServiceException;
     boolean confirmUser(long tokenId, String tokenValue) throws ServiceException;
     Optional<User> findActiveTrainers() throws ServiceException;
+    Optional<UserDetails> findUserDetails(User user) throws ServiceException;
 }

@@ -6,10 +6,8 @@ import com.epam.jwd.fitness_center.exception.ServiceException;
 import com.epam.jwd.fitness_center.model.dao.impl.DaoProvider;
 import com.epam.jwd.fitness_center.model.dao.impl.TokenDaoImpl;
 import com.epam.jwd.fitness_center.model.dao.impl.UserDaoImpl;
-import com.epam.jwd.fitness_center.model.entity.Token;
-import com.epam.jwd.fitness_center.model.entity.User;
-import com.epam.jwd.fitness_center.model.entity.UserRole;
-import com.epam.jwd.fitness_center.model.entity.UserStatus;
+import com.epam.jwd.fitness_center.model.dao.impl.UserDetailsDaoImpl;
+import com.epam.jwd.fitness_center.model.entity.*;
 import com.epam.jwd.fitness_center.model.service.MailService;
 import com.epam.jwd.fitness_center.model.service.UserService;
 import com.epam.jwd.fitness_center.model.validator.UserValidator;
@@ -218,5 +216,17 @@ public class UserServiceImpl implements UserService {
     public Optional<User> findActiveTrainers() throws ServiceException {
         //todo add nullable description and photo path to {user table} for trainers
         return Optional.empty();
+    }
+
+    @Override
+    public Optional<UserDetails> findUserDetails(User user) throws ServiceException {
+        final UserDetailsDaoImpl userDetailsDao = DaoProvider.getInstance().getUserDetailsDao();
+        List<UserDetails> userDetailsList;
+        try {
+            userDetailsList = userDetailsDao.findByUserId(user.getId());
+        } catch (DaoException e) {
+            throw new ServiceException("Unable to find user details by id", e);
+        }
+        return Optional.ofNullable(userDetailsList.get(0));
     }
 }

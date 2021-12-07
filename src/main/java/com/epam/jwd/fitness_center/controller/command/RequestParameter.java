@@ -11,6 +11,8 @@ public class RequestParameter {
     public static final String LASTNAME = "lastname";
     public static final String ERROR_CONFIRM_EMAIL = "errorConfirmEmail";
     public static final String LOCALE = "locale";
+    public static final String PRODUCT_LIST = "productList";
+    public static final String PRODUCT_LIST_WITH_DISCOUNT = "productListDiscount";
 
     private RequestParameter() {}
 

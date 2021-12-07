@@ -74,11 +74,14 @@ body {
 #signup {
   height: 800px;
 }
+#order {
+  height: 800px;
+}
 
 .form1 form *{
   font-family: 'Poppins',sans-serif;
   color: #ffffff;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
   outline: none;
   border: none;
 }
@@ -601,6 +604,9 @@ a {
   width: 100%;
   border: none;
   border-bottom: 1px solid #ccc
+}
+select, select option, textarea {
+  background-color: #181a1b;
 }
 
 .w3-dropdown-click,

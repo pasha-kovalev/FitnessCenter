@@ -2,6 +2,7 @@ package com.epam.jwd.fitness_center.controller.command;
 
 public final class SessionAttribute {
     public static final String USER = "user";
+    public static final String USER_DETAILS = "userDetails";
     public static final String LOGIN = "login";
     public static final String ERROR_LOGIN_BUNDLE_KEY = "errorLoginMsg";
     public static final String ERROR_SIGNUP_BUNDLE_KEY = "errorSignupMsg";

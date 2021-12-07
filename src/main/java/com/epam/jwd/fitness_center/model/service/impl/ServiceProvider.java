@@ -6,10 +6,12 @@ import com.epam.jwd.fitness_center.model.service.UserService;
 public final class ServiceProvider {
     private final UserService userService;
     private final MailService mailService;
+    private final ItemServiceImpl itemService;
 
     private ServiceProvider() {
         mailService = new MailServiceImpl();
         userService = new UserServiceImpl();
+        itemService = new ItemServiceImpl();
     }
 
     public static ServiceProvider getInstance() {
@@ -21,6 +23,10 @@ public final class ServiceProvider {
     }
     public MailService getMailService() {
         return mailService;
+    }
+
+    public ItemServiceImpl getItemService() {
+        return itemService;
     }
 
 

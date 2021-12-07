@@ -1,7 +1,6 @@
 package com.epam.jwd.fitness_center.model.entity;
 
 public class User implements Entity {
-
     private static final long serialVersionUID = 6836283217175179238L;
 
     private Long id;

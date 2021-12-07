@@ -79,8 +79,6 @@ public class UserDaoImpl extends BaseDao<User> implements UserDao {
             "        (SELECT id FROM user_status WHERE status=?),\n" +
             "        ?,?)";
 
-    private static final String INSERT_NEW_USER_TOKEN = "INSERT INTO user_token (id, user_id, token, creation_date)\n" +
-            "    VALUE (NULL, ?,?, NULL)";
 
     private static final String UPDATE_USER_BY_ID = "UPDATE user\n" +
             "    SET email = ?, password_hash = ?,\n" +
