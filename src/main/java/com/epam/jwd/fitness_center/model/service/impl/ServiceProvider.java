@@ -1,6 +1,7 @@
 package com.epam.jwd.fitness_center.model.service.impl;
 
 import com.epam.jwd.fitness_center.model.service.MailService;
+import com.epam.jwd.fitness_center.model.service.OrderService;
 import com.epam.jwd.fitness_center.model.service.UserService;
 
 public final class ServiceProvider {
@@ -8,10 +9,13 @@ public final class ServiceProvider {
     private final MailService mailService;
     private final ItemServiceImpl itemService;
 
+    private final OrderService orderService;
+
     private ServiceProvider() {
         mailService = new MailServiceImpl();
         userService = new UserServiceImpl();
         itemService = new ItemServiceImpl();
+        orderService = new OrderServiceImpl();
     }
 
     public static ServiceProvider getInstance() {
@@ -24,11 +28,12 @@ public final class ServiceProvider {
     public MailService getMailService() {
         return mailService;
     }
-
     public ItemServiceImpl getItemService() {
         return itemService;
     }
-
+    public OrderService getOrderService() {
+        return orderService;
+    }
 
     private static class ServiceProviderHolder {
         private static final ServiceProvider instance = new ServiceProvider();

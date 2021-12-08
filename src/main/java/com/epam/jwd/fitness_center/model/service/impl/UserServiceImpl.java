@@ -47,7 +47,8 @@ public class UserServiceImpl implements UserService {
         try {
             return UserValidator.isValidUser(user, false) && userDao.update(user);
         } catch (DaoException e) {
-            LOG.error("Unable to update user with id: {}", user.getId(), e);
+            //todo delete log because this info in e
+            LOG.error("Unable to update user with id: {}. {}", user.getId(), e.getMessage());
             throw new ServiceException("Unable to update user", e);
         }
     }
@@ -60,7 +61,7 @@ public class UserServiceImpl implements UserService {
             user.setPassword(hashedPassword);
             return userDao.create(user);
         } catch (DaoException e) {
-            LOG.error("Unable to insert user with email: {}", user.getEmail(), e);
+            LOG.error("Unable to insert user with email: {}. {}", user.getEmail(), e.getMessage());
             throw new ServiceException("Unable to insert user", e);
         }
     }
@@ -115,7 +116,7 @@ public class UserServiceImpl implements UserService {
         try {
             return userDao.findByEmail(email);
         } catch (DaoException e) {
-            LOG.error("Error during searching for user by email: {}", email, e);
+            LOG.error("Error during searching for user by email: {}. {}", email, e.getMessage());
             throw new ServiceException("Error during searching for user by email", e);
         }
     }
@@ -125,7 +126,7 @@ public class UserServiceImpl implements UserService {
         try {
             return userDao.read(id);
         } catch (DaoException e) {
-            LOG.error("Error during searching for user by id: {}", id, e);
+            LOG.error("Error during searching for user by id: {}. {}", id, e.getMessage());
             throw new ServiceException("Error during searching for user by id", e);
         }
     }
@@ -135,7 +136,7 @@ public class UserServiceImpl implements UserService {
         try {
             userDao.updateStatus(status, id);
         } catch (DaoException e) {
-            LOG.error("Error during updating status of user with id : {}", id, e);
+            LOG.error("Error during updating status of user with id : {}. {}", id, e.getMessage());
             throw new ServiceException("Error during updating user status by id", e);
         }
     }
@@ -201,7 +202,7 @@ public class UserServiceImpl implements UserService {
             tokenDao.removeByUserId(userId);
         } catch (DaoException e) {
             //fixme log e
-            LOG.error("Unable to remove tokens by user id : {}", userId, e);
+            LOG.error("Unable to remove tokens by user id : {}. {}", userId, e.getMessage());
         }
     }
 
