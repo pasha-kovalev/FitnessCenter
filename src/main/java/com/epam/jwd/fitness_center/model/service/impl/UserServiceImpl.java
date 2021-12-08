@@ -66,12 +66,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> register(String email, String password, String firstName, String secondName,
+    public Optional<User> register(String email, String password1, String password2, String firstName, String secondName,
                          UserRole role, UserStatus status, String locale) throws ServiceException {
+        if(UserValidator.isValidName(firstName) || UserValidator.isValidName(secondName)
+                || UserValidator.isValidEmail(email) || UserValidator.isValidPassword(password1)
+                || UserValidator.isValidPassword(password2) || UserValidator.isEqualPasswords(password1, password2))
+        {
+            return Optional.empty();
+        }
         if(isEmailRegistered(email)) return Optional.empty();
 
         User user = new User.Builder().setEmail(email)
-                .setPassword(password)
+                .setPassword(password1)
                 .setFirstName(firstName)
                 .setRole(role)
                 .setSecondName(secondName)
@@ -79,16 +85,16 @@ public class UserServiceImpl implements UserService {
         User userFromDb = insert(user);
         long userId = userFromDb.getId();
         MailService mailService = ServiceProvider.getInstance().getMailService();
-        //todo locale
         mailService.sendConfirmationEmail(userId, email, locale);
         return Optional.of(userFromDb);
     }
 
     @Override
     public Optional<User> authenticate(String email, String password) throws ServiceException {
-        if (email == null || password == null) {
+        if (!UserValidator.isValidEmail(email) || !UserValidator.isValidPassword(password)) {
             return Optional.empty();
         }
+
         final byte[] enteredPassword = password.getBytes(StandardCharsets.UTF_8);
         final Optional<User> readUser = findUserByEmail(email);
 

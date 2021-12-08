@@ -34,7 +34,7 @@ public class SignupCommand implements Command {
         final String passwordRepeat = request.getParameter(RequestParameter.PASSWORD_REPEAT);
         final String firstName = request.getParameter(RequestParameter.FIRSTNAME);
         final String lastname = request.getParameter(RequestParameter.LASTNAME);
-        Optional<CommandResponse> response = registerUser(request, login,password, passwordRepeat, firstName, lastname);
+        Optional<CommandResponse> response = registerUser(request, login, password, passwordRepeat, firstName, lastname);
         if(response.isPresent()) return response.get();
         request.clearSession();
         request.createSession();
@@ -42,38 +42,14 @@ public class SignupCommand implements Command {
         return requestFactory.createRedirectResponse(PagePath.MAIL_INFO_REDIRECT);
     }
 
-    private boolean isValidInput(CommandRequest request, String login, String password, String passwordRepeat,
-                                 String firstName, String lastname) {
-        if(!UserValidator.isValidEmail(login)) {
-            request.addToSession(SessionAttribute.ERROR_SIGNUP_BUNDLE_KEY, ResourceBundleKey.SIGNUP_EMAIL_ERROR);
-            return false;
-        }
-        if(!UserValidator.isValidName(firstName) || !UserValidator.isValidName(lastname)) {
-            request.addToSession(SessionAttribute.ERROR_SIGNUP_BUNDLE_KEY, ResourceBundleKey.SIGNUP_NAME_ERROR);
-            return false;
-        }
-        if(!UserValidator.isValidPassword(password)) {
-            request.addToSession(SessionAttribute.ERROR_SIGNUP_BUNDLE_KEY, ResourceBundleKey.SIGNUP_PASSWORD_ERROR);
-            return false;
-        }
-        if(!UserValidator.isEqualPasswords(password, passwordRepeat)) {
-            request.addToSession(SessionAttribute.ERROR_SIGNUP_BUNDLE_KEY,
-                                 ResourceBundleKey.SIGNUP_PASSWORD_MATCHES_ERROR);
-            return false;
-        }
-        return true;
-    }
-
     private Optional<CommandResponse> registerUser(CommandRequest request,String login, String password,
                                                    String passwordRepeat, String firstName, String lastname) {
-        if(!isValidInput(request, login, password, passwordRepeat, firstName, lastname)) {
-            return Optional.of(requestFactory.createRedirectResponse(PagePath.SIGNUP_REDIRECT));
-        }
         Optional<User> user;
         try {
-            user = userService.register(login, password, firstName, lastname, UserRole.USER, UserStatus.UNCONFIRMED,
+            user = userService.register(login, password,passwordRepeat, firstName, lastname, UserRole.USER,
+                    UserStatus.UNCONFIRMED,
                     (String) request.retrieveFromSession(SessionAttribute.LOCALE)
-                            .orElse(Locale.getDefault().toString()));
+                                    .orElse(Locale.getDefault().toString()));
         } catch (ServiceException e) {
             LOG.error("Error during registering new user", e);
             return Optional.of(requestFactory.createForwardResponse(PagePath.ERROR500));

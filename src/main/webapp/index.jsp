@@ -5,6 +5,6 @@
 </head>
 <body>
 <%--<jsp:forward page="/controller?command=main_page" />--%>
-<jsp:forward page="/WEB-INF/jsp/user/order.jsp" />
+<jsp:forward page="/WEB-INF/jsp/user/test.jsp" />
 </body>
 </html>

@@ -25,14 +25,14 @@ public class ItemDaoImpl extends BaseDao<Item> {
             ID_FIELD_NAME,  NAME_FIELD_NAME, PRICE_FIELD_NAME
     );
 
-//todo getFields
+    //todo getFields
     private static final String INSERT_NEW_ITEM_QUERY = "INSERT INTO " + TABLE_NAME +
             " (id, name, price)\n" +
             "    VALUE (NULL, ?, ?)";
 
     private static final String UPDATE_QUERY_ADDITION = "name = ?, price = ?";
 
-    protected ItemDaoImpl(ConnectionPool pool) {
+    ItemDaoImpl(ConnectionPool pool) {
         super(pool, LOG);
         updateQuery = String.format(updateQuery, UPDATE_QUERY_ADDITION);
         insertQuery = INSERT_NEW_ITEM_QUERY;

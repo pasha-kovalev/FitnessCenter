@@ -1,4 +1,5 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <fmt:setLocale value="${sessionScope.locale}" />
 <fmt:setBundle basename="locale" />
@@ -20,6 +21,8 @@
 <fmt:message var="PlanLi7" key="transformation.plan.li7"/>
 <fmt:message var="PlanLi8" key="transformation.plan.li8"/>
 <fmt:message var="PlanLi8Span" key="transformation.plan.li8.span"/>
+<fmt:message var="sign" key="programs.sign"/>
+<fmt:message var="buy" key="programs.buy"/>
 <html>
 <head>
     <title>${title}</title>
@@ -32,8 +35,6 @@
     h1, h2, h3, h4, h5, h6 {
         font-family: "PT serif";
     }
-    .w3-tag, .fa {cursor:pointer}
-    .w3-tag {height:15px;width:15px;padding:0;margin-top:6px}
 </style>
 <body style="background-color: #F5F5F5; color: black">>
 <jsp:include page="component/header.jsp" flush="true"/>
@@ -86,7 +87,16 @@
                     <span class="w3-opacity">${PlanLi8Span}</span>
                 </li>
                 <li class="w3-light-grey w3-padding-24">
-                    <a href="${pageContext.request.contextPath}/controller?command=show_signup" class="w3-button w3-white w3-padding-large">Sign Up</a>
+                    <c:choose>
+                        <c:when test="${sessionScope.user == null}">
+                            <a href="${pageContext.request.contextPath}/controller?command=show_signup"
+                               class="w3-button w3-white w3-padding-large">${sign}</a>
+                        </c:when>
+                        <c:otherwise>
+                            <a href="${pageContext.request.contextPath}/controller?command=show_order"
+                               class="w3-button w3-white w3-padding-large">${buy}</a>
+                        </c:otherwise>
+                    </c:choose>
                 </li>
             </ul>
         </div>

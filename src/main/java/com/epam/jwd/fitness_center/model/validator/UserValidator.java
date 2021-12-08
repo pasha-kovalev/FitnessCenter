@@ -3,7 +3,7 @@ package com.epam.jwd.fitness_center.model.validator;
 import com.epam.jwd.fitness_center.model.entity.User;
 
 public final class UserValidator {
-    private static final String PASSWORD_REGEX = "[0-9a-zA-Z]{6,20}";
+    private static final String PASSWORD_REGEX = "[0-9a-zA-Z]{4,20}";
     private static final String EMAIL_REGEX = "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$";
     private static final String NAME_REGEX = "([А-Яа-я]{1,20})|([A-Z][a-z]{1,20})";
 
@@ -46,5 +46,4 @@ public final class UserValidator {
         return isValidEmail(user.getEmail())  && isValidName(user.getFirstName())
                && isValidName(user.getSecondName()) && flag;
     }
-
 }

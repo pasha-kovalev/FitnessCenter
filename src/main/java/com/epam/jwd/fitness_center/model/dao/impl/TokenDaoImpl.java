@@ -40,7 +40,7 @@ public class TokenDaoImpl extends BaseDao<Token> {
 
     private static final String UPDATE_QUERY_ADDITION = "user_token = ?, creation_date = ?";
 
-    protected TokenDaoImpl(ConnectionPool pool) {
+    TokenDaoImpl(ConnectionPool pool) {
         super(pool, LOG);
         updateQuery = String.format(updateQuery, UPDATE_QUERY_ADDITION);
         insertQuery = INSERT_NEW_USER_TOKEN_QUERY;
@@ -85,6 +85,7 @@ public class TokenDaoImpl extends BaseDao<Token> {
         return rows > 0;
     }
 
+    //todo interface
     public long removeByUserId(Long userId) throws DaoException {
         return executeUpdate(DELETE_BY_USER_ID_QUERY, st -> st.setLong(1, userId));
     }

@@ -5,7 +5,6 @@
 <fmt:setBundle basename="locale" />
 <fmt:message var="title" key="emailInfo.title"/>
 <fmt:message var="msgSuccess" key="emailInfo.msg.success"/>
-<fmt:message var="goToLogin" key="emailInfo.login"/>
 
 <html>
 <head>
@@ -23,9 +22,6 @@
         </c:when>
         <c:otherwise>
             <p>${msgSuccess}</p>
-            <p style="color: #3f51b5">
-                <a href="${pageContext.request.contextPath}/controller?command=show_login" >${goToLogin}</a>
-            </p>
         </c:otherwise>
     </c:choose>
 </div>

@@ -109,7 +109,6 @@ public class User implements Entity {
         return result;
     }
 
-    //todo ? change to StringBuffer
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("User{");

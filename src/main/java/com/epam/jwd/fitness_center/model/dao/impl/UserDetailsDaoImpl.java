@@ -39,7 +39,7 @@ public class UserDetailsDaoImpl extends BaseDao<UserDetails> {
 
     private static final String UPDATE_QUERY_ADDITION = "user_id = ?, card_id = ?, discount = ?, personal_trainer_id = ?";
 
-    protected UserDetailsDaoImpl(ConnectionPool pool) {
+    UserDetailsDaoImpl(ConnectionPool pool) {
         super(pool, LOG);
         updateQuery = String.format(updateQuery, UPDATE_QUERY_ADDITION);
         insertQuery = INSERT_NEW_USER_DETAILS_QUERY;
@@ -83,10 +83,6 @@ public class UserDetailsDaoImpl extends BaseDao<UserDetails> {
             fillEntity(st, details);
         });
         return rows > 0;
-    }
-
-    public long removeByUserId(Long userId) throws DaoException {
-        return executeUpdate(DELETE_BY_USER_ID_QUERY, st -> st.setLong(1, userId));
     }
 
     public List<UserDetails> findByUserId(Long userId) throws DaoException {

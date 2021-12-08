@@ -30,7 +30,6 @@ public abstract class BaseDao<T extends Entity> implements EntityDao<T>{
     protected String selectAllQuery;
     protected String selectByIdQuery;
 
-
     private final Logger logger;
     protected final ConnectionPool pool;
 

@@ -21,7 +21,6 @@ import java.util.Optional;
 
 public class UserDaoImpl extends BaseDao<User> implements UserDao {
     private static final Logger LOG = LogManager.getLogger(UserDaoImpl.class);
-
     private static final String USER_TABLE_NAME = "user";
     private static final String ID_FIELD_NAME = "id";
     private static final String EMAIL_FIELD_NAME = "email";
@@ -117,7 +116,7 @@ public class UserDaoImpl extends BaseDao<User> implements UserDao {
     protected void fillEntity(PreparedStatement statement, User entity) throws SQLException {
         statement.setString( 1,entity.getEmail());
         statement.setString( 2,entity.getPassword());
-        statement.setString( 3,entity.getRole().toString().toLowerCase());
+        statement.setString( 3,entity.getRole().name().toLowerCase());
         statement.setString( 4,entity.getStatus().name().toLowerCase());
         statement.setString( 5,entity.getFirstName());
         statement.setString( 6,entity.getSecondName());
@@ -135,7 +134,7 @@ public class UserDaoImpl extends BaseDao<User> implements UserDao {
     @Override
     public boolean updateStatus(UserStatus status, long id) throws DaoException {
         int rows =  executeUpdate(UPDATE_USER_STATUS_BY_ID, st -> {
-            st.setString(1, status.toString().toLowerCase());
+            st.setString(1, status.name().toLowerCase());
             st.setLong(2, id);
         });
         return rows > 0;
@@ -166,7 +165,7 @@ public class UserDaoImpl extends BaseDao<User> implements UserDao {
                     .setPassword(rs.getString(PASSWORD_HASH_FIELD_NAME))
                     .setFirstName(rs.getString(FIRST_NAME_FIELD_NAME))
                     .setRole(UserRole.valueOf(rs.getString(ACCOUNT_ROLE_FIELD_NAME).toUpperCase())).setSecondName(rs.getString(SECOND_NAME_FIELD_NAME))
-                    .setStatus( UserStatus.valueOf(rs.getString(STATUS_FIELD_NAME).toUpperCase()))
+                    .setStatus(UserStatus.valueOf(rs.getString(STATUS_FIELD_NAME).toUpperCase()))
                     .build();
         } catch (SQLException e) {
             throw new DaoException("Unable to extract user", e);

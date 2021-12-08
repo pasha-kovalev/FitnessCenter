@@ -14,8 +14,8 @@ public class CommandProvider {
     private final RequestFactory requestFactory = RequestFactory.getInstance();
 
     private CommandProvider() {
-        commands.put(DEFAULT, new ShowMainPageCommand());
-        commands.put(MAIN_PAGE, commands.get(DEFAULT));
+        commands.put(DEFAULT, new DefaultCommand(requestFactory));
+        commands.put(MAIN_PAGE, new ShowMainPageCommand());
         commands.put(SHOW_USERS, new ShowUsersPageCommand());
         commands.put(LOGIN, new LoginCommand(requestFactory));
         commands.put(SHOW_LOGIN, new ShowLoginPageCommand(requestFactory));

@@ -27,9 +27,9 @@
             </c:if>
         </p>
         <label for="email">${loginLabel}</label>
-        <input id="email" type="text" name="login" >
+        <input id="email" type="text" name="login" required>
         <label for="password">${password}</label>
-        <input id="password" type="password" name="password" >
+        <input id="password" type="password" name="password" required>
         <input id="login-button" type="submit" value="${button}" />
     </form>
 </div>

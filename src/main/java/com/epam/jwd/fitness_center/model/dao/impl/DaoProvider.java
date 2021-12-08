@@ -7,7 +7,7 @@ public class DaoProvider {
     private final TokenDaoImpl tokenDao = new TokenDaoImpl(ConnectionPoolManager.getInstance());
     private final UserDetailsDaoImpl userDetailsDao = new UserDetailsDaoImpl(ConnectionPoolManager.getInstance());
     private final ItemDaoImpl itemDao = new ItemDaoImpl(ConnectionPoolManager.getInstance());
-
+    private final OrderDaoImpl orderDao = new OrderDaoImpl(ConnectionPoolManager.getInstance());
 
     private DaoProvider() {
     }
@@ -22,15 +22,15 @@ public class DaoProvider {
     public TokenDaoImpl getTokenDao() {
         return tokenDao;
     }
-
     public UserDetailsDaoImpl getUserDetailsDao() {
         return userDetailsDao;
     }
-
     public ItemDaoImpl getItemDao() {
         return itemDao;
     }
-
+    public OrderDaoImpl getOrderDao() {
+        return orderDao;
+    }
 
     private static class DaoProviderHolder {
         private static final DaoProvider instance = new DaoProvider();
