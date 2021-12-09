@@ -1,6 +1,7 @@
 package com.epam.jwd.fitness_center.model.dao.impl;
 
 import com.epam.jwd.fitness_center.model.connection.ConnectionPoolManager;
+import com.epam.jwd.fitness_center.model.dao.CardDao;
 
 public class DaoProvider {
     private final UserDaoImpl userDao = new UserDaoImpl(ConnectionPoolManager.getInstance());
@@ -8,6 +9,7 @@ public class DaoProvider {
     private final UserDetailsDaoImpl userDetailsDao = new UserDetailsDaoImpl(ConnectionPoolManager.getInstance());
     private final ItemDaoImpl itemDao = new ItemDaoImpl(ConnectionPoolManager.getInstance());
     private final OrderDaoImpl orderDao = new OrderDaoImpl(ConnectionPoolManager.getInstance());
+    private final CardDao cardDao = new CardDaoImpl(ConnectionPoolManager.getInstance());
 
     private DaoProvider() {
     }
@@ -30,6 +32,9 @@ public class DaoProvider {
     }
     public OrderDaoImpl getOrderDao() {
         return orderDao;
+    }
+    public CardDao getCardDao() {
+        return cardDao;
     }
 
     private static class DaoProviderHolder {

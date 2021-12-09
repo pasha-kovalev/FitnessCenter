@@ -21,7 +21,6 @@ public final class UserValidator {
 
     public static boolean isValidName(String name) {
         return isValidString(name, NAME_REGEX);
-
     }
 
     public static boolean isEqualPasswords(String password1, String password2) {

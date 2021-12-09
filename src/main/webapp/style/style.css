@@ -271,7 +271,7 @@ button:hover {
   font-size: 16px;
   font-weight: 500;
 }
-.form2 input:not([name="accept"]){
+.form2 input:not([name="acceptCredit"]){
   display: block;
   border: 1px solid gray;
   height: 50px;

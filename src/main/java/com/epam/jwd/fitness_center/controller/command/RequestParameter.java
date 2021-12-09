@@ -20,7 +20,8 @@ public final class RequestParameter {
     public static final String HEIGHT = "height";
     public static final String COMMENT = "comment";
     public static final String TRAINER = "trainer";
-    public static final String ORDER = "order";
+    public static final String CARD_NUMBER = "cardNumber";
+    public static final String CREDIT_CHECKBOX = "acceptCredit";
 
     private RequestParameter() {}
 

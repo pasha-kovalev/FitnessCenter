@@ -8,6 +8,7 @@ import com.epam.jwd.fitness_center.model.entity.Order;
 import com.epam.jwd.fitness_center.model.entity.OrderStatus;
 import com.epam.jwd.fitness_center.model.entity.UserDetails;
 import com.epam.jwd.fitness_center.model.service.OrderService;
+import com.epam.jwd.fitness_center.model.service.PaymentService;
 import com.epam.jwd.fitness_center.model.service.UserService;
 import com.epam.jwd.fitness_center.model.service.impl.ServiceProvider;
 import org.apache.logging.log4j.LogManager;
@@ -61,6 +62,8 @@ public class MakeOrderCommand implements Command {
             return requestFactory.createRedirectResponse(PagePath.ERROR500);
         }
         request.addToSession(SessionAttribute.ORDER, order);
+        request.addToSession(SessionAttribute.CREDIT_PERCENTAGE, PaymentService.DEFAULT_CREDIT_PERCENTAGE);
+        request.addToSession(SessionAttribute.CREDIT_PERIOD, PaymentService.DEFAULT_CREDIT_PERIOD);
         return requestFactory.createRedirectResponse(PagePath.SHOW_PAYMENT_REDIRECT);
     }
 

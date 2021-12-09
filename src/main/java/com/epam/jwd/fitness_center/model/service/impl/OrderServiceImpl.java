@@ -1,15 +1,12 @@
 package com.epam.jwd.fitness_center.model.service.impl;
 
-import com.epam.jwd.fitness_center.controller.PagePath;
 import com.epam.jwd.fitness_center.exception.DaoException;
 import com.epam.jwd.fitness_center.exception.ServiceException;
 import com.epam.jwd.fitness_center.model.dao.OrderDao;
 import com.epam.jwd.fitness_center.model.dao.impl.DaoProvider;
-import com.epam.jwd.fitness_center.model.dao.impl.ItemDaoImpl;
 import com.epam.jwd.fitness_center.model.entity.Order;
 import com.epam.jwd.fitness_center.model.entity.OrderStatus;
 import com.epam.jwd.fitness_center.model.service.OrderService;
-import com.epam.jwd.fitness_center.model.service.UserService;
 import com.epam.jwd.fitness_center.model.util.TextEscapeUtil;
 import com.epam.jwd.fitness_center.model.validator.OrderValidator;
 import org.apache.logging.log4j.LogManager;
@@ -62,6 +59,7 @@ public class OrderServiceImpl implements OrderService {
         if(!OrderValidator.isValidPeriod(period)){
             throw new ServiceException("Not valid period: " + period);
         }
+        //insert program until period ends
         BigDecimal price = calcPrice(userDetailsId, itemId, period);
         Order order = new Order.Builder()
                                .setUserDetailsId(userDetailsId)

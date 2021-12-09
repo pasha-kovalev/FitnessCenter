@@ -36,6 +36,7 @@ public class CommandProvider {
         commands.put(SHOW_ORDER, new ShowOrderPageCommand(requestFactory));
         commands.put(ORDER, new MakeOrderCommand(requestFactory));
         commands.put(SHOW_PAYMENT, new ShowPaymentPageCommand(requestFactory));
+        commands.put(PAYMENT, new PaymentCommand(requestFactory));
     }
 
     public Command of(String name) {

@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="ct" uri="customtag" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -12,8 +13,14 @@
 </style>
 <body class="form2" onload="outPayment()">
 <jsp:include page="../component/header.jsp" flush="true"/>
-<form id="order" name="payment-form" action="${pageContext.request.contextPath}/controller?command=pay" method="post">
+<form id="order" name="payment-form" action="${pageContext.request.contextPath}/controller?command=payment" method="post">
     <h1>Оплата</h1>
+    <p id="incorrect">
+        <ct:pullSessionAttribute attribute="errorPaymentMsg" name="msg"/>
+        <c:if test="${pageScope.msg != null}">
+            <fmt:message key="${msg}"/>
+        </c:if>
+    </p>
     <div>
         <label for="name">Имя держателя</label>
         <input id="name" type="text" maxlength="20" required
@@ -44,10 +51,11 @@
             <option value="25"> 2025</option>
         </select>
         <label for="ccn">Номер карты:</label>
-        <input id="ccn" type="tel" inputmode="numeric" pattern="[0-9]{16}" placeholder="1111222233334444" required
+        <input id="ccn" name="cardNumber" type="tel" inputmode="numeric" pattern="[0-9]{16}"
+               placeholder="1111222233334444" required
                oninvalid="setCustomValidity('${notValidTitle}')" oninput="setCustomValidity('')">
-        <label for="accept">
-            <input type="checkbox" id="accept" name="accept" value="yes" onclick="outPayment()"> Кредит
+        <label for="acceptCredit">
+            <input type="checkbox" id="acceptCredit" name="acceptCredit" value="yes" onclick="outPayment()"> Кредит
         </label>
         <p id="creditInfo" style="color: darkred"></p>
         <p>К оплате: <span id="price" style="color: green; font-weight: bold">${sessionScope.order.price}</span></p>
@@ -61,15 +69,18 @@
 <jsp:include page="../component/footer.jsp" flush="true"/>
 </body>
 <script>
-    var checkBox = document.getElementById("accept");
+    var checkBox = document.getElementById("acceptCredit");
     var creditInfo = document.getElementById("creditInfo");
     var priceElem = document.getElementById("price");
     var price = parseFloat(${sessionScope.order.price});
+    var creditPercentage = parseFloat(${sessionScope.creditPercentage});
+    var creditPeriod = parseInt(${sessionScope.creditPeriod})
+
 
     function outPayment() {
         if (checkBox.checked == true) {
-            var pricePerMonth = price * 1.05 / 3;
-            creditInfo.innerHTML = "На три месяца. " + "В месяц: " + pricePerMonth + " BYN";
+            var pricePerMonth = price * (1 + (creditPercentage / 100)) / creditPeriod;
+            creditInfo.innerHTML = "На "+ creditPeriod +" месяца. " + "В месяц: " + pricePerMonth + " BYN";
             priceElem.innerHTML = pricePerMonth + " BYN";
             creditInfo.style.display = "block";
         } else {

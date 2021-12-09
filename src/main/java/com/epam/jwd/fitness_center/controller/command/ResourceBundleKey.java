@@ -8,10 +8,10 @@ public class ResourceBundleKey {
     public static final String INFO_VALID_LINK = "emailInfo.msg.success";
     public static final String LOGIN_ERROR = "login.exception";
     public static final String SIGNUP_ERROR = "signup.error";
-    public static final String SIGNUP_EMAIL_ERROR = "signup.email.input.title";
-    public static final String SIGNUP_NAME_ERROR = "signup.input.name.notValid";
-    public static final String SIGNUP_PASSWORD_ERROR = "signup.password.input.title";
-    public static final String SIGNUP_PASSWORD_MATCHES_ERROR = "signup.error.passwordMismatch";
+    public static final String INFO_PAYMENT_SUCCESS = "payment.msg.success";
+    public static final String INFO_PAYMENT_CARD_NOT_EXIST = "payment.err.cardNotExist";
+    public static final String INFO_PAYMENT_INSUFFICIENT_FUNDS = "payment.err.funds";
+
 
     private ResourceBundleKey() {}
 }
