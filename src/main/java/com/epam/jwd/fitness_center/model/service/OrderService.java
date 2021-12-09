@@ -12,4 +12,6 @@ public interface OrderService extends EntityService<Order> {
     List<Order> findOrderByTrainerId(Long trainerId) throws ServiceException;
     List<Order> findOrderByAssignmentTrainerId(Long trainerId) throws ServiceException;
     void updateOrderStatus(OrderStatus status, long id) throws ServiceException;
+    Order insert(long userDetailsId, OrderStatus status, long itemId, long trainerId, long period,
+                 String comment) throws ServiceException;
 }

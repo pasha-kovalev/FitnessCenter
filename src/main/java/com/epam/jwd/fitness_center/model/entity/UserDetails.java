@@ -5,11 +5,11 @@ import java.math.BigDecimal;
 public final class UserDetails implements Entity {
     private static final long serialVersionUID = 1384401522272546369L;
     private long userId;
-    private long cardId;
+    private Long cardId;
     private BigDecimal discount;
     private Long personalTrainerId;
 
-    public UserDetails(long userId, long cardId, BigDecimal discount, Long personalTrainerId) {
+    public UserDetails(long userId, Long cardId, BigDecimal discount, Long personalTrainerId) {
         this.userId = userId;
         this.cardId = cardId;
         this.discount = discount;

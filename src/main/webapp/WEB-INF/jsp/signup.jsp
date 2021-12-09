@@ -28,7 +28,7 @@
     <form id="signup" name="signup-form" action="${pageContext.request.contextPath}/controller?command=signup" method="post">
         <h3>${title}</h3>
         <p id="incorrect">
-            <ct:pullSessionAttribute attribute="errorSignupMsg" msg="msg"/>
+            <ct:pullSessionAttribute attribute="errorSignupMsg" name="msg"/>
             <c:if test="${pageScope.msg != null}">
                 <fmt:message key="${msg}"/>
             </c:if>

@@ -21,7 +21,7 @@
         <h3>${title}</h3>
 
         <p id="incorrect">
-            <ct:pullSessionAttribute attribute="errorLoginMsg" msg="msg"/>
+            <ct:pullSessionAttribute attribute="errorLoginMsg" name="msg"/>
             <c:if test="${pageScope.msg != null}">
                 <fmt:message key="${msg}"/>
             </c:if>

@@ -9,7 +9,7 @@
 <fmt:message var="login" key="header.login"/>
 <fmt:message var="about" key="header.about"/>
 <fmt:message var="logout" key="header.logout"/>
-<fmt:message var="programs" key="header.programs"/>
+<fmt:message var="program" key="header.programs"/>
 <fmt:message var="programs1" key="header.programs.first"/>
 <fmt:message var="programs2" key="header.programs.second"/>
 
@@ -18,7 +18,7 @@
     <div class="w3-bar w3-black w3-card">
         <a href="${pageContext.request.contextPath}/controller?command=main_page" class="w3-bar-item w3-button w3-padding-large">${home}</a>
         <div class="w3-dropdown-hover w3-hide-small">
-            <button class="w3-padding-large w3-button" title="More">${programs} <i class="fa fa-caret-down"></i></button>
+            <button class="w3-padding-large w3-button" title="More">${program} <i class="fa fa-caret-down"></i></button>
             <div class="w3-dropdown-content w3-bar-block w3-card-4">
                 <a href="${pageContext.request.contextPath}/controller?command=show_programs" class="w3-bar-item w3-button">
                     ${programs1}

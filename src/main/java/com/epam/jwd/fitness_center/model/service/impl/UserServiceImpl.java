@@ -14,6 +14,7 @@ import com.epam.jwd.fitness_center.model.validator.UserValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -76,7 +77,6 @@ public class UserServiceImpl implements UserService {
             return Optional.empty();
         }
         if(isEmailRegistered(email)) return Optional.empty();
-
         User user = new User.Builder().setEmail(email)
                 .setPassword(password1)
                 .setFirstName(firstName)
@@ -84,6 +84,7 @@ public class UserServiceImpl implements UserService {
                 .setSecondName(secondName)
                 .setStatus(status).build();
         User userFromDb = insert(user);
+        this.addUserDetails(userFromDb);
         long userId = userFromDb.getId();
         MailService mailService = ServiceProvider.getInstance().getMailService();
         mailService.sendConfirmationEmail(userId, email, locale);
@@ -220,20 +221,63 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> findActiveTrainers() throws ServiceException {
-        //todo add nullable description and photo path to {user table} for trainers
-        return Optional.empty();
+    public List<User> findActiveTrainers() throws ServiceException {
+        try {
+            return userDao.findActiveTrainers();
+        } catch (DaoException e) {
+            throw new ServiceException("Unable to find all active trainers", e);
+        }
     }
 
     @Override
-    public Optional<UserDetails> findUserDetails(User user) throws ServiceException {
+    public Optional<UserDetails> findUserDetails(long userId) throws ServiceException {
         final UserDetailsDaoImpl userDetailsDao = DaoProvider.getInstance().getUserDetailsDao();
         List<UserDetails> userDetailsList;
         try {
-            userDetailsList = userDetailsDao.findByUserId(user.getId());
+            userDetailsList = userDetailsDao.findByUserId(userId);
         } catch (DaoException e) {
             throw new ServiceException("Unable to find user details by id", e);
         }
         return Optional.ofNullable(userDetailsList.get(0));
+    }
+
+    @Override
+    public UserDetails addUserDetails(User user)
+            throws ServiceException {
+        final UserDetailsDaoImpl userDetailsDao = DaoProvider.getInstance().getUserDetailsDao();
+        UserDetails userDetails = new UserDetails(user.getId(), null, null, null);
+        try {
+            return userDetailsDao.create(userDetails);
+        } catch (DaoException e) {
+            throw new ServiceException("Unable to add user details ", e);
+        }
+    }
+
+    @Override
+    public void updateUserDetails(UserDetails userDetails) throws ServiceException {
+        try {
+            final UserDetailsDaoImpl userDetailsDao = DaoProvider.getInstance().getUserDetailsDao();
+            userDetailsDao.update(userDetails);
+        } catch (DaoException e) {
+            throw new ServiceException("Unable to update user details", e);
+        }
+    }
+
+    @Override
+    public void updateUserDetailsDiscount(UserDetails userDetails, BigDecimal discount) throws ServiceException {
+        userDetails.setDiscount(discount);
+        updateUserDetails(userDetails);
+    }
+
+    @Override
+    public void updateUserDetailsTrainerId(UserDetails userDetails, long trainerId) throws ServiceException {
+        userDetails.setPersonalTrainerId(trainerId);
+        updateUserDetails(userDetails);
+    }
+
+    @Override
+    public void updateUserDetailsCardId(UserDetails userDetails, long cardId) throws ServiceException {
+        userDetails.setCardId(cardId);
+        updateUserDetails(userDetails);
     }
 }

@@ -10,7 +10,7 @@
             <page-encoding>UTF-8</page-encoding>
         </jsp-property-group>
     </jsp-config>
-    <error-page>
+    <!--<error-page>
         <error-code>404</error-code>
         <location>/WEB-INF/jsp/error404.jsp</location>
     </error-page>
@@ -20,5 +20,5 @@
     </error-page>
     <error-page>
         <location>/WEB-INF/jsp/error.jsp</location>
-    </error-page>
+    </error-page>-->
 </web-app>

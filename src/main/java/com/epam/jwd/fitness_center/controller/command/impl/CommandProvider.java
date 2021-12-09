@@ -34,6 +34,8 @@ public class CommandProvider {
         commands.put(SHOW_TRANSFORM_PROGRAM, new ShowTransformProgramCommand(requestFactory));
         commands.put(USER_CABINET, new ShowUserCabinetCommand(requestFactory));
         commands.put(SHOW_ORDER, new ShowOrderPageCommand(requestFactory));
+        commands.put(ORDER, new MakeOrderCommand(requestFactory));
+        commands.put(SHOW_PAYMENT, new ShowPaymentPageCommand(requestFactory));
     }
 
     public Command of(String name) {

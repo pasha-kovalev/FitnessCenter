@@ -10,6 +10,7 @@ public final class SessionAttribute {
     public static final String PREVIOUS_QUERY = "previousQuery";
     public static final String INFO_BUNDLE_KEY = "info";
     public static final String ADDITIONAL_INFO = "additionalInfo";
+    public static final String ORDER = "order";
 
     private SessionAttribute() {}
 

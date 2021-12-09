@@ -11,24 +11,17 @@ public final class UserValidator {
     }
 
     public static boolean isValidEmail(String email) {
-        if(email == null) {
-            return false;
-        }
-        return email.matches(EMAIL_REGEX);
+        return isValidString(email, EMAIL_REGEX);
     }
 
     public static boolean isValidPassword(String password) {
-        if(password == null) {
-            return false;
-        }
-        return password.matches(PASSWORD_REGEX);
+        return isValidString(password, PASSWORD_REGEX);
+
     }
 
     public static boolean isValidName(String name) {
-        if(name == null) {
-            return false;
-        }
-        return name.matches(NAME_REGEX);
+        return isValidString(name, NAME_REGEX);
+
     }
 
     public static boolean isEqualPasswords(String password1, String password2) {
@@ -45,5 +38,12 @@ public final class UserValidator {
         }
         return isValidEmail(user.getEmail())  && isValidName(user.getFirstName())
                && isValidName(user.getSecondName()) && flag;
+    }
+
+    private static boolean isValidString(String str, String regex) {
+        if(str == null) {
+            return false;
+        }
+        return str.matches(regex);
     }
 }

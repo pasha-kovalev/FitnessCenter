@@ -16,8 +16,8 @@
 <form id="order" name="order-form" action="${pageContext.request.contextPath}/controller?command=order" method="post">
     <h1>Заказ</h1>
     <div class="tab">
-        <label style="margin-top: 20px;" for="programs">Выберите программу:</label>
-        <select id="programs" name="programs" form="order">
+        <label style="margin-top: 20px;" for="program">Выберите программу:</label>
+        <select id="program" name="program" form="order">
             <c:forEach var="item" items="${requestScope.productList}" varStatus="loop">
                 <option value="${item.id}"
                         price="${item.price}"
@@ -25,12 +25,20 @@
                         ${item.name}</option>
             </c:forEach>
         </select>
-        <label for="periods">Выберите срок:</label>
-        <select id="periods" name="periods" form="order" required>
+        <label for="period">Выберите срок:</label>
+        <select id="period" name="period" form="order" required>
             <option value="1">1 месяц</option>
             <option value="2">2 месяца</option>
             <option value="3">3 месяца</option>
         </select>
+        <c:if test="${sessionScope.userDetails == null || sessionScope.userDetails.personalTrainerId == null}">
+            <label style="margin-top: 20px;" for="trainer">Выберите личного тренера:</label>
+            <select id="trainer" name="trainer" form="order">
+                <c:forEach var="trainer" items="${requestScope.trainerList}" >
+                    <option value="${trainer.id}">${trainer.firstName} ${trainer.secondName}</option>
+                </c:forEach>
+            </select>
+        </c:if>
         <p style="padding-top: 24px;font-weight: bold;">Итоговая цена:
             <c:choose>
                 <c:when test="${requestScope.productListDiscount == null}">
@@ -47,43 +55,15 @@
     </div>
     <div class="tab"><p style="text-align: center">Информация для тренера</p>
         <label for="weight">Вес</label>
-        <input id="weight" type="number" step="1" min="25" max="500" required>
+        <input id="weight" name="weight" type="number" step="1" min="25" max="500" required
+               oninvalid="setCustomValidity('${notValidTitle}')" oninput="setCustomValidity('')">
         <label for="height">Рост</label>
-        <input id="height" type="number" step="1" min="50" max="250" required>
+        <input id="height" name="height" type="number" step="1" min="50" max="250" required
+               oninvalid="setCustomValidity('${notValidTitle}')" oninput="setCustomValidity('')">
         <label for="comment">Расскажите нам о доступном снаряжении и своём опыте:</label>
-        <textarea id="comment" name="comment" rows="4" cols="33" maxlength="1000" required ></textarea>
+        <textarea id="comment" name="comment" rows="4" cols="33" maxlength="1000" required
+                  oninvalid="setCustomValidity('${notValidTitle}')" oninput="setCustomValidity('')"></textarea>
     </div>
-    <%--<div class="tab">Оплата:
-        <label for="name">Имя держателя</label>
-        <input id="name" type="text" maxlength="20" required>
-        <label for="cvv">CVV</label>
-        <input id="cvv" type="text" pattern="\d*" minlength="3" maxlength="3" type="text" required>
-        <label>Срок</label>
-        <select>
-            <option value="01">January</option>
-            <option value="02">February </option>
-            <option value="03">March</option>
-            <option value="04">April</option>
-            <option value="05">May</option>
-            <option value="06">June</option>
-            <option value="07">July</option>
-            <option value="08">August</option>
-            <option value="09">September</option>
-            <option value="10">October</option>
-            <option value="11">November</option>
-            <option value="12">December</option>
-        </select>
-        <select>
-            <option value="21"> 2021</option>
-            <option value="22"> 2022</option>
-            <option value="23"> 2023</option>
-            <option value="24"> 2024</option>
-            <option value="25"> 2025</option>
-        </select>
-        <label for="ccn">Номер карты:</label>
-        <input id="ccn" type="tel" inputmode="numeric" pattern="[0-9]{16}"
-               maxlength="16" maxlength="16" placeholder="xxxx xxxx xxxx xxxx" required>
-    </div>--%>
     <div style="overflow:auto; padding-top: 36px;">
         <div style="float:right;">
             <button type="button" id="prevBtn" onclick="nextPrev(-1)">Previous</button>
@@ -98,8 +78,8 @@
 <jsp:include page="../component/footer.jsp" flush="true"/>
 <script>
     var currentTab = 0;
-    var program = document.getElementById("programs");
-    var periods = document.getElementById("periods");
+    var program = document.getElementById("program");
+    var periods = document.getElementById("period");
     var price = document.getElementById("price");
     var totalPrice = document.getElementById("total");
 
@@ -112,6 +92,7 @@
         } else {
             periods.disabled = false;
         }
+
         refreshPrice();
     }
 
@@ -120,10 +101,16 @@
     }
 
     function refreshPrice() {
-        price.innerHTML = parseFloat(program.options[program.selectedIndex].getAttribute("price")) *
-            parseFloat(periods.options[periods.selectedIndex].getAttribute("value")) + " ";
-        totalPrice.innerHTML = parseFloat(program.options[program.selectedIndex].getAttribute("total")) *
-            parseFloat(periods.options[periods.selectedIndex].getAttribute("value")) + " ";
+        if(program.options[program.selectedIndex].text === 'transformation') {
+            price.innerHTML = parseFloat(program.options[program.selectedIndex].getAttribute("price")) + " ";
+            totalPrice.innerHTML = parseFloat(program.options[program.selectedIndex].getAttribute("total")) + " ";
+        } else {
+            price.innerHTML = parseFloat(program.options[program.selectedIndex].getAttribute("price")) *
+                parseFloat(periods.options[periods.selectedIndex].getAttribute("value")) + " ";
+            totalPrice.innerHTML = parseFloat(program.options[program.selectedIndex].getAttribute("total")) *
+                parseFloat(periods.options[periods.selectedIndex].getAttribute("value")) + " ";
+        }
+
     }
     function showTab(n) {
         var x = document.getElementsByClassName("tab");

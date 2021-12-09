@@ -1,15 +1,21 @@
 package com.epam.jwd.fitness_center.model.service.impl;
 
+import com.epam.jwd.fitness_center.controller.PagePath;
 import com.epam.jwd.fitness_center.exception.DaoException;
 import com.epam.jwd.fitness_center.exception.ServiceException;
 import com.epam.jwd.fitness_center.model.dao.OrderDao;
 import com.epam.jwd.fitness_center.model.dao.impl.DaoProvider;
+import com.epam.jwd.fitness_center.model.dao.impl.ItemDaoImpl;
 import com.epam.jwd.fitness_center.model.entity.Order;
 import com.epam.jwd.fitness_center.model.entity.OrderStatus;
 import com.epam.jwd.fitness_center.model.service.OrderService;
+import com.epam.jwd.fitness_center.model.service.UserService;
+import com.epam.jwd.fitness_center.model.util.TextEscapeUtil;
+import com.epam.jwd.fitness_center.model.validator.OrderValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class OrderServiceImpl implements OrderService {
@@ -47,6 +53,35 @@ public class OrderServiceImpl implements OrderService {
             LOG.error("Unable to insert order : {}. {}", entity, e.getMessage());
             throw new ServiceException("Unable to insert order", e);
         }
+    }
+
+    @Override
+    public Order insert(long userDetailsId, OrderStatus status, long itemId, long trainerId, long period,
+                        String comment) throws ServiceException {
+        String commentEscaped = TextEscapeUtil.escapeHtml(comment);
+        if(!OrderValidator.isValidPeriod(period)){
+            throw new ServiceException("Not valid period: " + period);
+        }
+        BigDecimal price = calcPrice(userDetailsId, itemId, period);
+        Order order = new Order.Builder()
+                               .setUserDetailsId(userDetailsId)
+                               .setOrderStatus(status)
+                               .setItemId(itemId)
+                               .setTrainerId(trainerId)
+                               .setPrice(price)
+                               .setComment(commentEscaped)
+                               .build();
+        try {
+            return orderDao.create(order);
+        } catch (DaoException e) {
+            LOG.error("Unable to insert order : {}. {}", order, e.getMessage());
+            throw new ServiceException("Unable to insert order", e);
+        }
+    }
+
+    private BigDecimal calcPrice(long userDetailsId, long itemId, long itemAmount) throws ServiceException {
+        ItemServiceImpl itemService = ServiceProvider.getInstance().getItemService();
+        return itemService.calculateItemPriceForUser(userDetailsId, itemId).multiply(new BigDecimal(itemAmount));
     }
 
     @Override

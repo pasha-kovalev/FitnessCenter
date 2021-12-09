@@ -45,7 +45,7 @@ public class LoginCommand implements Command {
         request.createSession();
         request.addToSession(SessionAttribute.USER, user);
         try {
-            userDetailsOptional = userService.findUserDetails(user);
+            userDetailsOptional = userService.findUserDetails(user.getId());
         } catch (ServiceException e) {
             LOG.error("Error during searching user details. User id: {}. {}", user.getId(), e.getMessage());
             return requestFactory.createForwardResponse(PagePath.ERROR500);

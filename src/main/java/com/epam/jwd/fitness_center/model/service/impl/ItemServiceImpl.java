@@ -5,7 +5,10 @@ import com.epam.jwd.fitness_center.exception.ServiceException;
 import com.epam.jwd.fitness_center.model.dao.impl.DaoProvider;
 import com.epam.jwd.fitness_center.model.dao.impl.ItemDaoImpl;
 import com.epam.jwd.fitness_center.model.entity.Item;
+import com.epam.jwd.fitness_center.model.entity.User;
+import com.epam.jwd.fitness_center.model.entity.UserDetails;
 import com.epam.jwd.fitness_center.model.service.EntityService;
+import com.epam.jwd.fitness_center.model.service.UserService;
 import com.epam.jwd.fitness_center.model.validator.UserValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ItemServiceImpl implements EntityService<Item> {
@@ -35,6 +39,14 @@ public class ItemServiceImpl implements EntityService<Item> {
         }
     }
 
+    public Optional<Item> find(long id) throws ServiceException {
+        try {
+            return itemDao.read(id);
+        } catch (DaoException e) {
+            throw new ServiceException("Unable to find item by id", e);
+        }
+    }
+
     @Override
     public boolean update(Item entity) throws ServiceException {
         try {
@@ -53,6 +65,17 @@ public class ItemServiceImpl implements EntityService<Item> {
             LOG.error("Unable to insert item with name: {}. {}", entity.getName(), e.getMessage());
             throw new ServiceException("Unable to insert item", e);
         }
+    }
+
+    public BigDecimal calculateItemPriceForUser(long userId, long itemId) throws ServiceException {
+        UserService userService = ServiceProvider.getInstance().getUserService();
+        userService.findUserDetails(userId);
+        Optional<UserDetails> optionalUserDetails = userService.findUserDetails(userId);
+        Optional<Item> optionalItem = find(itemId);
+        if (!optionalUserDetails.isPresent() || !optionalItem.isPresent()) {
+            throw new ServiceException("Unable to calculate price. User ID: " + userId + " Item ID: " + itemId);
+        }
+        return calcFinalPrice(optionalItem.get().getPrice(), optionalUserDetails.get().getDiscount());
     }
 
     public List<Item> modifyItemsByDiscount(List<Item> items, BigDecimal discount) {

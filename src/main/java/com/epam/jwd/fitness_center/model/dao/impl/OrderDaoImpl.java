@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.Arrays;
 import java.util.List;
 
@@ -106,11 +107,23 @@ public class OrderDaoImpl extends BaseDao<Order> implements OrderDao {
         statement.setLong( 1, entity.getUserDetailsId()  );
         statement.setString( 2, entity.getOrderStatus().name().toLowerCase());
         statement.setLong( 3, entity.getItemId());
-        statement.setLong( 4, entity.getAssignmentTrainerId());
-        statement.setLong( 5, entity.getTrainerId());
+        if(entity.getAssignmentTrainerId() == null) {
+            statement.setNull( 4, Types.INTEGER);
+        } else {
+            statement.setLong( 4, entity.getAssignmentTrainerId());
+        }
+        if(entity.getTrainerId() == null) {
+            statement.setNull( 5, Types.INTEGER);
+        } else {
+            statement.setLong( 5, entity.getTrainerId());
+        }
         statement.setBigDecimal( 6, entity.getPrice());
         statement.setString(7, entity.getComment());
-        statement.setString(8, entity.getReview());
+        if(entity.getReview() == null) {
+            statement.setNull( 8, Types.VARCHAR);
+        } else {
+            statement.setString(8, entity.getReview());
+        }
     }
 
     @Override
@@ -119,7 +132,7 @@ public class OrderDaoImpl extends BaseDao<Order> implements OrderDao {
             return new Order.Builder()
                             .setId(rs.getLong(ID_FIELD_NAME))
                             .setUserDetailsId(rs.getLong(USER_DETAILS_ID_FIELD_NAME))
-                            .setOrderStatus(OrderStatus.valueOf(rs.getString(ORDER_STATUS_FIELD_NAME)))
+                            .setOrderStatus(OrderStatus.valueOf(rs.getString(ORDER_STATUS_FIELD_NAME).toUpperCase()))
                             .setItemId(rs.getLong(ITEM_ID_FIELD_NAME))
                             .setAssignmentTrainerId(rs.getLong(ASSIGNMENT_TRAINER_ID_FIELD_NAME))
                             .setTrainerId(rs.getLong(TRAINER_ID_FIELD_NAME))

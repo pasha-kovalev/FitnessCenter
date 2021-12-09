@@ -1,5 +1,4 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page import="com.epam.jwd.fitness_center.model.entity.User" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
 <html>
@@ -28,18 +27,11 @@
     </div>
 </nav>
 
-<!-- !PAGE CONTENT! -->
 <div class="w3-main" style="margin-left:300px;margin-top:43px; height: 95%"> </div>
 <jsp:include page="../component/footer.jsp" flush="true"/>
-
 <script>
-    // Get the Sidebar
     var mySidebar = document.getElementById("mySidebar");
-
-    // Get the DIV with overlay effect
     var overlayBg = document.getElementById("myOverlay");
-
-    // Toggle between showing and hiding the sidebar, and add overlay effect
     function w3_open() {
         if (mySidebar.style.display === 'block') {
             mySidebar.style.display = 'none';
@@ -50,7 +42,6 @@
         }
     }
 
-    // Close the sidebar with the close button
     function w3_close() {
         mySidebar.style.display = "none";
         overlayBg.style.display = "none";

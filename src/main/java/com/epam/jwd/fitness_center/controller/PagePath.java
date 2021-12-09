@@ -24,7 +24,9 @@ public enum PagePath {
     SHOW_TRANSFORM_PROGRAM("/WEB-INF/jsp/transformation.jsp"),
     USER_CABINET("/WEB-INF/jsp/user/cabinet.jsp"),
     SHOW_ORDER("/WEB-INF/jsp/user/order.jsp"),
-    ORDER_REDIRECT("/controller?command=show_order");
+    SHOW_ORDER_REDIRECT("/controller?command=show_order"),
+    SHOW_PAYMENT("/WEB-INF/jsp/user/payment.jsp"),
+    SHOW_PAYMENT_REDIRECT("/controller?command=show_payment");
 
     private final String path;
 
