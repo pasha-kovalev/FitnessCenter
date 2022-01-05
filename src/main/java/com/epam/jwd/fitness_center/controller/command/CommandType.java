@@ -30,17 +30,14 @@ public enum CommandType {
     SHOW_ORDER(USER, CORPORATE_USER, REGULAR_USER),
     ORDER(USER, CORPORATE_USER, REGULAR_USER),
     SHOW_PAYMENT(USER, CORPORATE_USER, REGULAR_USER),
-    PAYMENT(USER, CORPORATE_USER, REGULAR_USER);
+    PAYMENT(USER, CORPORATE_USER, REGULAR_USER),
+    SHOW_USER_ACTIVE_ORDERS(USER, CORPORATE_USER, REGULAR_USER);
 
     private final List<UserRole> allowedRoles;
 
     CommandType(UserRole... roles) {
         this.allowedRoles = roles != null && roles.length > 0 ? Arrays.asList(roles) : UserRole.valuesAsList();
         Arrays.asList(USER, TRAINER, ADMIN, REGULAR_USER);
-    }
-
-    public List<UserRole> getAllowedRoles() {
-        return allowedRoles;
     }
 
     public static CommandType of(String name) {
@@ -50,5 +47,9 @@ public enum CommandType {
             }
         }
         return DEFAULT;
+    }
+
+    public List<UserRole> getAllowedRoles() {
+        return allowedRoles;
     }
 }

@@ -1,8 +1,29 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<fmt:setLocale value="${sessionScope.locale}" />
+<fmt:setBundle basename="locale" />
+<fmt:message var="title" key="order.title"/>
+<fmt:message var="chooseProgram" key="order.label.chooseProgram"/>
+<fmt:message var="choosePeriod" key="order.label.choosePeriod"/>
+<fmt:message var="month1" key="order.period.month1"/>
+<fmt:message var="month2" key="order.period.month2"/>
+<fmt:message var="choosePersonal" key="order.label.choosePersonal"/>
+<fmt:message var="finalPrice" key="order.label.finalPrice"/>
+<fmt:message var="money" key="order.price.money"/>
+<fmt:message var="trainerInfo" key="order.label.trainerInfo"/>
+<fmt:message var="weight" key="order.label.weight"/>
+<fmt:message var="height" key="order.label.height"/>
+<fmt:message var="comment" key="order.label.comment"/>
+<fmt:message var="notValidTitle" key="payment.input.notValid"/>
+<fmt:message var="previous" key="order.button.previous"/>
+<fmt:message var="next" key="order.button.next"/>
+
+
+
 <html>
 <head>
-    <title>Заказ</title>
+    <title>${title}</title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <link href="../../../style/style.css" type="text/css" rel="stylesheet">
 </head>
@@ -14,9 +35,9 @@
 <body class="form2" onload="refreshPrice()">
 <jsp:include page="../component/header.jsp" flush="true"/>
 <form id="order" name="order-form" action="${pageContext.request.contextPath}/controller?command=order" method="post">
-    <h1>Заказ</h1>
+    <h1>${title}</h1>
     <div class="tab">
-        <label style="margin-top: 20px;" for="program">Выберите программу:</label>
+        <label style="margin-top: 20px;" for="program">${chooseProgram}</label>
         <select id="program" name="program" form="order">
             <c:forEach var="item" items="${requestScope.productList}" varStatus="loop">
                 <option value="${item.id}"
@@ -25,49 +46,49 @@
                         ${item.name}</option>
             </c:forEach>
         </select>
-        <label for="period">Выберите срок:</label>
+        <label for="period">${choosePeriod}</label>
         <select id="period" name="period" form="order" required>
-            <option value="1">1 месяц</option>
-            <option value="2">2 месяца</option>
-            <option value="3">3 месяца</option>
+            <option value="1">1 ${month1}</option>
+            <option value="2">2 ${month2}</option>
+            <option value="3">3 ${month2}</option>
         </select>
-        <c:if test="${sessionScope.userDetails == null || sessionScope.userDetails.personalTrainerId == null}">
-            <label style="margin-top: 20px;" for="trainer">Выберите личного тренера:</label>
-            <select id="trainer" name="trainer" form="order">
+        <c:if test="${sessionScope.userDetails == null || sessionScope.userDetails.personalTrainerId == 0}">
+            <label style="margin-top: 20px;" for="trainer">${choosePersonal}</label>
+            <select id="trainer" name="trainer" form="order" required>
                 <c:forEach var="trainer" items="${requestScope.trainerList}" >
                     <option value="${trainer.id}">${trainer.firstName} ${trainer.secondName}</option>
                 </c:forEach>
             </select>
         </c:if>
-        <p style="padding-top: 24px;font-weight: bold;">Итоговая цена:
+        <p style="padding-top: 24px;font-weight: bold;">${finalPrice}
             <c:choose>
                 <c:when test="${requestScope.productListDiscount == null}">
                     <span id="price"></span>
-                    <span>BYN</span>
+                    <span>${money}</span>
                 </c:when>
                 <c:otherwise>
                     <span id="price" style="text-decoration: line-through;"></span>
                     <span id="total"></span>
-                    <span>BYN</span>
+                    <span>${money}</span>
                 </c:otherwise>
             </c:choose>
         </p>
     </div>
-    <div class="tab"><p style="text-align: center">Информация для тренера</p>
-        <label for="weight">Вес</label>
+    <div class="tab"><p style="text-align: center">${trainerInfo}</p>
+        <label for="weight">${weight}</label>
         <input id="weight" name="weight" type="number" step="1" min="25" max="500" required
                oninvalid="setCustomValidity('${notValidTitle}')" oninput="setCustomValidity('')">
-        <label for="height">Рост</label>
+        <label for="height">${height}</label>
         <input id="height" name="height" type="number" step="1" min="50" max="250" required
                oninvalid="setCustomValidity('${notValidTitle}')" oninput="setCustomValidity('')">
-        <label for="comment">Расскажите нам о доступном снаряжении и своём опыте:</label>
+        <label for="comment">${comment}</label>
         <textarea id="comment" name="comment" rows="4" cols="33" maxlength="1000" required
                   oninvalid="setCustomValidity('${notValidTitle}')" oninput="setCustomValidity('')"></textarea>
     </div>
     <div style="overflow:auto; padding-top: 36px;">
         <div style="float:right;">
-            <button type="button" id="prevBtn" onclick="nextPrev(-1)">Previous</button>
-            <button type="button" id="nextBtn" onclick="nextPrev(1)">Next</button>
+            <button type="button" id="prevBtn" onclick="nextPrev(-1)">${previous}</button>
+            <button type="button" id="nextBtn" onclick="nextPrev(1)">${next}</button>
         </div>
     </div>
     <div style="text-align:center;margin-top:40px;">

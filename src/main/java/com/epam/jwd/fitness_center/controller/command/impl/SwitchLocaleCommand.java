@@ -1,13 +1,8 @@
 package com.epam.jwd.fitness_center.controller.command.impl;
 
 import com.epam.jwd.fitness_center.controller.PagePath;
-import com.epam.jwd.fitness_center.controller.RequestFactory;
 import com.epam.jwd.fitness_center.controller.SimpleRequestFactory;
 import com.epam.jwd.fitness_center.controller.command.*;
-import com.epam.jwd.fitness_center.model.service.UserService;
-import com.epam.jwd.fitness_center.model.service.impl.ServiceProvider;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,11 +23,11 @@ public class SwitchLocaleCommand implements Command {
     @Override
     public CommandResponse execute(CommandRequest request) {
         final String locale = request.getParameter(RequestParameter.LOCALE);
-        if(locale != null && locales.contains(locale)) {
+        if (locale != null && locales.contains(locale)) {
             request.addToSession(SessionAttribute.LOCALE, locale);
         }
         Optional<Object> optionalQuery = request.retrieveFromSession(SessionAttribute.PREVIOUS_QUERY);
-        if(optionalQuery.isPresent()) {
+        if (optionalQuery.isPresent()) {
             String previousQuery = (String) optionalQuery.get();
             String path = previousQuery.isEmpty() ? PagePath.MAIN_REDIRECT.getPath() : PagePath.CONTROLLER.getPath()
                     + QUESTION_MARK + previousQuery;

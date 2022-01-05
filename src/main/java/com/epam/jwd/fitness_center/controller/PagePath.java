@@ -26,16 +26,13 @@ public enum PagePath {
     SHOW_ORDER("/WEB-INF/jsp/user/order.jsp"),
     SHOW_ORDER_REDIRECT("/controller?command=show_order"),
     SHOW_PAYMENT("/WEB-INF/jsp/user/payment.jsp"),
-    SHOW_PAYMENT_REDIRECT("/controller?command=show_payment");
+    SHOW_PAYMENT_REDIRECT("/controller?command=show_payment"),
+    SHOW_USER_ACTIVE_ORDERS("/WEB-INF/jsp/user/cabinet_active_orders.jsp");
 
     private final String path;
 
     PagePath(String path) {
         this.path = path;
-    }
-
-    public String getPath() {
-        return path;
     }
 
     public static PagePath of(String name) {
@@ -45,5 +42,9 @@ public enum PagePath {
             }
         }
         return MAIN_REDIRECT;
+    }
+
+    public String getPath() {
+        return path;
     }
 }

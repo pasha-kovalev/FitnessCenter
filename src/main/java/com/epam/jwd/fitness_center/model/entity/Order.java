@@ -3,40 +3,36 @@ package com.epam.jwd.fitness_center.model.entity;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public class Order implements Entity{
+public class Order implements Entity {
     private static final long serialVersionUID = 8082141217268710611L;
-
+    private final LocalDateTime creationDate;
     private Long id;
     private Long userDetailsId;
     private OrderStatus orderStatus;
-    private Long itemId;
+    /*
+        todo: find usages:
+        private Long itemId;
+    */
+    private Item item;
     private Long assignmentTrainerId;
     private Long trainerId;
+    private String trainerName;
     private BigDecimal price;
     private String comment;
-    private final LocalDateTime creationDate;
     private String review;
 
     public Order(Builder builder) {
         this.id = builder.id;
         this.userDetailsId = builder.userDetailsId;
         this.orderStatus = builder.orderStatus;
-        this.itemId = builder.itemId;
+        this.item = builder.item;
         this.assignmentTrainerId = builder.assignmentTrainerId;
         this.trainerId = builder.trainerId;
         this.price = builder.price;
         this.comment = builder.comment;
         this.creationDate = builder.creationDate;
         this.review = builder.review;
-    }
-
-    public Long getItemId() {
-        return itemId;
-    }
-
-    public Order setItemId(Long itemId) {
-        this.itemId = itemId;
-        return this;
+        this.trainerName = builder.trainerName;
     }
 
     public Long getId() {
@@ -54,6 +50,15 @@ public class Order implements Entity{
 
     public Order setUserDetailsId(Long userDetailsId) {
         this.userDetailsId = userDetailsId;
+        return this;
+    }
+
+    public Item getItem() {
+        return item;
+    }
+
+    public Order setItem(Item item) {
+        this.item = item;
         return this;
     }
 
@@ -115,15 +120,25 @@ public class Order implements Entity{
         return this;
     }
 
+    public String getTrainerName() {
+        return trainerName;
+    }
+
+    public Order setTrainerName(String trainerName) {
+        this.trainerName = trainerName;
+        return this;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("Order{");
         sb.append("id=").append(id);
         sb.append(", userDetailsId=").append(userDetailsId);
         sb.append(", orderStatus=").append(orderStatus);
-        sb.append(", itemId=").append(itemId);
+        sb.append(", item=").append(item);
         sb.append(", assignmentTrainerId=").append(assignmentTrainerId);
         sb.append(", trainerId=").append(trainerId);
+        sb.append(", trainerName=").append(trainerName);
         sb.append(", price=").append(price);
         sb.append(", comment='").append(comment).append('\'');
         sb.append(", creationDate=").append(creationDate);
@@ -136,9 +151,10 @@ public class Order implements Entity{
         private Long id;
         private Long userDetailsId;
         private OrderStatus orderStatus;
-        private Long itemId;
+        private Item item;
         private Long assignmentTrainerId;
         private Long trainerId;
+        private String trainerName;
         private BigDecimal price;
         private String comment;
         private LocalDateTime creationDate;
@@ -159,8 +175,8 @@ public class Order implements Entity{
             return this;
         }
 
-        public Builder setItemId(Long itemId) {
-            this.itemId = itemId;
+        public Builder setItem(Item item) {
+            this.item = item;
             return this;
         }
 
@@ -171,6 +187,11 @@ public class Order implements Entity{
 
         public Builder setTrainerId(Long trainerId) {
             this.trainerId = trainerId;
+            return this;
+        }
+
+        public Builder setTrainerName(String name) {
+            this.trainerName = name;
             return this;
         }
 

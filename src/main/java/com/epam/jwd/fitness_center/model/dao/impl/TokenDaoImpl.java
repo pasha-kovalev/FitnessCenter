@@ -3,7 +3,7 @@ package com.epam.jwd.fitness_center.model.dao.impl;
 import com.epam.jwd.fitness_center.exception.DaoException;
 import com.epam.jwd.fitness_center.model.connection.ConnectionPool;
 import com.epam.jwd.fitness_center.model.dao.BaseDao;
-import com.epam.jwd.fitness_center.model.entity.*;
+import com.epam.jwd.fitness_center.model.entity.Token;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -26,19 +26,15 @@ public class TokenDaoImpl extends BaseDao<Token> {
     );
 
     private static final String DELETE_BY_USER_ID_QUERY = "DELETE FROM " + TOKEN_TABLE_NAME + " WHERE "
-            + USER_ID_FIELD_NAME +" = ?";
-
-    private final String SELECT_BY_USER_ID_QUERY = selectAllQuery + " WHERE "
-            + USER_ID_FIELD_NAME +" = ?";
-
+            + USER_ID_FIELD_NAME + " = ?";
     private static final String DELETE_BY_DAYS_QUERY = "DELETE FROM " + TOKEN_TABLE_NAME + " WHERE "
-            + CREATION_DATE_FIELD_NAME +" < now() - interval ? DAY";
-
+            + CREATION_DATE_FIELD_NAME + " < now() - interval ? DAY";
     private static final String INSERT_NEW_USER_TOKEN_QUERY = "INSERT INTO " + TOKEN_TABLE_NAME +
             " (id, user_id, token, creation_date)\n" +
             "    VALUE (NULL, ?,?, DEFAULT)";
-
     private static final String UPDATE_QUERY_ADDITION = "user_token = ?, creation_date = ?";
+    private final String SELECT_BY_USER_ID_QUERY = selectAllQuery + " WHERE "
+            + USER_ID_FIELD_NAME + " = ?";
 
     TokenDaoImpl(ConnectionPool pool) {
         super(pool, LOG);
@@ -78,7 +74,7 @@ public class TokenDaoImpl extends BaseDao<Token> {
 
     @Override
     public boolean update(Token token) throws DaoException {
-        int rows =  executeUpdate(updateQuery, st -> {
+        int rows = executeUpdate(updateQuery, st -> {
             fillEntity(st, token);
             st.setLong(3, token.getId());
         });
@@ -91,7 +87,7 @@ public class TokenDaoImpl extends BaseDao<Token> {
     }
 
     public List<Token> findByUserId(Long userId) throws DaoException {
-        return executePrepared(SELECT_BY_USER_ID_QUERY, this::extractResult, st -> st.setLong(1, userId) );
+        return executePrepared(SELECT_BY_USER_ID_QUERY, this::extractResult, st -> st.setLong(1, userId));
     }
 
     public void removeExpiredToken(int days) throws DaoException {

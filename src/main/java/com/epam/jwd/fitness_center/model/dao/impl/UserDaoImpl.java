@@ -15,7 +15,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
 
@@ -90,7 +89,6 @@ public class UserDaoImpl extends BaseDao<User> implements UserDao {
             "SET user_status_id = (SELECT id FROM user_status WHERE status = ?)\n" +
             "WHERE user.id = ?";
 
-    //todo ? do them private and set
     {
         selectAllQuery = SELECT_ALL_USERS;
         insertQuery = INSERT_NEW_USER;
@@ -114,17 +112,17 @@ public class UserDaoImpl extends BaseDao<User> implements UserDao {
 
     @Override
     protected void fillEntity(PreparedStatement statement, User entity) throws SQLException {
-        statement.setString( 1,entity.getEmail());
-        statement.setString( 2,entity.getPassword());
-        statement.setString( 3,entity.getRole().name().toLowerCase());
-        statement.setString( 4,entity.getStatus().name().toLowerCase());
-        statement.setString( 5,entity.getFirstName());
-        statement.setString( 6,entity.getSecondName());
+        statement.setString(1, entity.getEmail());
+        statement.setString(2, entity.getPassword());
+        statement.setString(3, entity.getRole().name().toLowerCase());
+        statement.setString(4, entity.getStatus().name().toLowerCase());
+        statement.setString(5, entity.getFirstName());
+        statement.setString(6, entity.getSecondName());
     }
 
     @Override
     public boolean update(User entity) throws DaoException {
-        int rows =  executeUpdate(updateQuery, st -> {
+        int rows = executeUpdate(updateQuery, st -> {
             fillEntity(st, entity);
             st.setLong(7, entity.getId());
         });
@@ -133,7 +131,7 @@ public class UserDaoImpl extends BaseDao<User> implements UserDao {
 
     @Override
     public boolean updateStatus(UserStatus status, long id) throws DaoException {
-        int rows =  executeUpdate(UPDATE_USER_STATUS_BY_ID, st -> {
+        int rows = executeUpdate(UPDATE_USER_STATUS_BY_ID, st -> {
             st.setString(1, status.name().toLowerCase());
             st.setLong(2, id);
         });

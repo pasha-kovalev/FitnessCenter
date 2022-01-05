@@ -2,7 +2,6 @@ package com.epam.jwd.fitness_center.controller.listener;
 
 import com.epam.jwd.fitness_center.controller.command.SessionAttribute;
 
-
 import javax.servlet.annotation.WebListener;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;

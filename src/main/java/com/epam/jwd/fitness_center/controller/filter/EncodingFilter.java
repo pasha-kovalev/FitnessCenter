@@ -13,8 +13,8 @@ public class EncodingFilter implements Filter {
             throws IOException, ServletException {
         String responseEncoding = servletRequest.getCharacterEncoding();
 
-        if(!ENCODING.equalsIgnoreCase(responseEncoding)) {
-                servletResponse.setCharacterEncoding(ENCODING);
+        if (!ENCODING.equalsIgnoreCase(responseEncoding)) {
+            servletResponse.setCharacterEncoding(ENCODING);
         }
         filterChain.doFilter(servletRequest, servletResponse);
     }

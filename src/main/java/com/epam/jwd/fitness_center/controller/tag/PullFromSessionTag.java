@@ -17,7 +17,7 @@ public class PullFromSessionTag extends TagSupport {
     @Override
     public int doStartTag() {
         Object value = this.pageContext.getSession().getAttribute(attribute);
-        if(value != null) {
+        if (value != null) {
             this.pageContext.setAttribute(name, value);
             this.pageContext.getSession().removeAttribute(attribute);
         }

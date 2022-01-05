@@ -15,6 +15,7 @@ public final class SessionAttribute {
     public static final String CREDIT_PERCENTAGE = "creditPercentage";
     public static final String CREDIT_PERIOD = "creditPeriod";
 
-    private SessionAttribute() {}
+    private SessionAttribute() {
+    }
 
 }

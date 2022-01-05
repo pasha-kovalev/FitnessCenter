@@ -56,19 +56,19 @@ public class OrderServiceImpl implements OrderService {
     public Order insert(long userDetailsId, OrderStatus status, long itemId, long trainerId, long period,
                         String comment) throws ServiceException {
         String commentEscaped = TextEscapeUtil.escapeHtml(comment);
-        if(!OrderValidator.isValidPeriod(period)){
+        if (!OrderValidator.isValidPeriod(period)) {
             throw new ServiceException("Not valid period: " + period);
         }
         //insert program until period ends
         BigDecimal price = calcPrice(userDetailsId, itemId, period);
         Order order = new Order.Builder()
-                               .setUserDetailsId(userDetailsId)
-                               .setOrderStatus(status)
-                               .setItemId(itemId)
-                               .setTrainerId(trainerId)
-                               .setPrice(price)
-                               .setComment(commentEscaped)
-                               .build();
+                .setUserDetailsId(userDetailsId)
+                .setOrderStatus(status)
+                .setItem(ServiceProvider.getInstance().getItemService().find(itemId).get())
+                .setTrainerId(trainerId)
+                .setPrice(price)
+                .setComment(commentEscaped)
+                .build();
         try {
             return orderDao.create(order);
         } catch (DaoException e) {
@@ -99,6 +99,16 @@ public class OrderServiceImpl implements OrderService {
         } catch (DaoException e) {
             LOG.error("Error during searching for order by trainerId: {}. {}", trainerId, e.getMessage());
             throw new ServiceException("Error during searching for order by trainerId", e);
+        }
+    }
+
+    @Override
+    public List<Order> findOrderByUserId(Long userId) throws ServiceException {
+        try {
+            return orderDao.findByUserId(userId);
+        } catch (DaoException e) {
+            LOG.error("Error during searching for order by userId: {}. {}", userId, e.getMessage());
+            throw new ServiceException("Error during searching for order by userId", e);
         }
     }
 

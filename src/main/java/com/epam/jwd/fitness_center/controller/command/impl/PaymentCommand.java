@@ -29,19 +29,19 @@ public class PaymentCommand implements Command {
     @Override
     public CommandResponse execute(CommandRequest request) {
         Optional<Object> orderOptional = request.retrieveFromSession(SessionAttribute.ORDER);
-        if(!orderOptional.isPresent()) {
-            return requestFactory.createRedirectResponse(PagePath.ERROR);
+        if (!orderOptional.isPresent()) {
+            return requestFactory.createForwardResponse(PagePath.ERROR);
         }
         Order order = (Order) orderOptional.get();
         String cardNumber = request.getParameter(RequestParameter.CARD_NUMBER);
-        if(request.getParameter(RequestParameter.CREDIT_CHECKBOX) != null) {
-             Optional<CommandResponse> optionalResponse = processCredit(request, order, cardNumber);
-             if(optionalResponse.isPresent()) {
-                 return optionalResponse.get();
-             }
+        if (request.getParameter(RequestParameter.CREDIT_CHECKBOX) != null) {
+            Optional<CommandResponse> optionalResponse = processCredit(request, order, cardNumber);
+            if (optionalResponse.isPresent()) {
+                return optionalResponse.get();
+            }
         } else {
             Optional<CommandResponse> optionalResponse = processPayment(request, order, cardNumber);
-            if(optionalResponse.isPresent()) {
+            if (optionalResponse.isPresent()) {
                 return optionalResponse.get();
             }
         }
@@ -54,12 +54,12 @@ public class PaymentCommand implements Command {
 
     private Optional<CommandResponse> processPayment(CommandRequest request, Order order, String cardNumber) {
         try {
-            if(!paymentService.checkCardExistence(cardNumber)) {
+            if (!paymentService.checkCardExistence(cardNumber)) {
                 request.addToSession(SessionAttribute.ERROR_PAYMENT_BUNDLE_KEY,
                         ResourceBundleKey.INFO_PAYMENT_CARD_NOT_EXIST);
                 return Optional.of(requestFactory.createRedirectResponse(PagePath.SHOW_PAYMENT_REDIRECT));
             }
-            if(!paymentService.checkCardBalance(cardNumber, order.getPrice(), false)) {
+            if (!paymentService.checkCardBalance(cardNumber, order.getPrice(), false)) {
                 request.addToSession(SessionAttribute.ERROR_PAYMENT_BUNDLE_KEY,
                         ResourceBundleKey.INFO_PAYMENT_INSUFFICIENT_FUNDS);
                 return Optional.of(requestFactory.createRedirectResponse(PagePath.SHOW_PAYMENT_REDIRECT));
@@ -76,12 +76,12 @@ public class PaymentCommand implements Command {
     private Optional<CommandResponse> processCredit(CommandRequest request, Order order, String cardNumber) {
         LOG.info("Credit selected");
         try {
-            if(!paymentService.checkCardExistence(cardNumber)) {
+            if (!paymentService.checkCardExistence(cardNumber)) {
                 request.addToSession(SessionAttribute.ERROR_PAYMENT_BUNDLE_KEY,
-                                     ResourceBundleKey.INFO_PAYMENT_CARD_NOT_EXIST);
+                        ResourceBundleKey.INFO_PAYMENT_CARD_NOT_EXIST);
                 return Optional.of(requestFactory.createRedirectResponse(PagePath.SHOW_PAYMENT_REDIRECT));
             }
-            if(!paymentService.checkCardBalance(cardNumber, order.getPrice(), true)) {
+            if (!paymentService.checkCardBalance(cardNumber, order.getPrice(), true)) {
                 request.addToSession(SessionAttribute.ERROR_PAYMENT_BUNDLE_KEY,
                         ResourceBundleKey.INFO_PAYMENT_INSUFFICIENT_FUNDS);
                 return Optional.of(requestFactory.createRedirectResponse(PagePath.SHOW_PAYMENT_REDIRECT));

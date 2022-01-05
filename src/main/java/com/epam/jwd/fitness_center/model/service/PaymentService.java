@@ -2,6 +2,7 @@ package com.epam.jwd.fitness_center.model.service;
 
 import com.epam.jwd.fitness_center.exception.ServiceException;
 import com.epam.jwd.fitness_center.model.entity.Order;
+
 import java.math.BigDecimal;
 
 public interface PaymentService {

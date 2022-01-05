@@ -2,7 +2,7 @@ package com.epam.jwd.fitness_center.model.entity;
 
 import java.time.LocalDateTime;
 
-public final class Token implements Entity{
+public final class Token implements Entity {
     private static final long serialVersionUID = -4135987863303979517L;
     private final Long id;
     private final Long userId;

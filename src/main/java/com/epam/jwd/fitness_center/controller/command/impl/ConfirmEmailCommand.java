@@ -26,7 +26,8 @@ public class ConfirmEmailCommand implements Command {
         String tokenIdStr = request.getParameter(RequestParameter.TOKEN_ID);
         String tokenValue = request.getParameter(RequestParameter.TOKEN);
         //todo validation on services
-        if(!NumberValidator.isPositiveInteger(tokenIdStr)) {
+        request.removeFromSession(SessionAttribute.ADDITIONAL_INFO);
+        if (!NumberValidator.isPositiveInteger(tokenIdStr)) {
             request.addToSession(SessionAttribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_ERROR_LINK);
             return requestFactory.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
         }

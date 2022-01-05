@@ -1,8 +1,8 @@
 package com.epam.jwd.fitness_center.controller.command.impl;
 
 import com.epam.jwd.fitness_center.controller.PagePath;
-import com.epam.jwd.fitness_center.controller.command.*;
 import com.epam.jwd.fitness_center.controller.RequestFactory;
+import com.epam.jwd.fitness_center.controller.command.*;
 import com.epam.jwd.fitness_center.exception.ServiceException;
 import com.epam.jwd.fitness_center.model.entity.User;
 import com.epam.jwd.fitness_center.model.entity.UserDetails;
@@ -36,7 +36,7 @@ public class LoginCommand implements Command {
             LOG.error("Error during login", e);
             return requestFactory.createForwardResponse(PagePath.ERROR500);
         }
-        if(!optionalUser.isPresent() ) {
+        if (!optionalUser.isPresent()) {
             request.addToSession(SessionAttribute.ERROR_LOGIN_BUNDLE_KEY, ResourceBundleKey.LOGIN_ERROR);
             return requestFactory.createRedirectResponse(PagePath.LOGIN_REDIRECT);
         }

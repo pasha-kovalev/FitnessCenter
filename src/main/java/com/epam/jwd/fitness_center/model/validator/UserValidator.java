@@ -7,7 +7,7 @@ public final class UserValidator {
     private static final String EMAIL_REGEX = "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$";
     private static final String NAME_REGEX = "([А-Яа-я]{1,20})|([A-Z][a-z]{1,20})";
 
-    private UserValidator(){
+    private UserValidator() {
     }
 
     public static boolean isValidEmail(String email) {
@@ -24,7 +24,7 @@ public final class UserValidator {
     }
 
     public static boolean isEqualPasswords(String password1, String password2) {
-        if(password1 == null || password2 == null) {
+        if (password1 == null || password2 == null) {
             return false;
         }
         return password1.equals(password2);
@@ -32,15 +32,15 @@ public final class UserValidator {
 
     public static boolean isValidUser(User user, boolean checkPassword) {
         boolean flag = true;
-        if(checkPassword) {
+        if (checkPassword) {
             flag = isValidPassword(user.getPassword());
         }
-        return isValidEmail(user.getEmail())  && isValidName(user.getFirstName())
-               && isValidName(user.getSecondName()) && flag;
+        return isValidEmail(user.getEmail()) && isValidName(user.getFirstName())
+                && isValidName(user.getSecondName()) && flag;
     }
 
     private static boolean isValidString(String str, String regex) {
-        if(str == null) {
+        if (str == null) {
             return false;
         }
         return str.matches(regex);

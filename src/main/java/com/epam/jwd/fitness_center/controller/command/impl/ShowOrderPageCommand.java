@@ -47,21 +47,21 @@ public class ShowOrderPageCommand implements Command {
         return requestFactory.createForwardResponse(PagePath.SHOW_ORDER);
     }
 
-    private void addDiscountListToJsp(CommandRequest request, List<Item> products)  {
+    private void addDiscountListToJsp(CommandRequest request, List<Item> products) {
         ArrayList<Item> clonedProductList = new ArrayList<>();
         try {
-            for(Item item : products) {
+            for (Item item : products) {
                 clonedProductList.add(item.clone());
             }
         } catch (CloneNotSupportedException e) {
             LOG.error("Unable to clone products list", e);
         }
         Optional<Object> optionalUserDetails = request.retrieveFromSession(SessionAttribute.USER_DETAILS);
-        if(optionalUserDetails.isPresent()) {
+        if (optionalUserDetails.isPresent()) {
             BigDecimal discount = ((UserDetails) optionalUserDetails.get()).getDiscount();
-            if(discount.compareTo(BigDecimal.ZERO) > 0) {
+            if (discount != null && discount.compareTo(BigDecimal.ZERO) > 0) {
                 request.addAttributeToJsp(RequestParameter.PRODUCT_LIST_WITH_DISCOUNT,
-                                          itemService.modifyItemsByDiscount(clonedProductList, discount));
+                        itemService.modifyItemsByDiscount(clonedProductList, discount));
             }
         }
     }

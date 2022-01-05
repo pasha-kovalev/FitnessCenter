@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public enum UserRole {
-    ADMIN, TRAINER, USER,  CORPORATE_USER, REGULAR_USER, GUEST;
+    ADMIN, TRAINER, USER, CORPORATE_USER, REGULAR_USER, GUEST;
 
     private static final List<UserRole> ALL_AVAILABLE_ROLES = Arrays.asList(values());
 

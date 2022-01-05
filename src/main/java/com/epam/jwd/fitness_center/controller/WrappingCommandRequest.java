@@ -45,11 +45,13 @@ public class WrappingCommandRequest implements CommandRequest {
         final HttpSession session = request.getSession(false);
         session.removeAttribute(name);
     }
+
     public Optional<Object> pullFromSession(String name) {
         Optional<Object> result = retrieveFromSession(name);
         removeFromSession(name);
         return result;
     }
+
     @Override
     public void clearSession() {
         final HttpSession session = request.getSession(false);

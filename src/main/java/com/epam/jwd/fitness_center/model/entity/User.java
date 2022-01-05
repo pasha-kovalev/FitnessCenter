@@ -10,8 +10,8 @@ public class User implements Entity {
     private String secondName;
     private UserRole role;
     private UserStatus status;
-    private String description;
-    private String photoPath;
+    private final String description;
+    private final String photoPath;
 
     public User(Builder builder) {
         this.id = builder.id;

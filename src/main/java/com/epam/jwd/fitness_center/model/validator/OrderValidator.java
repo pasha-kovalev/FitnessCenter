@@ -10,7 +10,7 @@ public final class OrderValidator {
     }
 
     public static boolean isValidCardNumber(String cardNumber) {
-        if(cardNumber == null) {
+        if (cardNumber == null) {
             return false;
         }
         return cardNumber.matches(CARD_NUMBER_REGEX);

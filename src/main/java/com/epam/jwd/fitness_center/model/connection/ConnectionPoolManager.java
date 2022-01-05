@@ -1,5 +1,9 @@
 package com.epam.jwd.fitness_center.model.connection;
 
+import com.epam.jwd.fitness_center.exception.DatabaseConnectionException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
@@ -10,11 +14,10 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.locks.*;
-
-import com.epam.jwd.fitness_center.exception.DatabaseConnectionException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public final class ConnectionPoolManager implements ConnectionPool {
     private static final Logger LOG = LogManager.getLogger(ConnectionPoolManager.class);
@@ -23,20 +26,16 @@ public final class ConnectionPoolManager implements ConnectionPool {
     private static final String POOL_MAX_SIZE_PROPERTY = "maxSize";
     private static final String POOL_INCREASE_COEFFICIENT_PROPERTY = "increaseCoefficient";
     private static final String POOL_CLEAN_INTERVAL_PROPERTY = "cleanInterval";
-
-    private static ConnectionPoolManager instance;
     private static final AtomicBoolean hasInstance = new AtomicBoolean(false);
-
     private static final String POOL_CONFIG_PATH = "properties/database/pool.properties";
     private static final int DEFAULT_POOL_SIZE = 8;
     private static final int DEFAULT_MIN_POOL_SIZE = 4;
     private static final int DEFAULT_MAX_POOL_SIZE = 15;
     private static final double DEFAULT_INCREASE_COEFF = 0.75;
-
     //In seconds
     private static final int DEFAULT_CLEANING_INTERVAL = 60;
     private static final int DEFAULT_MAX_CONNECTION_DOWNTIME = 60;
-
+    private static ConnectionPoolManager instance;
     //todo: ? atomic reference or blocking
     private final Queue<ProxyConnection> availableConnections = new ArrayDeque<>();
     private final List<ProxyConnection> usedConnections = new ArrayList<>();
@@ -63,12 +62,12 @@ public final class ConnectionPoolManager implements ConnectionPool {
 
     //fixme magic to constants
     private ConnectionPoolManager() {
-        try(InputStream is = ConnectionPool.class.getClassLoader().getResourceAsStream(POOL_CONFIG_PATH)) {
-            if(is == null) {
+        try (InputStream is = ConnectionPool.class.getClassLoader().getResourceAsStream(POOL_CONFIG_PATH)) {
+            if (is == null) {
                 LOG.warn("Unable to find connection pool property file");
                 assignDefault();
             }
-            Properties poolProperties =  new Properties();
+            Properties poolProperties = new Properties();
             poolProperties.load(is);
             poolSize = Integer.parseInt(poolProperties.getProperty(POOL_SIZE_PROPERTY));
             minPoolSize = Integer.parseInt(poolProperties.getProperty(POOL_MIN_SIZE_PROPERTY));
@@ -94,11 +93,22 @@ public final class ConnectionPoolManager implements ConnectionPool {
 
     public static ConnectionPoolManager getInstance() {
         while (instance == null) {
-            if(hasInstance.compareAndSet(false, true)) {
+            if (hasInstance.compareAndSet(false, true)) {
                 instance = new ConnectionPoolManager();
             }
         }
         return instance;
+    }
+
+    private static void deregisterDrivers() {
+        final Enumeration<Driver> drivers = DriverManager.getDrivers();
+        while (drivers.hasMoreElements()) {
+            try {
+                DriverManager.deregisterDriver(drivers.nextElement());
+            } catch (SQLException e) {
+                LOG.error("Unable to deregister driver", e);
+            }
+        }
     }
 
     public int getCurrentSize() {
@@ -130,8 +140,7 @@ public final class ConnectionPoolManager implements ConnectionPool {
         try {
             if (isShutDown.get()) {
                 LOG.error("Unable to init connections in pool because of pool is shut down");
-            }
-            else if (!isInitialized.get()) {
+            } else if (!isInitialized.get()) {
                 initDaemonThreads();
                 for (int i = 0; i < poolSize; i++) {
                     addConnection();
@@ -158,15 +167,14 @@ public final class ConnectionPoolManager implements ConnectionPool {
     @Override
     public Connection takeConnection() throws DatabaseConnectionException {
         writeLock.lock();
-        if(!isInitialized.get()) init();
+        if (!isInitialized.get()) init();
         try {
             checkCondition();
             final ProxyConnection connection = availableConnections.poll();
             usedConnections.add(connection);
             LOG.trace("Connection taken: {}", connection);
             return connection;
-        }
-        finally {
+        } finally {
             writeLock.unlock();
         }
     }
@@ -187,16 +195,15 @@ public final class ConnectionPoolManager implements ConnectionPool {
     public boolean releaseConnection(Connection connection) {
         writeLock.lock();
         try {
-            if(connection instanceof ProxyConnection && isInitialized.get()) {
-                    if (usedConnections.remove(connection)) {
-                        availableConnections.add((ProxyConnection) connection);
-                        ((ProxyConnection) connection).setLastTakeDate(LocalDateTime.now());
-                        hasAvailableConnections.signalAll();
-                        LOG.trace("Connection released: {}", connection);
-                        return true;
-                    }
-            }
-            else {
+            if (connection instanceof ProxyConnection && isInitialized.get()) {
+                if (usedConnections.remove(connection)) {
+                    availableConnections.add((ProxyConnection) connection);
+                    ((ProxyConnection) connection).setLastTakeDate(LocalDateTime.now());
+                    hasAvailableConnections.signalAll();
+                    LOG.trace("Connection released: {}", connection);
+                    return true;
+                }
+            } else {
                 LOG.error("Unable to release connection: {}, pool initialized: {}", connection, isInitialized.get());
             }
         } finally {
@@ -248,8 +255,8 @@ public final class ConnectionPoolManager implements ConnectionPool {
     private void addConnection(ProxyConnection proxyConnection) {
         writeLock.lock();
         try {
-            if(getCurrentSize() < maxPoolSize) {
-                if(proxyConnection == null) LOG.error("null");
+            if (getCurrentSize() < maxPoolSize) {
+                if (proxyConnection == null) LOG.error("null");
                 availableConnections.add(proxyConnection);
                 hasAvailableConnections.signalAll();
                 LOG.trace("added existing connection: {}", proxyConnection);
@@ -260,8 +267,8 @@ public final class ConnectionPoolManager implements ConnectionPool {
     }
 
     private void closeConnections() {
-            closeConnections(availableConnections);
-            closeConnections(usedConnections);
+        closeConnections(availableConnections);
+        closeConnections(usedConnections);
     }
 
     private void closeConnections(Collection<ProxyConnection> collection) {
@@ -274,20 +281,8 @@ public final class ConnectionPoolManager implements ConnectionPool {
             collection.clear();
         } catch (SQLException e) {
             LOG.error("Unable to close connection", e);
-        }
-        finally {
+        } finally {
             writeLock.unlock();
-        }
-    }
-
-    private static void deregisterDrivers() {
-        final Enumeration<Driver> drivers = DriverManager.getDrivers();
-        while (drivers.hasMoreElements()) {
-            try {
-                DriverManager.deregisterDriver(drivers.nextElement());
-            } catch (SQLException e) {
-                LOG.error("Unable to deregister driver", e);
-            }
         }
     }
 
@@ -301,14 +296,14 @@ public final class ConnectionPoolManager implements ConnectionPool {
 
         @Override
         public void run() {
-            while(!isShutDown.get()) {
+            while (!isShutDown.get()) {
                 lock.lock();
                 try {
-                    while (!isToIncrease &&  !isShutDown.get()) {
+                    while (!isToIncrease && !isShutDown.get()) {
                         needToCreateConnections.await();
                     }
 
-                    if(isShutDown.get()) break;
+                    if (isShutDown.get()) break;
                     increase();
                 } catch (InterruptedException e) {
                     LOG.info("CleanPoolThread interrupted");
@@ -337,7 +332,7 @@ public final class ConnectionPoolManager implements ConnectionPool {
             if (!isToIncrease) {
                 lock.lock();
                 try {
-                    if(getUsedConnectionsSize() >= increaseCoeff * ConnectionPoolManager.this.getCurrentSize()) {
+                    if (getUsedConnectionsSize() >= increaseCoeff * ConnectionPoolManager.this.getCurrentSize()) {
                         isToIncrease = true;
                         needToCreateConnections.signalAll();
                     }
@@ -352,7 +347,7 @@ public final class ConnectionPoolManager implements ConnectionPool {
         }
 
         public void shutDown() {
-            if(!isInterrupted()) {
+            if (!isInterrupted()) {
                 this.interrupt();
             }
         }
@@ -361,8 +356,8 @@ public final class ConnectionPoolManager implements ConnectionPool {
     private class CleanPoolThread extends TimerTask {
         @Override
         public void run() {
-                if(isShutDown.get()) return;
-                cleanByDownTime();
+            if (isShutDown.get()) return;
+            cleanByDownTime();
         }
 
         private void cleanByDownTime() {
@@ -381,7 +376,7 @@ public final class ConnectionPoolManager implements ConnectionPool {
                             needToClean = true;
                         }
                     }
-                    if(needToClean){
+                    if (needToClean) {
                         connectionsToRemove.forEach(this::deleteConnection);
                     }
                 }
@@ -394,7 +389,7 @@ public final class ConnectionPoolManager implements ConnectionPool {
             readLock.unlock();
             writeLock.lock();
             try {
-                if(availableConnections.remove(conn)) {
+                if (availableConnections.remove(conn)) {
                     LOG.info("Closing connection in CleanPoolThread: {}", conn);
                     conn.realClose();
                 }

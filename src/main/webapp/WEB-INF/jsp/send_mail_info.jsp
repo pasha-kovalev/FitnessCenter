@@ -15,7 +15,7 @@
 </head>
 <body class="form1">
 <jsp:include page="component/header.jsp" flush="true"/>
-<div class="center-text">
+<div class="center-text" style="margin-top: 20%;">
             <p>${sent}</p>
             <p>
                 ${receive}

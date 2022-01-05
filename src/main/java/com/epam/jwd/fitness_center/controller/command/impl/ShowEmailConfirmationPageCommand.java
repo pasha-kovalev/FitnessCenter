@@ -6,7 +6,7 @@ import com.epam.jwd.fitness_center.controller.command.Command;
 import com.epam.jwd.fitness_center.controller.command.CommandRequest;
 import com.epam.jwd.fitness_center.controller.command.CommandResponse;
 
-public class ShowEmailConfirmationPageCommand  implements Command {
+public class ShowEmailConfirmationPageCommand implements Command {
     private final RequestFactory requestFactory;
 
     ShowEmailConfirmationPageCommand(RequestFactory requestFactory) {

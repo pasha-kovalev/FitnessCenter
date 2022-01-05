@@ -12,6 +12,7 @@ public class ShowSendMailInfoCommand implements Command {
     ShowSendMailInfoCommand(RequestFactory requestFactory) {
         this.requestFactory = requestFactory;
     }
+
     //todo add to filter
     @Override
     public CommandResponse execute(CommandRequest request) {

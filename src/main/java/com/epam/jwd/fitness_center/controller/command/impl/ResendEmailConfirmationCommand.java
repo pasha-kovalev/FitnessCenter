@@ -33,7 +33,7 @@ public class ResendEmailConfirmationCommand implements Command {
         //todo ? check sessionExists
         Optional<Object> loginObj = request.pullFromSession(SessionAttribute.LOGIN);
         Optional<User> optionalUser;
-        if(!loginObj.isPresent()) {
+        if (!loginObj.isPresent()) {
             LOG.error("Error during pull login from session");
             return requestFactory.createForwardResponse(PagePath.ERROR);
         }
@@ -44,14 +44,14 @@ public class ResendEmailConfirmationCommand implements Command {
             LOG.error("Error during searching user by email", e);
             return requestFactory.createForwardResponse(PagePath.ERROR500);
         }
-        if(!optionalUser.isPresent()) {
+        if (!optionalUser.isPresent()) {
             //todo add listener to clear error messages
             request.addToSession(SessionAttribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_ERROR_USER_NOT_FOUND);
             return requestFactory.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
         }
 
         User user = optionalUser.get();
-        if( user.getStatus() != UserStatus.UNCONFIRMED) {
+        if (user.getStatus() != UserStatus.UNCONFIRMED) {
             //todo add listener to clear error messages
             request.addToSession(SessionAttribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_ERROR_USER_CONFIRMED);
             return requestFactory.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
@@ -60,7 +60,7 @@ public class ResendEmailConfirmationCommand implements Command {
         try {
             mailService.sendConfirmationEmail(user.getId(), user.getEmail(),
                     (String) request.retrieveFromSession(SessionAttribute.LOCALE)
-                                    .orElse(Locale.getDefault().toString()));
+                            .orElse(Locale.getDefault().toString()));
         } catch (ServiceException e) {
             LOG.error("Error during sendConfirmationEmail", e);
             return requestFactory.createForwardResponse(PagePath.ERROR500);

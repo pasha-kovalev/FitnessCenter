@@ -21,18 +21,23 @@ public class DaoProvider {
     public UserDaoImpl getUserDao() {
         return userDao;
     }
+
     public TokenDaoImpl getTokenDao() {
         return tokenDao;
     }
+
     public UserDetailsDaoImpl getUserDetailsDao() {
         return userDetailsDao;
     }
+
     public ItemDaoImpl getItemDao() {
         return itemDao;
     }
+
     public OrderDaoImpl getOrderDao() {
         return orderDao;
     }
+
     public CardDao getCardDao() {
         return cardDao;
     }

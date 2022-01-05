@@ -13,16 +13,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 
 @WebServlet("/controller")
 public class Controller extends HttpServlet {
-    private static final long serialVersionUID = -5223997271791449828L;
-
-    private static final Logger LOG = LogManager.getLogger(Controller.class);
-
     public static final String COMMAND_NAME_PARAM = "command";
-
+    private static final long serialVersionUID = -5223997271791449828L;
+    private static final Logger LOG = LogManager.getLogger(Controller.class);
     private final RequestFactory requestFactory = RequestFactory.getInstance();
 
     @Override
@@ -33,7 +29,7 @@ public class Controller extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp)  {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
         LOG.trace("req and resp in doPost");
         processRequest(req, resp);
     }

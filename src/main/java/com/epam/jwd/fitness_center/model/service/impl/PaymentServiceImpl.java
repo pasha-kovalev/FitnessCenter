@@ -27,8 +27,8 @@ public class PaymentServiceImpl implements PaymentService {
         int numberOfMonths = DEFAULT_CREDIT_PERIOD;
         try {
             cardDao.establishCredit(cardNumber,
-                                    calcCreditPricePerMonth(order.getPrice(), percentage, numberOfMonths),
-                                    numberOfMonths, order.getId(), order.getUserDetailsId());
+                    calcCreditPricePerMonth(order.getPrice(), percentage, numberOfMonths),
+                    numberOfMonths, order.getId(), order.getUserDetailsId());
         } catch (DaoException e) {
             throw new ServiceException("Unable to establish credit", e);
         }
@@ -63,8 +63,8 @@ public class PaymentServiceImpl implements PaymentService {
         if (!OrderValidator.isValidCardNumber(cardNumber)) {
             return false;
         }
-        if(isCredit) {
-            amount =  calcCreditPricePerMonth(amount, DEFAULT_CREDIT_PERCENTAGE, DEFAULT_CREDIT_PERIOD);
+        if (isCredit) {
+            amount = calcCreditPricePerMonth(amount, DEFAULT_CREDIT_PERCENTAGE, DEFAULT_CREDIT_PERIOD);
         }
         try {
             return cardDao.isEnoughMoney(cardNumber, amount);

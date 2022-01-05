@@ -1,13 +1,10 @@
 package com.epam.jwd.fitness_center.model.service.impl;
 
-import com.epam.jwd.fitness_center.controller.command.SessionAttribute;
 import com.epam.jwd.fitness_center.exception.DaoException;
 import com.epam.jwd.fitness_center.exception.ServiceException;
 import com.epam.jwd.fitness_center.model.dao.impl.DaoProvider;
 import com.epam.jwd.fitness_center.model.dao.impl.TokenDaoImpl;
-import com.epam.jwd.fitness_center.model.dao.impl.UserDaoImpl;
 import com.epam.jwd.fitness_center.model.entity.Token;
-import com.epam.jwd.fitness_center.model.entity.User;
 import com.epam.jwd.fitness_center.model.service.MailService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -93,12 +90,12 @@ public class MailServiceImpl implements MailService {
     }
 
     private Properties takeMailProperties(String path) throws ServiceException {
-        try(InputStream is = getClass().getClassLoader().getResourceAsStream(path)) {
-            if(is == null) {
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream(path)) {
+            if (is == null) {
                 LOG.warn("Unable to find mail service property file:{}", path);
                 throw new ServiceException("Unable to find mail service property file:" + path);
             }
-            Properties mailProperties =  new Properties();
+            Properties mailProperties = new Properties();
             mailProperties.load(is);
             return mailProperties;
         } catch (IOException e) {
@@ -119,12 +116,12 @@ public class MailServiceImpl implements MailService {
 
     private Properties takeSessionProperties(String path) throws ServiceException {
 
-        try(InputStream is = getClass().getClassLoader().getResourceAsStream(path)) {
-            if(is == null) {
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream(path)) {
+            if (is == null) {
                 LOG.warn("Unable to find mail session service property file:{}", path);
                 throw new ServiceException("Unable to find mail session service property file:" + path);
             }
-            Properties sessionProperties =  new Properties();
+            Properties sessionProperties = new Properties();
             sessionProperties.load(is);
             return sessionProperties;
         } catch (IOException e) {

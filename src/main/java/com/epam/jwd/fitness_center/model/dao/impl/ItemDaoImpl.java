@@ -4,7 +4,6 @@ import com.epam.jwd.fitness_center.exception.DaoException;
 import com.epam.jwd.fitness_center.model.connection.ConnectionPool;
 import com.epam.jwd.fitness_center.model.dao.BaseDao;
 import com.epam.jwd.fitness_center.model.entity.Item;
-import com.epam.jwd.fitness_center.model.entity.UserDetails;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,7 +21,7 @@ public class ItemDaoImpl extends BaseDao<Item> {
     private static final String PRICE_FIELD_NAME = "price";
 
     private static final List<String> TABLE_FIELDS = Arrays.asList(
-            ID_FIELD_NAME,  NAME_FIELD_NAME, PRICE_FIELD_NAME
+            ID_FIELD_NAME, NAME_FIELD_NAME, PRICE_FIELD_NAME
     );
 
     //todo getFields
@@ -69,7 +68,7 @@ public class ItemDaoImpl extends BaseDao<Item> {
 
     @Override
     public boolean update(Item item) throws DaoException {
-        int rows =  executeUpdate(updateQuery, st -> {
+        int rows = executeUpdate(updateQuery, st -> {
             fillEntity(st, item);
             st.setLong(3, item.getId());
         });

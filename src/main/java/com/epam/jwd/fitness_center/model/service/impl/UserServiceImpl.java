@@ -23,9 +23,8 @@ import java.util.Optional;
 import static at.favre.lib.crypto.bcrypt.BCrypt.MIN_COST;
 
 public class UserServiceImpl implements UserService {
-    private static final Logger LOG = LogManager.getLogger(UserServiceImpl.class);
     public static final int TOKEN_EXPIRATION_DAYS = 1;
-
+    private static final Logger LOG = LogManager.getLogger(UserServiceImpl.class);
     private final UserDaoImpl userDao;
     private final BCrypt.Hasher hasher = BCrypt.withDefaults();
     private final BCrypt.Verifyer verifier = BCrypt.verifyer();
@@ -69,14 +68,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<User> register(String email, String password1, String password2, String firstName, String secondName,
-                         UserRole role, UserStatus status, String locale) throws ServiceException {
-        if(UserValidator.isValidName(firstName) || UserValidator.isValidName(secondName)
-                || UserValidator.isValidEmail(email) || UserValidator.isValidPassword(password1)
-                || UserValidator.isValidPassword(password2) || UserValidator.isEqualPasswords(password1, password2))
-        {
+                                   UserRole role, UserStatus status, String locale) throws ServiceException {
+        if (!UserValidator.isValidName(firstName) || !UserValidator.isValidName(secondName)
+                || !UserValidator.isValidEmail(email) || !UserValidator.isValidPassword(password1)
+                || !UserValidator.isValidPassword(password2) || !UserValidator.isEqualPasswords(password1, password2)) {
             return Optional.empty();
         }
-        if(isEmailRegistered(email)) return Optional.empty();
+        if (isEmailRegistered(email)) return Optional.empty();
         User user = new User.Builder().setEmail(email)
                 .setPassword(password1)
                 .setFirstName(firstName)
@@ -96,11 +94,9 @@ public class UserServiceImpl implements UserService {
         if (!UserValidator.isValidEmail(email) || !UserValidator.isValidPassword(password)) {
             return Optional.empty();
         }
-
         final byte[] enteredPassword = password.getBytes(StandardCharsets.UTF_8);
         final Optional<User> readUser = findUserByEmail(email);
-
-        if (readUser.isPresent() && !(readUser.get().getStatus() == UserStatus.UNCONFIRMED) ) {
+        if (readUser.isPresent() && !(readUser.get().getStatus() == UserStatus.UNCONFIRMED)) {
             final byte[] hashedPassword = readUser.get()
                     .getPassword()
                     .getBytes(StandardCharsets.UTF_8);
@@ -149,11 +145,11 @@ public class UserServiceImpl implements UserService {
     }
 
     private boolean hasValidToken(User user) {
-        if(user.getStatus() == UserStatus.UNCONFIRMED) {
+        if (user.getStatus() == UserStatus.UNCONFIRMED) {
             try {
                 TokenDaoImpl tokenDao = DaoProvider.getInstance().getTokenDao();
                 tokenDao.removeExpiredToken(TOKEN_EXPIRATION_DAYS);
-                if(!tokenDao.findByUserId(user.getId()).isEmpty()) {
+                if (!tokenDao.findByUserId(user.getId()).isEmpty()) {
                     return true;
                 } else {
                     userDao.delete(user.getId());
@@ -175,15 +171,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean confirmUser(long tokenId, String tokenValue) throws ServiceException {
         final Optional<Token> optionalToken = retrieveUserToken(tokenId);
-        if(!optionalToken.isPresent()) {
-                LOG.error("Unable to confirm user because token not found. Token ID: {}", tokenId);
-                return false;
+        if (!optionalToken.isPresent()) {
+            LOG.error("Unable to confirm user because token not found. Token ID: {}", tokenId);
+            return false;
         }
         Token token = optionalToken.get();
         Optional<User> optionalUser = findUserByTokenId(tokenId);
-        if(optionalUser.isPresent() && optionalUser.get().getStatus() == UserStatus.UNCONFIRMED
-           && checkToken(token, tokenValue))
-        {
+        if (optionalUser.isPresent() && optionalUser.get().getStatus() == UserStatus.UNCONFIRMED
+                && checkToken(token, tokenValue)) {
             updateUserStatus(UserStatus.INACTIVE, token.getUserId());
             removeUserTokens(optionalUser.get().getId());
             return true;
@@ -202,7 +197,6 @@ public class UserServiceImpl implements UserService {
         try {
             tokenDao.removeByUserId(userId);
         } catch (DaoException e) {
-            //fixme log e
             LOG.error("Unable to remove tokens by user id : {}. {}", userId, e.getMessage());
         }
     }
@@ -245,7 +239,7 @@ public class UserServiceImpl implements UserService {
     public UserDetails addUserDetails(User user)
             throws ServiceException {
         final UserDetailsDaoImpl userDetailsDao = DaoProvider.getInstance().getUserDetailsDao();
-        UserDetails userDetails = new UserDetails(user.getId(), null, null, null);
+        UserDetails userDetails = new UserDetails(user.getId(), BigDecimal.ZERO, null);
         try {
             return userDetailsDao.create(userDetails);
         } catch (DaoException e) {
@@ -272,12 +266,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateUserDetailsTrainerId(UserDetails userDetails, long trainerId) throws ServiceException {
         userDetails.setPersonalTrainerId(trainerId);
-        updateUserDetails(userDetails);
-    }
-
-    @Override
-    public void updateUserDetailsCardId(UserDetails userDetails, long cardId) throws ServiceException {
-        userDetails.setCardId(cardId);
         updateUserDetails(userDetails);
     }
 }

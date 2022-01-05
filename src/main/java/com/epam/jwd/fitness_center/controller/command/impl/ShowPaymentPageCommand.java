@@ -16,7 +16,7 @@ public class ShowPaymentPageCommand implements Command {
 
     @Override
     public CommandResponse execute(CommandRequest request) {
-        if(!request.retrieveFromSession(SessionAttribute.ORDER).isPresent()) {
+        if (!request.retrieveFromSession(SessionAttribute.ORDER).isPresent()) {
             return requestFactory.createForwardResponse(PagePath.ERROR);
         }
         return requestFactory.createForwardResponse(PagePath.SHOW_PAYMENT);

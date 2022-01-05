@@ -5,11 +5,9 @@ import com.epam.jwd.fitness_center.exception.ServiceException;
 import com.epam.jwd.fitness_center.model.dao.impl.DaoProvider;
 import com.epam.jwd.fitness_center.model.dao.impl.ItemDaoImpl;
 import com.epam.jwd.fitness_center.model.entity.Item;
-import com.epam.jwd.fitness_center.model.entity.User;
 import com.epam.jwd.fitness_center.model.entity.UserDetails;
 import com.epam.jwd.fitness_center.model.service.EntityService;
 import com.epam.jwd.fitness_center.model.service.UserService;
-import com.epam.jwd.fitness_center.model.validator.UserValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -86,7 +84,8 @@ public class ItemServiceImpl implements EntityService<Item> {
 
 
     private BigDecimal calcFinalPrice(BigDecimal price, BigDecimal discount) {
-        return price.subtract(price.multiply(discount.divide(BigDecimal.valueOf(PERCENT_DIVISOR))),
-                                             new MathContext(MONEY_PRECISION));
+        return discount == null ? price
+                : price.subtract(price.multiply(discount.divide(BigDecimal.valueOf(PERCENT_DIVISOR))),
+                new MathContext(MONEY_PRECISION));
     }
 }

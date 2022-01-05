@@ -1,9 +1,9 @@
 package com.epam.jwd.fitness_center.controller.command.impl;
 
+import com.epam.jwd.fitness_center.controller.RequestFactory;
 import com.epam.jwd.fitness_center.controller.SimpleRequestFactory;
 import com.epam.jwd.fitness_center.controller.command.Command;
 import com.epam.jwd.fitness_center.controller.command.CommandType;
-import com.epam.jwd.fitness_center.controller.RequestFactory;
 
 import java.util.EnumMap;
 
@@ -25,7 +25,7 @@ public class CommandProvider {
         commands.put(SHOW_ERROR, new ShowErrorCommand(requestFactory));
         commands.put(SHOW_MAIL_INFO, new ShowSendMailInfoCommand(requestFactory));
         commands.put(RESEND_EMAIL, new ResendEmailConfirmationCommand(requestFactory));
-        commands.put(CONFIRM_EMAIL , new ConfirmEmailCommand(requestFactory));
+        commands.put(CONFIRM_EMAIL, new ConfirmEmailCommand(requestFactory));
         commands.put(SHOW_CONFIRM_EMAIL, new ShowEmailConfirmationPageCommand(requestFactory));
         commands.put(SWITCH_LOCALE, new SwitchLocaleCommand((SimpleRequestFactory) requestFactory));
         commands.put(SHOW_INFO, new ShowInfoCommand(requestFactory));
@@ -37,14 +37,15 @@ public class CommandProvider {
         commands.put(ORDER, new MakeOrderCommand(requestFactory));
         commands.put(SHOW_PAYMENT, new ShowPaymentPageCommand(requestFactory));
         commands.put(PAYMENT, new PaymentCommand(requestFactory));
-    }
-
-    public Command of(String name) {
-        return commands.get(CommandType.of(name));
+        commands.put(SHOW_USER_ACTIVE_ORDERS, new ShowUserActiveOrdersPageCommand(requestFactory));
     }
 
     public static CommandProvider getInstance() {
         return CommandProviderHolder.INSTANCE;
+    }
+
+    public Command of(String name) {
+        return commands.get(CommandType.of(name));
     }
 
     private static class CommandProviderHolder {
