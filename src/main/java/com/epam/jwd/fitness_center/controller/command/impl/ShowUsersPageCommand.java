@@ -20,8 +20,18 @@ public class ShowUsersPageCommand implements Command {
         }
 
         @Override
+        public boolean isAjax() {
+            return false;
+        }
+
+        @Override
         public String getPath() {
             return PagePath.USERS.getPath();
+        }
+
+        @Override
+        public String getAjaxData() {
+            return null;
         }
     };
 

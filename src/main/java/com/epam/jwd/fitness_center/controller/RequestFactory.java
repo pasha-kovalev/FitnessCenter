@@ -15,4 +15,6 @@ public interface RequestFactory {
     CommandResponse createForwardResponse(PagePath page);
 
     CommandResponse createRedirectResponse(PagePath page);
+
+    CommandResponse createAjaxResponse(String data);
 }

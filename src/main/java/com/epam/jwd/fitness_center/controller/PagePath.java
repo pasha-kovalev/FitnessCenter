@@ -26,8 +26,7 @@ public enum PagePath {
     SHOW_ORDER("/WEB-INF/jsp/user/order.jsp"),
     SHOW_ORDER_REDIRECT("/controller?command=show_order"),
     SHOW_PAYMENT("/WEB-INF/jsp/user/payment.jsp"),
-    SHOW_PAYMENT_REDIRECT("/controller?command=show_payment"),
-    SHOW_USER_ACTIVE_ORDERS("/WEB-INF/jsp/user/cabinet_active_orders.jsp");
+    SHOW_PAYMENT_REDIRECT("/controller?command=show_payment");
 
     private final String path;
 

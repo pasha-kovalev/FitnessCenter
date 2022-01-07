@@ -4,6 +4,8 @@ import com.epam.jwd.fitness_center.controller.command.CommandResponse;
 
 public class PlainCommandResponse implements CommandResponse {
     private final boolean redirect;
+    private final boolean ajax;
+    private final String ajaxData;
     private final String path;
 
     public PlainCommandResponse(String path) {
@@ -11,8 +13,18 @@ public class PlainCommandResponse implements CommandResponse {
     }
 
     public PlainCommandResponse(boolean redirect, String path) {
+        this(redirect, path, false, path);
+    }
+
+    public PlainCommandResponse(boolean redirect, String path,  boolean ajax, String ajaxData) {
         this.redirect = redirect;
+        this.ajax = ajax;
         this.path = path;
+        this.ajaxData = ajaxData;
+    }
+
+    public static PlainCommandResponse createAjaxResponse(String data) {
+        return new PlainCommandResponse(false, null, true, data);
     }
 
     @Override
@@ -21,8 +33,18 @@ public class PlainCommandResponse implements CommandResponse {
     }
 
     @Override
+    public boolean isAjax() {
+        return ajax;
+    }
+
+    @Override
     public String getPath() {
         return path;
+    }
+
+    @Override
+    public String getAjaxData() {
+        return ajaxData;
     }
 
     @Override

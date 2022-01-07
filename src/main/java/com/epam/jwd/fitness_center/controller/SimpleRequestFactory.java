@@ -35,6 +35,11 @@ public class SimpleRequestFactory implements RequestFactory {
                 new PlainCommandResponse(true, page.getPath()));
     }
 
+    @Override
+    public CommandResponse createAjaxResponse(String data) {
+        return PlainCommandResponse.createAjaxResponse(data);
+    }
+
     public CommandResponse createRedirectResponse(String path) {
 
         return redirectResponseCache.computeIfAbsent(path, p ->

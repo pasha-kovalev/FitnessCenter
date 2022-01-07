@@ -13,8 +13,18 @@ public class ShowMainPageCommand implements Command {
         }
 
         @Override
+        public boolean isAjax() {
+            return false;
+        }
+
+        @Override
         public String getPath() {
             return PagePath.MAIN.getPath();
+        }
+
+        @Override
+        public String getAjaxData() {
+            return null;
         }
     };
 

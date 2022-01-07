@@ -45,7 +45,14 @@ public class Controller extends HttpServlet {
     private void proceedWithResponse(HttpServletRequest req, HttpServletResponse resp,
                                      CommandResponse commandResponse) {
         try {
-            forwardOrRedirectToResponseLocation(req, resp, commandResponse);
+            if(commandResponse.isAjax()) {
+                resp.setContentType("application/json");
+                resp.setCharacterEncoding("UTF-8");
+                resp.getWriter().write(commandResponse.getAjaxData());
+            }
+            else {
+                forwardOrRedirectToResponseLocation(req, resp, commandResponse);
+            }
         } catch (ServletException e) {
             LOG.error("servlet exception occurred", e);
         } catch (IOException e) {

@@ -79,17 +79,6 @@ public class MakeOrderCommand implements Command {
                 + COMMENT + delimiter + request.getParameter(COMMENT);
     }
 
-    private Optional<UserDetails> retrieveUserDetailsFromSession(CommandRequest request) {
-        Optional<Object> userDetailsOptional = request.retrieveFromSession(SessionAttribute.USER_DETAILS);
-        if (!userDetailsOptional.isPresent()) {
-            LOG.error("Not found user details for user: {}",
-                    request.retrieveFromSession(SessionAttribute.USER).isPresent()
-                            ? request.retrieveFromSession(SessionAttribute.USER).get() : "user not found in session");
-            return Optional.empty();
-        }
-        return Optional.of((UserDetails) userDetailsOptional.get());
-    }
-
     private Optional<Long> parseLongRequestParameter(CommandRequest request, String parameter) {
         Optional<Long> result;
         String paramValue = request.getParameter(parameter);
