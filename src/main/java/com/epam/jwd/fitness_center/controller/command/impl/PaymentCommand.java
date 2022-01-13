@@ -33,6 +33,9 @@ public class PaymentCommand implements Command {
             return requestFactory.createForwardResponse(PagePath.ERROR);
         }
         Order order = (Order) orderOptional.get();
+        if(order.getOrderStatus() != OrderStatus.PAYMENT_AWAITING) {
+            return requestFactory.createForwardResponse(PagePath.ERROR);
+        }
         String cardNumber = request.getParameter(RequestParameter.CARD_NUMBER);
         if (request.getParameter(RequestParameter.CREDIT_CHECKBOX) != null) {
             Optional<CommandResponse> optionalResponse = processCredit(request, order, cardNumber);
@@ -64,7 +67,7 @@ public class PaymentCommand implements Command {
                         ResourceBundleKey.INFO_PAYMENT_INSUFFICIENT_FUNDS);
                 return Optional.of(requestFactory.createRedirectResponse(PagePath.SHOW_PAYMENT_REDIRECT));
             }
-            orderService.updateOrderStatus(OrderStatus.ACTIVE, order.getId());
+            orderService.updateOrderStatus(OrderStatus.PENDING_TRAINER, order.getId());
             paymentService.doPayment(cardNumber, order);
             return Optional.empty();
         } catch (ServiceException e) {
@@ -86,7 +89,7 @@ public class PaymentCommand implements Command {
                         ResourceBundleKey.INFO_PAYMENT_INSUFFICIENT_FUNDS);
                 return Optional.of(requestFactory.createRedirectResponse(PagePath.SHOW_PAYMENT_REDIRECT));
             }
-            orderService.updateOrderStatus(OrderStatus.ACTIVE, order.getId());
+            orderService.updateOrderStatus(OrderStatus.PENDING_TRAINER, order.getId());
             paymentService.establishCredit(cardNumber, order);
             return Optional.empty();
         } catch (ServiceException e) {

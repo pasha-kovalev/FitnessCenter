@@ -18,9 +18,6 @@
 <fmt:message var="notValidTitle" key="payment.input.notValid"/>
 <fmt:message var="previous" key="order.button.previous"/>
 <fmt:message var="next" key="order.button.next"/>
-
-
-
 <html>
 <head>
     <title>${title}</title>
@@ -103,9 +100,7 @@
     var periods = document.getElementById("period");
     var price = document.getElementById("price");
     var totalPrice = document.getElementById("total");
-
     showTab(currentTab);
-
     program.onchange = function() {
         if(program.options[program.selectedIndex].text === 'transformation') {
             periods.value = "3";

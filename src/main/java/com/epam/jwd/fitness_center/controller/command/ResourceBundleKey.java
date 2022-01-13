@@ -12,7 +12,6 @@ public class ResourceBundleKey {
     public static final String INFO_PAYMENT_CARD_NOT_EXIST = "payment.err.cardNotExist";
     public static final String INFO_PAYMENT_INSUFFICIENT_FUNDS = "payment.err.funds";
 
-
     private ResourceBundleKey() {
     }
 }

@@ -20,6 +20,7 @@
                             <a href="${pageContext.request.contextPath}/controller?command=log_out"
                                class="w3-bar-item w3-button">${logout}</a>
                         </div>
+                    </div>
         </div>
     </div>
 </header>

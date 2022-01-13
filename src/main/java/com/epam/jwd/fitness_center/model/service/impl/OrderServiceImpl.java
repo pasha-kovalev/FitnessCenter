@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 public class OrderServiceImpl implements OrderService {
     private static final Logger LOG = LogManager.getLogger(OrderServiceImpl.class);
@@ -99,6 +100,16 @@ public class OrderServiceImpl implements OrderService {
         } catch (DaoException e) {
             LOG.error("Error during searching for order by trainerId: {}. {}", trainerId, e.getMessage());
             throw new ServiceException("Error during searching for order by trainerId", e);
+        }
+    }
+
+    @Override
+    public Optional<Order> findOrderById(Long id) throws ServiceException {
+        try {
+            return orderDao.read(id);
+        } catch (DaoException e) {
+            LOG.error("Error during searching for order by id: {}. {}", id, e.getMessage());
+            throw new ServiceException("Error during searching for order by id", e);
         }
     }
 

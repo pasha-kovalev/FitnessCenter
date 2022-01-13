@@ -17,6 +17,9 @@
     <link href="../../style/style.css" type="text/css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
     <style>
+        footer {
+            position: relative;
+        }
         .custom-table {
             min-width: 1100px;
             margin: 0 auto;
@@ -74,7 +77,8 @@
     </style>
 </head>
 <body>
-<nav class="w3-sidebar w3-collapse w3-white w3-animate-left" style="z-index:3;width:300px;" id="mySidebar"><br>
+<jsp:include page="../component/header.jsp" flush="true"/>
+<nav class="w3-sidebar w3-collapse w3-white w3-animate-left" style="z-index:3;width:300px;margin-top: 46px" id="mySidebar"><br>
     <div class="w3-container w3-row">
         <div class="w3-col s2">
             <i class="fa fa-user-circle fa-2x w3-margin-right" style="width:46px"></i>
@@ -95,6 +99,7 @@
 <div class="w3-main" style="margin-left:300px;padding-top:90px; height: 95%">
     <div id="mainData"></div>
 </div>
+<jsp:include page="../component/footer.jsp" flush="true"/>
 <script>
     var mySidebar = document.getElementById("mySidebar");
     var overlayBg = document.getElementById("myOverlay");
@@ -130,6 +135,23 @@
                     .append($("<tr><th>Дата заказа</th><th>Программа</th><th>Тренер</th><th>Цена</th>" +
                         "<th>Статус</th></tr>"));
                     $.each(responseJson, function(index, order) {
+                        var lastTd = "";
+                        switch (order.orderStatus) {
+                            case 'PAYMENT_AWAITING':
+                                lastTd = "<a " +
+                                    "href=\"${pageContext.request.contextPath}/controller?command=show_payment&orderId="
+                                    + order.id +"\" class=\"btn btn-danger\">Pay</a>";
+                                break;
+                            case 'PENDING_CLIENT':
+                                lastTd = "<a href=\"#\" class=\"btn btn-warning\">Approve</a>";
+                                break;
+                            case 'ACTIVE':
+                                lastTd = "<a href=\"#\" class=\"btn btn-success\">Open</a>";
+                                break;
+                            default:
+                                lastTd = "";
+                                break;
+                        }
                         $("<tr>").appendTo($table)
                             .append($("<td>").text(order.creationDate.date['day'] + '-' +
                                                    order.creationDate.date['month'] + '-' +
@@ -137,13 +159,13 @@
                             .append($("<td>").text(order.item['name']))
                             .append($("<td>").text(order.trainerName))
                             .append($("<td>").text(order.price))
-                            .append($("<td>").text(order.orderStatus));
+                            .append($("<td>").text(order.orderStatus))
+                            .append($("<td>").append(lastTd));
                     });
             }
-        });
+        })
         mainDataLoaded = true;
     }
-
 </script>
 </body>
 </html>
