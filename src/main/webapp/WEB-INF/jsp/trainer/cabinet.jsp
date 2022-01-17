@@ -90,11 +90,10 @@
     </div>
     <hr>
     <div class="w3-bar-block">
-        <button class="w3-bar-item w3-button w3-padding" onclick="showActiveOrders()">
-            <i class="fa fa-bullseye fa-fw"></i> ${currentOrders}</button>
-        <a href="#" class="w3-bar-item w3-button w3-padding"><i class="fa fa-diamond fa-fw"></i>${personalTrainer}</a>
-        <a href="#" class="w3-bar-item w3-button w3-padding"><i class="fa fa-history fa-fw"></i>${orders}</a>
-        <a href="#" class="w3-bar-item w3-button w3-padding"><i class="fa fa-cog fa-fw"></i>${settings}</a><br><br>
+        <button class="w3-bar-item w3-button w3-padding" onclick="showOrders('show_trainer_active_orders')">
+            <i class="fa fa-bullseye fa-fw"></i>Мои заказы</button>
+        <button class="w3-bar-item w3-button w3-padding" onclick="showOrders('show_untaken_orders')">
+            <i class="fa fa-bullseye fa-fw"></i>Необработанные заказы</button>
     </div>
 </nav>
 <div class="w3-main" style="margin-left:300px;padding-top:90px; height: 95%">
@@ -105,6 +104,7 @@
     var mySidebar = document.getElementById("mySidebar");
     var overlayBg = document.getElementById("myOverlay");
     var mainDataLoaded = false;
+    var isFiltered = false;
 
     function w3_open() {
         if (mySidebar.style.display === 'block') {
@@ -121,29 +121,33 @@
         overlayBg.style.display = "none";
     }
 
-    function showActiveOrders() {
-        document.getElementById("mainData").innerHTML = "";
+    function showOrders(command) {
         jQuery.ajax({
             type : 'GET',
-            url : '${pageContext.request.contextPath}/controller?command=show_user_active_orders',
+            url : '${pageContext.request.contextPath}/controller?command=' + command,
             success : function(responseJson) {
-                var $table = $("<table class=\"custom-table\">").appendTo($("#mainData"));
+                document.getElementById("mainData").innerHTML = "";
+                var $table = $(`<table class="custom-table" id="mainTable">`).appendTo($("#mainData"));
                 $("<thead>").appendTo($table)
-                    .append($("<tr><th>Дата заказа</th><th>Программа</th><th>Тренер</th><th>Цена</th>" +
-                        "<th>Статус</th></tr>"));
+                    .append($(`<tr><th onclick="sortTable(0)" style="cursor: pointer">Дата заказа</th>
+                                   <th>Программа</th>
+                                   <th onclick="filterByTrainer('${sessionScope.user.secondName}')"
+                                       style="cursor: pointer">Личный тренер</th>
+                                   <th>Статус</th></tr>`));
                     $.each(responseJson, function(index, order) {
-                        var lastTd = "";
+                        var lastTd;
                         switch (order.orderStatus) {
-                            case ${OrderStatus.PAYMENT_AWAITING.name()}:
+                            case ${OrderStatus.UNTAKEN.name()}:
                                 lastTd = "<a " +
-                                    "href=\"${pageContext.request.contextPath}/controller?command=show_payment&orderId="
-                                    + order.id +"\" class=\"btn btn-danger\">Pay</a>";
+                                    "href=\"${pageContext.request.contextPath}/controller"+
+                                    "?command=show_make_program&orderId=" + order.id +
+                                    '" class="btn btn-danger">Взять</a>';
                                 break;
-                            case ${OrderStatus.PENDING_CLIENT.name()}:
-                                lastTd = "<a href=\"#\" class=\"btn btn-warning\">Approve</a>";
-                                break;
-                            case ${OrderStatus.ACTIVE.name()}:
-                                lastTd = "<a href=\"#\" class=\"btn btn-success\">Open</a>";
+                            case ${OrderStatus.TAKEN.name()}:
+                                lastTd = "<a " +
+                                    "href=\"${pageContext.request.contextPath}/controller"+
+                                    "?command=show_make_program&orderId=" + order.id +
+                                    '" class="btn btn-danger">Обработать</a>';
                                 break;
                             default:
                                 lastTd = "";
@@ -154,13 +158,80 @@
                                                    order.creationDate.date['month'] + '-' +
                                                    order.creationDate.date['year']))
                             .append($("<td>").text(order.item['name']))
-                            .append($("<td>").text(order.trainerName))
-                            .append($("<td>").text(order.price))
+                            .append($(`<td class="trainer-name">`).text(order.trainerName))
                             .append($("<td>").text(order.orderStatus))
                             .append($("<td>").append(lastTd));
                     });
             }
         })
+    }
+
+    function sortTable(n) {
+        var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+        table = document.getElementById("mainTable");
+        switching = true;
+        dir = "asc";
+        while (switching) {
+            switching = false;
+            rows = table.rows;
+            for (i = 1; i < (rows.length - 1); i++) {
+                shouldSwitch = false;
+                x = rows[i].getElementsByTagName("TD")[n];
+                y = rows[i + 1].getElementsByTagName("TD")[n];
+                if (dir == "asc") {
+                    if (convertDate(x.innerHTML) - convertDate(y.innerHTML) < 0) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                } else if (dir == "desc") {
+                    if (convertDate(x.innerHTML) - convertDate(y.innerHTML) > 0) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                }
+            }
+            if (shouldSwitch) {
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+                switchcount ++;
+            } else {
+                if (switchcount == 0 && dir == "asc") {
+                    dir = "desc";
+                    switching = true;
+                }
+            }
+        }
+    }
+
+    function convertDate(d) {
+        var p = d.split("-");
+        return +(p[2]+p[1]+p[0]);
+    }
+
+    function filterByTrainer(trainerName) {
+        var filter, table, tr, td, i, txtValue;
+        filter = trainerName.toUpperCase();
+        table = document.getElementById("mainTable");
+        tr = table.getElementsByTagName("tr");
+        if(isFiltered) {
+            for (i = 0; i < tr.length; i++) {
+                tr[i].style.display = "";
+            }
+            isFiltered = false;
+        } else {
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByClassName("trainer-name")[0];
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase() == filter) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+            isFiltered = true;
+        }
     }
 </script>
 </body>

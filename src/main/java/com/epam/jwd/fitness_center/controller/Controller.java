@@ -25,7 +25,6 @@ public class Controller extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
         LOG.trace("req and resp in doGet");
         processRequest(req, resp);
-
     }
 
     @Override

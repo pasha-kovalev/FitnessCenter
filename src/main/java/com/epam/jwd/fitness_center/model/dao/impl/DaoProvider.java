@@ -11,6 +11,8 @@ public class DaoProvider {
     private final OrderDaoImpl orderDao = new OrderDaoImpl(ConnectionPoolManager.getInstance());
     private final CardDao cardDao = new CardDaoImpl(ConnectionPoolManager.getInstance());
 
+    private final ProgramDaoImpl programDao = new ProgramDaoImpl(ConnectionPoolManager.getInstance());
+
     private DaoProvider() {
     }
 
@@ -18,6 +20,9 @@ public class DaoProvider {
         return DaoProviderHolder.instance;
     }
 
+    public ProgramDaoImpl getProgramDao() {
+        return programDao;
+    }
     public UserDaoImpl getUserDao() {
         return userDao;
     }

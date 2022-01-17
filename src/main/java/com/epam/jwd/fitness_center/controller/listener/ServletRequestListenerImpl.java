@@ -2,7 +2,7 @@ package com.epam.jwd.fitness_center.controller.listener;
 
 import com.epam.jwd.fitness_center.controller.command.CommandType;
 import com.epam.jwd.fitness_center.controller.command.RequestParameter;
-import com.epam.jwd.fitness_center.controller.command.SessionAttribute;
+import com.epam.jwd.fitness_center.controller.command.Attribute;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -30,7 +30,7 @@ public class ServletRequestListenerImpl implements ServletRequestListener {
         if (command != null) {
             if (command.compareToIgnoreCase(CommandType.SWITCH_LOCALE.name()) != 0) {
                 String query = servletRequest.getQueryString();
-                session.setAttribute(SessionAttribute.PREVIOUS_QUERY, query);
+                session.setAttribute(Attribute.PREVIOUS_QUERY, query);
             }
         }
     }

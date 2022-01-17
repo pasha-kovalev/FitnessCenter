@@ -1,7 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="com.epam.jwd.fitness_center.model.entity.UserRole" %>
 <fmt:setLocale value="${sessionScope.locale}" />
 <fmt:setBundle basename="locale" />
 <fmt:message var="home" key="header.home"/>
@@ -39,19 +38,7 @@
                         <i class="fa fa-user-circle fa-2x" style="padding-top: 4px; padding-right: 16px; padding-left: 16px"></i>
                     </button>
                     <div class="w3-dropdown-content w3-bar-block w3-card-4">
-                        <a href=
-                            <c:choose>
-                            <c:when test="${sessionScope.user.role ne UserRole.ADMIN
-                                            || sessionScope.user.role ne UserRole.TRAINER}">
-                                   "${pageContext.request.contextPath}/controller?command=user_cabinet"
-                            </c:when>
-                            <c:when test="${sessionScope.user.role eq UserRole.ADMIN}">
-                                "${pageContext.request.contextPath}/controller?command=admin_cabinet"
-                            </c:when>
-                            <c:when test="${sessionScope.user.role eq UserRole.TRAINER}">
-                                "${pageContext.request.contextPath}/controller?command=trainer_cabinet"
-                            </c:when>
-                            </c:choose>
+                        <a href="${pageContext.request.contextPath}/controller?command=show_cabinet"
                            class="w3-bar-item w3-button"
                            style="padding-left: 9px;padding-right: 23px;">${account}</a>
                         <a href="${pageContext.request.contextPath}/controller?command=log_out"

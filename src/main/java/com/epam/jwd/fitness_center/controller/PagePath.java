@@ -23,10 +23,13 @@ public enum PagePath {
     SHOW_PROGRAMS("/WEB-INF/jsp/programs.jsp"),
     SHOW_TRANSFORM_PROGRAM("/WEB-INF/jsp/transformation.jsp"),
     USER_CABINET("/WEB-INF/jsp/user/cabinet.jsp"),
+    TRAINER_CABINET("/WEB-INF/jsp/trainer/cabinet.jsp"),
     SHOW_ORDER("/WEB-INF/jsp/user/order.jsp"),
     SHOW_ORDER_REDIRECT("/controller?command=show_order"),
     SHOW_PAYMENT("/WEB-INF/jsp/user/payment.jsp"),
-    SHOW_PAYMENT_REDIRECT("/controller?command=show_payment");
+    SHOW_PAYMENT_REDIRECT("/controller?command=show_payment"),
+    SHOW_PROGRAM("/WEB-INF/jsp/trainer/program.jsp"),
+    SHOW_PROGRAM_REDIRECT("/controller?command=show_make_program");
 
     private final String path;
 

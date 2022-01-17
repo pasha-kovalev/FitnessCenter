@@ -28,7 +28,7 @@ public class PaymentCommand implements Command {
 
     @Override
     public CommandResponse execute(CommandRequest request) {
-        Optional<Object> orderOptional = request.retrieveFromSession(SessionAttribute.ORDER);
+        Optional<Object> orderOptional = request.retrieveFromSession(Attribute.ORDER);
         if (!orderOptional.isPresent()) {
             return requestFactory.createForwardResponse(PagePath.ERROR);
         }
@@ -48,26 +48,26 @@ public class PaymentCommand implements Command {
                 return optionalResponse.get();
             }
         }
-        request.removeFromSession(SessionAttribute.ORDER);
-        request.removeFromSession(SessionAttribute.CREDIT_PERCENTAGE);
-        request.removeFromSession(SessionAttribute.CREDIT_PERIOD);
-        request.addToSession(SessionAttribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_PAYMENT_SUCCESS);
+        request.removeFromSession(Attribute.ORDER);
+        request.removeFromSession(Attribute.CREDIT_PERCENTAGE);
+        request.removeFromSession(Attribute.CREDIT_PERIOD);
+        request.addToSession(Attribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_SUCCESS);
         return requestFactory.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
     }
 
     private Optional<CommandResponse> processPayment(CommandRequest request, Order order, String cardNumber) {
         try {
             if (!paymentService.checkCardExistence(cardNumber)) {
-                request.addToSession(SessionAttribute.ERROR_PAYMENT_BUNDLE_KEY,
+                request.addToSession(Attribute.ERROR_PAYMENT_BUNDLE_KEY,
                         ResourceBundleKey.INFO_PAYMENT_CARD_NOT_EXIST);
                 return Optional.of(requestFactory.createRedirectResponse(PagePath.SHOW_PAYMENT_REDIRECT));
             }
             if (!paymentService.checkCardBalance(cardNumber, order.getPrice(), false)) {
-                request.addToSession(SessionAttribute.ERROR_PAYMENT_BUNDLE_KEY,
+                request.addToSession(Attribute.ERROR_PAYMENT_BUNDLE_KEY,
                         ResourceBundleKey.INFO_PAYMENT_INSUFFICIENT_FUNDS);
                 return Optional.of(requestFactory.createRedirectResponse(PagePath.SHOW_PAYMENT_REDIRECT));
             }
-            orderService.updateOrderStatus(OrderStatus.PENDING_TRAINER, order.getId());
+            orderService.updateOrderStatus(OrderStatus.UNTAKEN, order.getId());
             paymentService.doPayment(cardNumber, order);
             return Optional.empty();
         } catch (ServiceException e) {
@@ -80,16 +80,16 @@ public class PaymentCommand implements Command {
         LOG.info("Credit selected");
         try {
             if (!paymentService.checkCardExistence(cardNumber)) {
-                request.addToSession(SessionAttribute.ERROR_PAYMENT_BUNDLE_KEY,
+                request.addToSession(Attribute.ERROR_PAYMENT_BUNDLE_KEY,
                         ResourceBundleKey.INFO_PAYMENT_CARD_NOT_EXIST);
                 return Optional.of(requestFactory.createRedirectResponse(PagePath.SHOW_PAYMENT_REDIRECT));
             }
             if (!paymentService.checkCardBalance(cardNumber, order.getPrice(), true)) {
-                request.addToSession(SessionAttribute.ERROR_PAYMENT_BUNDLE_KEY,
+                request.addToSession(Attribute.ERROR_PAYMENT_BUNDLE_KEY,
                         ResourceBundleKey.INFO_PAYMENT_INSUFFICIENT_FUNDS);
                 return Optional.of(requestFactory.createRedirectResponse(PagePath.SHOW_PAYMENT_REDIRECT));
             }
-            orderService.updateOrderStatus(OrderStatus.PENDING_TRAINER, order.getId());
+            orderService.updateOrderStatus(OrderStatus.UNTAKEN, order.getId());
             paymentService.establishCredit(cardNumber, order);
             return Optional.empty();
         } catch (ServiceException e) {

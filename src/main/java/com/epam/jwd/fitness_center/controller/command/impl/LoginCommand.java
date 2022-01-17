@@ -37,20 +37,20 @@ public class LoginCommand implements Command {
             return requestFactory.createForwardResponse(PagePath.ERROR500);
         }
         if (!optionalUser.isPresent()) {
-            request.addToSession(SessionAttribute.ERROR_LOGIN_BUNDLE_KEY, ResourceBundleKey.LOGIN_ERROR);
+            request.addToSession(Attribute.ERROR_LOGIN_BUNDLE_KEY, ResourceBundleKey.LOGIN_ERROR);
             return requestFactory.createRedirectResponse(PagePath.LOGIN_REDIRECT);
         }
         User user = optionalUser.get();
         request.clearSession();
         request.createSession();
-        request.addToSession(SessionAttribute.USER, user);
+        request.addToSession(Attribute.USER, user);
         try {
             userDetailsOptional = userService.findUserDetails(user.getId());
         } catch (ServiceException e) {
             LOG.error("Error during searching user details. User id: {}. {}", user.getId(), e.getMessage());
             return requestFactory.createForwardResponse(PagePath.ERROR500);
         }
-        userDetailsOptional.ifPresent(details -> request.addToSession(SessionAttribute.USER_DETAILS, details));
+        userDetailsOptional.ifPresent(details -> request.addToSession(Attribute.USER_DETAILS, details));
         return requestFactory.createRedirectResponse(PagePath.INDEX);
     }
 }

@@ -51,7 +51,7 @@ public class ItemServiceImpl implements EntityService<Item> {
             return itemDao.update(entity);
         } catch (DaoException e) {
             LOG.error("Unable to update item with id: {}. {}", entity.getId(), e.getMessage());
-            throw new ServiceException("Unable to update user", e);
+            throw new ServiceException("Unable to update item", e);
         }
     }
 

@@ -232,7 +232,7 @@ public class UserServiceImpl implements UserService {
         } catch (DaoException e) {
             throw new ServiceException("Unable to find user details by id", e);
         }
-        return Optional.ofNullable(userDetailsList.get(0));
+        return Optional.ofNullable(userDetailsList.isEmpty() ? null : userDetailsList.get(0));
     }
 
     @Override

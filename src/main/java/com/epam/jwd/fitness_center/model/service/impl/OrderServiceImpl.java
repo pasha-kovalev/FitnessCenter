@@ -13,8 +13,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class OrderServiceImpl implements OrderService {
     private static final Logger LOG = LogManager.getLogger(OrderServiceImpl.class);
@@ -60,7 +62,6 @@ public class OrderServiceImpl implements OrderService {
         if (!OrderValidator.isValidPeriod(period)) {
             throw new ServiceException("Not valid period: " + period);
         }
-        //insert program until period ends
         BigDecimal price = calcPrice(userDetailsId, itemId, period);
         Order order = new Order.Builder()
                 .setUserDetailsId(userDetailsId)
@@ -132,6 +133,16 @@ public class OrderServiceImpl implements OrderService {
                     trainerId, e.getMessage());
             throw new ServiceException("Error during searching for order by assignmentTrainerId", e);
         }
+    }
+
+    @Override
+    public List<Order> findOrderByAssignmentTrainerIdAndStatus(Long trainerId, OrderStatus status,
+                                                               OrderStatus... statuses) throws ServiceException {
+        return findOrderByAssignmentTrainerId(trainerId).stream()
+                .filter(o -> o.getOrderStatus() == status
+                        || Arrays.stream(statuses)
+                                 .anyMatch(s -> s == o.getOrderStatus()))
+                .collect(Collectors.toList());
     }
 
     @Override

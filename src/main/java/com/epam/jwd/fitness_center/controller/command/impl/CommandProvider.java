@@ -32,12 +32,16 @@ public class CommandProvider {
         commands.put(SHOW_ABOUT, new ShowAboutCommand(requestFactory));
         commands.put(SHOW_PROGRAMS, new ShowProgramsCommand(requestFactory));
         commands.put(SHOW_TRANSFORM_PROGRAM, new ShowTransformProgramCommand(requestFactory));
-        commands.put(USER_CABINET, new ShowUserCabinetCommand(requestFactory));
+        commands.put(SHOW_CABINET, new ShowCabinetCommand(requestFactory));
         commands.put(SHOW_ORDER, new ShowOrderPageCommand(requestFactory));
         commands.put(ORDER, new MakeOrderCommand(requestFactory));
         commands.put(SHOW_PAYMENT, new ShowPaymentPageCommand(requestFactory));
         commands.put(PAYMENT, new PaymentCommand(requestFactory));
         commands.put(SHOW_USER_ACTIVE_ORDERS, new ShowUserActiveOrdersPageCommand(requestFactory));
+        commands.put(SHOW_TRAINER_ACTIVE_ORDERS, new ShowTrainerActiveOrdersPageCommand(requestFactory));
+        commands.put(SHOW_UNTAKEN_ORDERS, new ShowUntakenOrdersPageCommand(requestFactory));
+        commands.put(SHOW_MAKE_PROGRAM, new ShowMakeProgramPageCommand(requestFactory));
+        commands.put(MAKE_PROGRAM, new MakeProgramCommand(requestFactory));
     }
 
     public static CommandProvider getInstance() {

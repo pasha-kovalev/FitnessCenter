@@ -37,7 +37,7 @@ public class SignupCommand implements Command {
         if (response.isPresent()) return response.get();
         request.clearSession();
         request.createSession();
-        request.addToSession(SessionAttribute.LOGIN, login);
+        request.addToSession(RequestParameter.LOGIN, login);
         return requestFactory.createRedirectResponse(PagePath.MAIL_INFO_REDIRECT);
     }
 
@@ -47,14 +47,14 @@ public class SignupCommand implements Command {
         try {
             user = userService.register(login, password, passwordRepeat, firstName, lastname, UserRole.USER,
                     UserStatus.UNCONFIRMED,
-                    (String) request.retrieveFromSession(SessionAttribute.LOCALE)
+                    (String) request.retrieveFromSession(RequestParameter.LOCALE)
                             .orElse(Locale.getDefault().toString()));
         } catch (ServiceException e) {
             LOG.error("Error during registering new user", e);
             return Optional.of(requestFactory.createForwardResponse(PagePath.ERROR500));
         }
         if (!user.isPresent()) {
-            request.addToSession(SessionAttribute.ERROR_SIGNUP_BUNDLE_KEY, ResourceBundleKey.SIGNUP_ERROR);
+            request.addToSession(Attribute.ERROR_SIGNUP_BUNDLE_KEY, ResourceBundleKey.SIGNUP_ERROR);
             return Optional.of(requestFactory.createRedirectResponse(PagePath.SIGNUP_REDIRECT));
         }
         return Optional.empty();

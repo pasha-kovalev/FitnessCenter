@@ -2,10 +2,7 @@ package com.epam.jwd.fitness_center.controller.command.impl;
 
 import com.epam.jwd.fitness_center.controller.PagePath;
 import com.epam.jwd.fitness_center.controller.RequestFactory;
-import com.epam.jwd.fitness_center.controller.command.Command;
-import com.epam.jwd.fitness_center.controller.command.CommandRequest;
-import com.epam.jwd.fitness_center.controller.command.CommandResponse;
-import com.epam.jwd.fitness_center.controller.command.SessionAttribute;
+import com.epam.jwd.fitness_center.controller.command.*;
 import com.epam.jwd.fitness_center.exception.ServiceException;
 import com.epam.jwd.fitness_center.model.entity.Order;
 import com.epam.jwd.fitness_center.model.entity.OrderStatus;
@@ -19,8 +16,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Optional;
-
-import static com.epam.jwd.fitness_center.controller.command.RequestParameter.*;
 
 public class MakeOrderCommand implements Command {
     private static final Logger LOG = LogManager.getLogger(MakeOrderCommand.class);
@@ -43,12 +38,12 @@ public class MakeOrderCommand implements Command {
         Optional<UserDetails> userDetailsOptional = retrieveUserDetailsFromSession(request);
         if (!userDetailsOptional.isPresent()) return requestFactory.createForwardResponse(PagePath.ERROR);
         UserDetails userDetails = userDetailsOptional.get();
-        itemIdOptional = parseLongRequestParameter(request, PROGRAM);
-        periodOptional = parseLongRequestParameter(request, PERIOD);
+        itemIdOptional = parseLongRequestParameter(request, RequestParameter.PROGRAM);
+        periodOptional = parseLongRequestParameter(request, RequestParameter.PERIOD);
         if (!itemIdOptional.isPresent()) return requestFactory.createForwardResponse(PagePath.ERROR);
         if (!periodOptional.isPresent()) periodOptional = Optional.of(DEFAULT_PERIOD);
         if (request.getParameter("trainer") != null) {
-            trainerIdOptional = parseLongRequestParameter(request, TRAINER);
+            trainerIdOptional = parseLongRequestParameter(request, Attribute.TRAINER);
             if (!trainerIdOptional.isPresent()) return requestFactory.createForwardResponse(PagePath.ERROR);
             try {
                 userService.updateUserStatus(UserStatus.ACTIVE, userDetails.getUserId());
@@ -66,17 +61,17 @@ public class MakeOrderCommand implements Command {
             LOG.error(e);
             return requestFactory.createForwardResponse(PagePath.ERROR500);
         }
-        request.addToSession(SessionAttribute.ORDER, order);
-        request.addToSession(SessionAttribute.CREDIT_PERCENTAGE, PaymentService.DEFAULT_CREDIT_PERCENTAGE);
-        request.addToSession(SessionAttribute.CREDIT_PERIOD, PaymentService.DEFAULT_CREDIT_PERIOD);
+        request.addToSession(Attribute.ORDER, order);
+        request.addToSession(Attribute.CREDIT_PERCENTAGE, PaymentService.DEFAULT_CREDIT_PERCENTAGE);
+        request.addToSession(Attribute.CREDIT_PERIOD, PaymentService.DEFAULT_CREDIT_PERIOD);
         return requestFactory.createRedirectResponse(PagePath.SHOW_PAYMENT_REDIRECT);
     }
 
     private String composeCommentForTrainer(CommandRequest request) {
         String delimiter = ": ";
-        return WEIGHT + delimiter + request.getParameter(WEIGHT)
-                + HEIGHT + delimiter + request.getParameter(HEIGHT)
-                + COMMENT + delimiter + request.getParameter(COMMENT);
+        return RequestParameter.WEIGHT + delimiter + request.getParameter(RequestParameter.WEIGHT) + '\n'
+                + RequestParameter.HEIGHT + delimiter + request.getParameter(RequestParameter.HEIGHT) + '\n'
+                + RequestParameter.COMMENT + delimiter + request.getParameter(RequestParameter.COMMENT);
     }
 
     private Optional<Long> parseLongRequestParameter(CommandRequest request, String parameter) {

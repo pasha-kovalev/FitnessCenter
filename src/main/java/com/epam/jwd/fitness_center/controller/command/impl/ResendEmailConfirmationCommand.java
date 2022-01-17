@@ -31,7 +31,7 @@ public class ResendEmailConfirmationCommand implements Command {
     @Override
     public CommandResponse execute(CommandRequest request) {
         //todo ? check sessionExists
-        Optional<Object> loginObj = request.pullFromSession(SessionAttribute.LOGIN);
+        Optional<Object> loginObj = request.pullFromSession(RequestParameter.LOGIN);
         Optional<User> optionalUser;
         if (!loginObj.isPresent()) {
             LOG.error("Error during pull login from session");
@@ -46,28 +46,28 @@ public class ResendEmailConfirmationCommand implements Command {
         }
         if (!optionalUser.isPresent()) {
             //todo add listener to clear error messages
-            request.addToSession(SessionAttribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_ERROR_USER_NOT_FOUND);
+            request.addToSession(Attribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_ERROR_USER_NOT_FOUND);
             return requestFactory.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
         }
 
         User user = optionalUser.get();
         if (user.getStatus() != UserStatus.UNCONFIRMED) {
             //todo add listener to clear error messages
-            request.addToSession(SessionAttribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_ERROR_USER_CONFIRMED);
+            request.addToSession(Attribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_ERROR_USER_CONFIRMED);
             return requestFactory.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
         }
 
         try {
             mailService.sendConfirmationEmail(user.getId(), user.getEmail(),
-                    (String) request.retrieveFromSession(SessionAttribute.LOCALE)
+                    (String) request.retrieveFromSession(RequestParameter.LOCALE)
                             .orElse(Locale.getDefault().toString()));
         } catch (ServiceException e) {
             LOG.error("Error during sendConfirmationEmail", e);
             return requestFactory.createForwardResponse(PagePath.ERROR500);
         }
         //todo ? add to jsp
-        request.addToSession(SessionAttribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_EMAIL_RESEND);
-        request.addToSession(SessionAttribute.ADDITIONAL_INFO, login);
+        request.addToSession(Attribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_EMAIL_RESEND);
+        request.addToSession(Attribute.ADDITIONAL_INFO, login);
         return requestFactory.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
     }
 }

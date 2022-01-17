@@ -41,8 +41,8 @@ public class ShowOrderPageCommand implements Command {
             LOG.error(e);
             return requestFactory.createForwardResponse(PagePath.ERROR500);
         }
-        request.addAttributeToJsp(RequestParameter.PRODUCT_LIST, products);
-        request.addAttributeToJsp(RequestParameter.TRAINER_LIST, trainers);
+        request.addAttributeToJsp(Attribute.PRODUCT_LIST, products);
+        request.addAttributeToJsp(Attribute.TRAINER_LIST, trainers);
         addDiscountListToJsp(request, products);
         return requestFactory.createForwardResponse(PagePath.SHOW_ORDER);
     }
@@ -56,11 +56,11 @@ public class ShowOrderPageCommand implements Command {
         } catch (CloneNotSupportedException e) {
             LOG.error("Unable to clone products list", e);
         }
-        Optional<Object> optionalUserDetails = request.retrieveFromSession(SessionAttribute.USER_DETAILS);
+        Optional<Object> optionalUserDetails = request.retrieveFromSession(Attribute.USER_DETAILS);
         if (optionalUserDetails.isPresent()) {
             BigDecimal discount = ((UserDetails) optionalUserDetails.get()).getDiscount();
             if (discount != null && discount.compareTo(BigDecimal.ZERO) > 0) {
-                request.addAttributeToJsp(RequestParameter.PRODUCT_LIST_WITH_DISCOUNT,
+                request.addAttributeToJsp(Attribute.PRODUCT_LIST_WITH_DISCOUNT,
                         itemService.modifyItemsByDiscount(clonedProductList, discount));
             }
         }

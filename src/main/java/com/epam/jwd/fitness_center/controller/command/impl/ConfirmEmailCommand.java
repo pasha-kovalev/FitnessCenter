@@ -10,6 +10,8 @@ import com.epam.jwd.fitness_center.model.validator.NumberValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Optional;
+
 public class ConfirmEmailCommand implements Command {
     private static final Logger LOG = LogManager.getLogger(ConfirmEmailCommand.class);
     private final UserService userService;
@@ -23,25 +25,25 @@ public class ConfirmEmailCommand implements Command {
     @Override
     public CommandResponse execute(CommandRequest request) {
         //todo unconfirmed user cant access
-        String tokenIdStr = request.getParameter(RequestParameter.TOKEN_ID);
         String tokenValue = request.getParameter(RequestParameter.TOKEN);
         //todo validation on services
-        request.removeFromSession(SessionAttribute.ADDITIONAL_INFO);
-        if (!NumberValidator.isPositiveInteger(tokenIdStr)) {
-            request.addToSession(SessionAttribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_ERROR_LINK);
+        request.removeFromSession(Attribute.ADDITIONAL_INFO);
+        Optional<Long> optionalTokenId = retrievePositiveLongParameter(request, RequestParameter.TOKEN_ID);
+        if(!optionalTokenId.isPresent()) {
+            request.addToSession(Attribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_ERROR_LINK);
             return requestFactory.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
         }
-        int tokenId = Integer.parseInt(tokenIdStr);
+        int tokenId = optionalTokenId.get().intValue();
         try {
             if (!userService.confirmUser(tokenId, tokenValue)) {
-                request.addToSession(SessionAttribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_ERROR_LINK);
+                request.addToSession(Attribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_ERROR_LINK);
                 return requestFactory.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
             }
         } catch (ServiceException e) {
             LOG.error("Error during user confirmation", e);
             return requestFactory.createForwardResponse(PagePath.ERROR500);
         }
-        request.addToSession(SessionAttribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_VALID_LINK);
+        request.addToSession(Attribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_VALID_LINK);
         return requestFactory.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
     }
 }

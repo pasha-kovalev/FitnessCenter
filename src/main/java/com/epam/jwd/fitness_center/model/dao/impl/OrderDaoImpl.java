@@ -32,21 +32,23 @@ public class OrderDaoImpl extends BaseDao<Order> implements OrderDao {
     private static final String COMMENT_FIELD_NAME = "comment";
     private static final String CREATED_AT_FIELD_NAME = "created_at";
     private static final String REVIEW_FIELD_NAME = "review";
+    private static final String PERIOD_FIELD_NAME = "period";
+
     private static final List<String> ORDER_FIELDS = Arrays.asList(
             ID_FIELD_NAME, USER_DETAILS_ID_FIELD_NAME, ORDER_STATUS_FIELD_NAME, ITEM_ID_FIELD_NAME,
             ASSIGNMENT_TRAINER_ID_FIELD_NAME, TRAINER_ID_FIELD_NAME,
-            PRICE_FIELD_NAME, COMMENT_FIELD_NAME, CREATED_AT_FIELD_NAME, REVIEW_FIELD_NAME
+            PRICE_FIELD_NAME, COMMENT_FIELD_NAME, CREATED_AT_FIELD_NAME, REVIEW_FIELD_NAME, PERIOD_FIELD_NAME
     );
 
     private static final String SELECT_ALL_ORDERS = "SELECT order.id, user_details_id, order_status, item_id,\n" +
-            " assignment_trainer_id, trainer_id, second_name as trainer_name, price, comment, created_at, review\n" +
+            " assignment_trainer_id, trainer_id, second_name as trainer_name, price, comment, created_at, review, period\n" +
             "FROM `order`\n" +
             "JOIN order_status s on s.id = order.order_status_id\n" +
             "JOIN user u on u.id = order.trainer_id";
 
     private static final String SELECT_ORDER_BY_ID = "SELECT order.id, user_details_id, order_status, item_id,\n" +
             "       assignment_trainer_id, trainer_id, second_name as trainer_name, price, comment, created_at," +
-            " review\n" +
+            " review, period\n" +
             "FROM `order`\n" +
             "JOIN order_status s on s.id = order.order_status_id\n" +
             "JOIN user u on u.id = order.trainer_id\n" +
@@ -54,7 +56,7 @@ public class OrderDaoImpl extends BaseDao<Order> implements OrderDao {
 
     private static final String SELECT_ORDER_BY_STATUS = "SELECT order.id, user_details_id, order_status, item_id,\n" +
             "       assignment_trainer_id, trainer_id, second_name as trainer_name, price, comment, created_at, " +
-            "review\n" +
+            "review, period\n" +
             "FROM `order`\n" +
             "JOIN order_status s on s.id = order.order_status_id\n" +
             "JOIN user u on u.id = order.trainer_id\n" +
@@ -62,7 +64,7 @@ public class OrderDaoImpl extends BaseDao<Order> implements OrderDao {
 
     private static final String SELECT_ORDER_BY_TRAINER_ID = "SELECT order.id, user_details_id, order_status, \n" +
             "item_id, assignment_trainer_id, trainer_id, second_name as trainer_name, price, comment, " +
-            "created_at, review\n" +
+            "created_at, review, period\n" +
             "FROM `order`\n" +
             "JOIN order_status s on s.id = order.order_status_id\n" +
             "JOIN user u on u.id = order.trainer_id\n" +
@@ -70,7 +72,7 @@ public class OrderDaoImpl extends BaseDao<Order> implements OrderDao {
 
     private static final String SELECT_ORDER_BY_USER_ID = "SELECT order.id, user_details_id, order_status, \n" +
             "item_id, assignment_trainer_id, trainer_id, second_name as trainer_name, price, comment, " +
-            "created_at, review\n" +
+            "created_at, review, period\n" +
             "FROM `order`\n" +
             "JOIN order_status s on s.id = order.order_status_id\n" +
             "JOIN user u on u.id = order.trainer_id\n" +
@@ -78,7 +80,7 @@ public class OrderDaoImpl extends BaseDao<Order> implements OrderDao {
 
     private static final String SELECT_ORDER_BY_ASSIGNMENT_TRAINER_ID = "SELECT order.id, user_details_id, \n" +
             "order_status, item_id, assignment_trainer_id, trainer_id, second_name as trainer_name, price, " +
-            "comment, created_at, review\n" +
+            "comment, created_at, review, period\n" +
             "FROM `order`\n" +
             "JOIN order_status s on s.id = order.order_status_id\n" +
             "JOIN user u on u.id = order.trainer_id\n" +
@@ -86,16 +88,16 @@ public class OrderDaoImpl extends BaseDao<Order> implements OrderDao {
 
     private static final String INSERT_NEW_ORDER = "insert into `order` (id, user_details_id, order_status_id, " +
             "item_id, assignment_trainer_id, trainer_id, price, comment,\n" +
-            "created_at, review)\n" +
+            "created_at, review, period)\n" +
             "value (null, ?,\n" +
             "       (SELECT id FROM order_status WHERE order_status=?),\n" +
-            "      ?, ?, ?, ?, ?, default, ?);";
+            "      ?, ?, ?, ?, ?, default, ?, ?);";
 
     private static final String UPDATE_ORDER_BY_ID = "update `order`\n" +
             "set user_details_id = ?,\n" +
             "    order_status_id = (SELECT id FROM order_status WHERE order_status=?),\n" +
             "    item_id = ?, assignment_trainer_id = ?, trainer_id = ?, price = ?,\n" +
-            "    comment = ?, review = ?\n" +
+            "    comment = ?, review = ?, period = ?\n" +
             "where `order`.id = ?";
 
     private static final String UPDATE_ORDER_STATUS_BY_ID = "UPDATE `order`\n" +
@@ -145,6 +147,7 @@ public class OrderDaoImpl extends BaseDao<Order> implements OrderDao {
         } else {
             statement.setString(8, entity.getReview());
         }
+        statement.setLong(9, entity.getPeriod());
     }
 
     @Override
@@ -156,14 +159,16 @@ public class OrderDaoImpl extends BaseDao<Order> implements OrderDao {
                     .setOrderStatus(OrderStatus.valueOf(rs.getString(ORDER_STATUS_FIELD_NAME).toUpperCase()))
                     .setItem(ServiceProvider.getInstance()
                             .getItemService()
-                            .find(rs.getLong(ITEM_ID_FIELD_NAME)).get())
+                            .find(rs.getLong(ITEM_ID_FIELD_NAME))
+                            .orElseThrow(() -> new DaoException("Unable to set item in order")))
                     .setAssignmentTrainerId(rs.getLong(ASSIGNMENT_TRAINER_ID_FIELD_NAME))
                     .setTrainerId(rs.getLong(TRAINER_ID_FIELD_NAME))
                     .setTrainerName(rs.getString(TRAINER_NAME_FIELD_NAME))
                     .setPrice(rs.getBigDecimal(PRICE_FIELD_NAME))
                     .setComment(rs.getString(COMMENT_FIELD_NAME))
                     .setCreationDate(rs.getTimestamp(CREATED_AT_FIELD_NAME).toLocalDateTime())
-                    .setReview(REVIEW_FIELD_NAME)
+                    .setReview(rs.getString(REVIEW_FIELD_NAME))
+                    .setPeriod(rs.getLong(PERIOD_FIELD_NAME))
                     .build();
         } catch (SQLException | ServiceException e) {
             throw new DaoException("Unable to extract order", e);
@@ -174,7 +179,7 @@ public class OrderDaoImpl extends BaseDao<Order> implements OrderDao {
     public boolean update(Order entity) throws DaoException {
         int rows = executeUpdate(updateQuery, st -> {
             fillEntity(st, entity);
-            st.setLong(9, entity.getId());
+            st.setLong(10, entity.getId());
         });
         return rows > 0;
     }

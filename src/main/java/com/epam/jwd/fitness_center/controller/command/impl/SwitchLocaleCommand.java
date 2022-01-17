@@ -24,9 +24,9 @@ public class SwitchLocaleCommand implements Command {
     public CommandResponse execute(CommandRequest request) {
         final String locale = request.getParameter(RequestParameter.LOCALE);
         if (locale != null && locales.contains(locale)) {
-            request.addToSession(SessionAttribute.LOCALE, locale);
+            request.addToSession(RequestParameter.LOCALE, locale);
         }
-        Optional<Object> optionalQuery = request.retrieveFromSession(SessionAttribute.PREVIOUS_QUERY);
+        Optional<Object> optionalQuery = request.retrieveFromSession(Attribute.PREVIOUS_QUERY);
         if (optionalQuery.isPresent()) {
             String previousQuery = (String) optionalQuery.get();
             String path = previousQuery.isEmpty() ? PagePath.MAIN_REDIRECT.getPath() : PagePath.CONTROLLER.getPath()

@@ -20,6 +20,7 @@ public class Order implements Entity {
     private BigDecimal price;
     private String comment;
     private String review;
+    private Long period;
 
     public Order(Builder builder) {
         this.id = builder.id;
@@ -33,6 +34,7 @@ public class Order implements Entity {
         this.creationDate = builder.creationDate;
         this.review = builder.review;
         this.trainerName = builder.trainerName;
+        this.period = builder.period;
     }
 
     public Long getId() {
@@ -129,20 +131,30 @@ public class Order implements Entity {
         return this;
     }
 
+    public Long getPeriod() {
+        return period;
+    }
+
+    public Order setPeriod(Long period) {
+        this.period = period;
+        return this;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("Order{");
-        sb.append("id=").append(id);
+        sb.append("creationDate=").append(creationDate);
+        sb.append(", id=").append(id);
         sb.append(", userDetailsId=").append(userDetailsId);
         sb.append(", orderStatus=").append(orderStatus);
         sb.append(", item=").append(item);
         sb.append(", assignmentTrainerId=").append(assignmentTrainerId);
         sb.append(", trainerId=").append(trainerId);
-        sb.append(", trainerName=").append(trainerName);
+        sb.append(", trainerName='").append(trainerName).append('\'');
         sb.append(", price=").append(price);
         sb.append(", comment='").append(comment).append('\'');
-        sb.append(", creationDate=").append(creationDate);
         sb.append(", review='").append(review).append('\'');
+        sb.append(", period=").append(period);
         sb.append('}');
         return sb.toString();
     }
@@ -159,6 +171,7 @@ public class Order implements Entity {
         private String comment;
         private LocalDateTime creationDate;
         private String review;
+        private Long period;
 
         public Builder setId(Long id) {
             this.id = id;
@@ -212,6 +225,11 @@ public class Order implements Entity {
 
         public Builder setReview(String review) {
             this.review = review;
+            return this;
+        }
+
+        public Builder setPeriod(Long period) {
+            this.period = period;
             return this;
         }
 
