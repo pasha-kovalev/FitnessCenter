@@ -13,7 +13,6 @@ public class ShowSendMailInfoCommand implements Command {
         this.requestFactory = requestFactory;
     }
 
-    //todo add to filter
     @Override
     public CommandResponse execute(CommandRequest request) {
         return requestFactory.createForwardResponse(PagePath.MAIL_INFO);

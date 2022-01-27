@@ -30,7 +30,8 @@ public class EditUserDataCommand implements Command {
         String value = request.getParameter(RequestParameter.VALUE);
         Optional<User> userOptional = retrieveUserFromSession(request);
         if (!userOptional.isPresent() || fieldName == null || value == null) {
-            //todo add logs
+            //todo add logs like this
+            LOG.debug("Cannot execute command. Parameters:{},{}", fieldName, value);
             return requestFactory.createRedirectResponse(PagePath.ERROR);
         }
         User user = userOptional.get();

@@ -9,10 +9,6 @@ public class Order implements Entity {
     private Long id;
     private Long userDetailsId;
     private OrderStatus orderStatus;
-    /*
-        todo: find usages:
-        private Long itemId;
-    */
     private Item item;
     private Long assignmentTrainerId;
     private Long trainerId;

@@ -30,7 +30,6 @@ public class ResendEmailConfirmationCommand implements Command {
 
     @Override
     public CommandResponse execute(CommandRequest request) {
-        //todo ? check sessionExists
         Optional<Object> loginObj = request.pullFromSession(RequestParameter.LOGIN);
         Optional<User> optionalUser;
         if (!loginObj.isPresent()) {
@@ -45,14 +44,12 @@ public class ResendEmailConfirmationCommand implements Command {
             return requestFactory.createRedirectResponse(PagePath.ERROR500);
         }
         if (!optionalUser.isPresent()) {
-            //todo add listener to clear error messages
             request.addToSession(Attribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_ERROR_USER_NOT_FOUND);
             return requestFactory.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
         }
 
         User user = optionalUser.get();
         if (user.getStatus() != UserStatus.UNCONFIRMED) {
-            //todo add listener to clear error messages
             request.addToSession(Attribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_ERROR_USER_CONFIRMED);
             return requestFactory.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
         }
@@ -65,7 +62,6 @@ public class ResendEmailConfirmationCommand implements Command {
             LOG.error("Error during sendConfirmationEmail", e);
             return requestFactory.createRedirectResponse(PagePath.ERROR500);
         }
-        //todo ? add to jsp
         request.addToSession(Attribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_EMAIL_RESEND);
         request.addToSession(Attribute.ADDITIONAL_INFO, login);
         return requestFactory.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);

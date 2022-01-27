@@ -2,6 +2,8 @@ package com.epam.jwd.fitness_center.controller;
 
 import com.epam.jwd.fitness_center.controller.command.CommandRequest;
 import com.epam.jwd.fitness_center.controller.command.CommandResponse;
+import com.epam.jwd.fitness_center.controller.command.PlainCommandResponse;
+import com.epam.jwd.fitness_center.controller.command.WrappingCommandRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;

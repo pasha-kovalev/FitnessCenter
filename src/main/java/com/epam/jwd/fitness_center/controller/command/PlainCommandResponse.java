@@ -1,6 +1,4 @@
-package com.epam.jwd.fitness_center.controller;
-
-import com.epam.jwd.fitness_center.controller.command.CommandResponse;
+package com.epam.jwd.fitness_center.controller.command;
 
 public class PlainCommandResponse implements CommandResponse {
     private final boolean redirect;

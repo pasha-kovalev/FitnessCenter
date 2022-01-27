@@ -191,7 +191,7 @@ public class UserDaoImpl extends BaseDao<User> implements UserDao {
         return executeStatement(SELECT_ACTIVE_CLIENTS, this::extractResult);
     }
 
-    //todo make roleOf [instead of valueOf] like nmikle did
+    //todo IN OTHER and delete to upper case make roleOf [instead of valueOf] like nmikle did
     @Override
     protected User extractResult(ResultSet rs) throws DaoException {
         try {
@@ -200,8 +200,9 @@ public class UserDaoImpl extends BaseDao<User> implements UserDao {
                     .setEmail(rs.getString(EMAIL_FIELD_NAME))
                     .setPassword(rs.getString(PASSWORD_HASH_FIELD_NAME))
                     .setFirstName(rs.getString(FIRST_NAME_FIELD_NAME))
-                    .setRole(UserRole.valueOf(rs.getString(ACCOUNT_ROLE_FIELD_NAME).toUpperCase())).setSecondName(rs.getString(SECOND_NAME_FIELD_NAME))
-                    .setStatus(UserStatus.valueOf(rs.getString(STATUS_FIELD_NAME).toUpperCase()))
+                    .setRole(UserRole.of(rs.getString(ACCOUNT_ROLE_FIELD_NAME)))
+                    .setSecondName(rs.getString(SECOND_NAME_FIELD_NAME))
+                    .setStatus(UserStatus.of(rs.getString(STATUS_FIELD_NAME)))
                     .setDescription(rs.getString(DESCRIPTION_FIELD_NAME))
                     .setPhotoPath(rs.getString(PHOTO_PATH_FIELD_NAME))
                     .build();

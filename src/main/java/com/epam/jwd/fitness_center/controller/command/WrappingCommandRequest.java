@@ -1,6 +1,5 @@
-package com.epam.jwd.fitness_center.controller;
+package com.epam.jwd.fitness_center.controller.command;
 
-import com.epam.jwd.fitness_center.controller.command.CommandRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -33,11 +32,6 @@ public class WrappingCommandRequest implements CommandRequest {
     @Override
     public String[] getParameterValues(String name) {
         return request.getParameterValues(name);
-    }
-
-    @Override
-    public boolean sessionExists() {
-        return request.getSession(false) != null;
     }
 
     @Override

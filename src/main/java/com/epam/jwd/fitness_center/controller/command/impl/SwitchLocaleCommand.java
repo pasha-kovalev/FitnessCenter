@@ -10,10 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class SwitchLocaleCommand implements Command {
-
-    public static final String QUESTION_MARK = "?";
     private final SimpleRequestFactory requestFactory;
-    //todo improve
     private final List<String> locales = new ArrayList<>(Arrays.asList("en", "ru"));
 
     SwitchLocaleCommand(SimpleRequestFactory requestFactory) {

@@ -188,6 +188,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean confirmUser(long tokenId, String tokenValue) throws ServiceException {
         final Optional<Token> optionalToken = retrieveUserToken(tokenId);
+        tokenValue = TextEscapeUtil.escapeHtml(tokenValue);
         if (!optionalToken.isPresent()) {
             LOG.error("Unable to confirm user because token not found. Token ID: {}", tokenId);
             return false;

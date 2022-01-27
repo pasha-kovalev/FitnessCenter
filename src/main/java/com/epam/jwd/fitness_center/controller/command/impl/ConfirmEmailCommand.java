@@ -23,18 +23,15 @@ public class ConfirmEmailCommand implements Command {
 
     @Override
     public CommandResponse execute(CommandRequest request) {
-        //todo unconfirmed user cant access
         String tokenValue = request.getParameter(RequestParameter.TOKEN);
-        //todo validation on services
         request.removeFromSession(Attribute.ADDITIONAL_INFO);
         Optional<Long> optionalTokenId = retrievePositiveLongParameter(request, RequestParameter.TOKEN_ID);
         if (!optionalTokenId.isPresent()) {
             request.addToSession(Attribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_ERROR_LINK);
             return requestFactory.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
         }
-        int tokenId = optionalTokenId.get().intValue();
         try {
-            if (!userService.confirmUser(tokenId, tokenValue)) {
+            if (!userService.confirmUser(optionalTokenId.get().intValue(), tokenValue)) {
                 request.addToSession(Attribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_ERROR_LINK);
                 return requestFactory.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
             }

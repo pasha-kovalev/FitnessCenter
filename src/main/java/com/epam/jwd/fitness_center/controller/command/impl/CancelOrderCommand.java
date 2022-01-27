@@ -11,6 +11,9 @@ import com.epam.jwd.fitness_center.model.service.impl.ServiceProvider;
 
 import java.util.Optional;
 
+/**
+ * 
+ */
 public class CancelOrderCommand implements Command {
     private final RequestFactory requestFactory;
     private final OrderService orderService;

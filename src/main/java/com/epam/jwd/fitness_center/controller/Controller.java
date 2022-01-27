@@ -13,6 +13,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/** Represents a controller
+ * @author Pavel Kovalev
+ * @version 1.0
+ */
 @WebServlet("/controller")
 @MultipartConfig(fileSizeThreshold = 1024 * 1024,
         maxFileSize = 1024 * 1024 * 5,
@@ -35,6 +39,10 @@ public class Controller extends HttpServlet {
         processRequest(req, resp);
     }
 
+    /** Executes command from request parameter and then proceed with command response
+     * @param req http request
+     * @param resp http response
+     */
     private void processRequest(HttpServletRequest req, HttpServletResponse resp) {
         final String commandName = req.getParameter(COMMAND_NAME_PARAM);
         final Command command = Command.of(commandName);
@@ -47,6 +55,11 @@ public class Controller extends HttpServlet {
         proceedWithResponse(req, resp, commandResponse);
     }
 
+    /** Writes ajax data to response or forwards request or sends redirect
+     * @param req http request
+     * @param resp http response
+     * @param commandResponse executed response
+     */
     private void proceedWithResponse(HttpServletRequest req, HttpServletResponse resp,
                                      CommandResponse commandResponse) {
         try {
@@ -64,6 +77,13 @@ public class Controller extends HttpServlet {
         }
     }
 
+    /** Forwards request or sends redirect
+     * @param req http request
+     * @param resp http response
+     * @param commandResponse executed response
+     * @throws IOException is thrown when send redirect exception occurs
+     * @throws ServletException is thrown when forward exception occurs
+     */
     private void forwardOrRedirectToResponseLocation(HttpServletRequest req, HttpServletResponse resp,
                                                      CommandResponse commandResponse) throws IOException, ServletException {
         if (commandResponse.isRedirect()) {

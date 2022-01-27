@@ -24,7 +24,6 @@ public class ItemDaoImpl extends BaseDao<Item> {
             ID_FIELD_NAME, NAME_FIELD_NAME, PRICE_FIELD_NAME
     );
 
-    //todo getFields
     private static final String INSERT_NEW_ITEM_QUERY = "INSERT INTO " + TABLE_NAME +
             " (id, name, price)\n" +
             "    VALUE (NULL, ?, ?)";

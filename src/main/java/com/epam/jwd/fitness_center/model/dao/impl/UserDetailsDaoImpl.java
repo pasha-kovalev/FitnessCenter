@@ -25,7 +25,7 @@ public class UserDetailsDaoImpl extends BaseDao<UserDetails> {
     private static final List<String> TABLE_FIELDS = Arrays.asList(
             USER_ID_FIELD_NAME, DISCOUNT_FIELD_NAME, TRAINER_ID_FIELD_NAME
     );
-    //todo getFields
+
     private static final String INSERT_NEW_USER_DETAILS_QUERY = "INSERT INTO " + TABLE_NAME +
             " (user_id, discount, personal_trainer_id)\n" +
             "    VALUE (?, default, ?)";

@@ -53,7 +53,6 @@ public class MailServiceImpl implements MailService {
         mailSession = createMailSession(login, password);
     }
 
-    //todo bundle, processing exceptions during reading/writing
     @Override
     public long sendConfirmationEmail(long userId, String email, String localeStr) throws ServiceException {
         final String token = UUID.randomUUID().toString();
@@ -74,7 +73,7 @@ public class MailServiceImpl implements MailService {
             message.setRecipient(Message.RecipientType.TO, new InternetAddress(email));
             Transport.send(message);
         } catch (MessagingException e) {
-            LOG.error("Unable to send message. User id:{}", e);
+            LOG.error("Unable to send message", e);
             throw new ServiceException("Unable to send message", e);
         }
     }
@@ -115,7 +114,6 @@ public class MailServiceImpl implements MailService {
     }
 
     private Properties takeSessionProperties(String path) throws ServiceException {
-
         try (InputStream is = getClass().getClassLoader().getResourceAsStream(path)) {
             if (is == null) {
                 LOG.warn("Unable to find mail session service property file:{}", path);
@@ -129,5 +127,4 @@ public class MailServiceImpl implements MailService {
             throw new ServiceException("Unable to open connection mail session service property file", e);
         }
     }
-
 }
