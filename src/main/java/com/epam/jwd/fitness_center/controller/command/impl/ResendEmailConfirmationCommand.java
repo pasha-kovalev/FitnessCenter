@@ -35,14 +35,14 @@ public class ResendEmailConfirmationCommand implements Command {
         Optional<User> optionalUser;
         if (!loginObj.isPresent()) {
             LOG.error("Error during pull login from session");
-            return requestFactory.createForwardResponse(PagePath.ERROR);
+            return requestFactory.createRedirectResponse(PagePath.ERROR);
         }
         final String login = (String) loginObj.get();
         try {
             optionalUser = userService.findUserByEmail(login);
         } catch (ServiceException e) {
             LOG.error("Error during searching user by email", e);
-            return requestFactory.createForwardResponse(PagePath.ERROR500);
+            return requestFactory.createRedirectResponse(PagePath.ERROR500);
         }
         if (!optionalUser.isPresent()) {
             //todo add listener to clear error messages
@@ -63,7 +63,7 @@ public class ResendEmailConfirmationCommand implements Command {
                             .orElse(Locale.getDefault().toString()));
         } catch (ServiceException e) {
             LOG.error("Error during sendConfirmationEmail", e);
-            return requestFactory.createForwardResponse(PagePath.ERROR500);
+            return requestFactory.createRedirectResponse(PagePath.ERROR500);
         }
         //todo ? add to jsp
         request.addToSession(Attribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_EMAIL_RESEND);

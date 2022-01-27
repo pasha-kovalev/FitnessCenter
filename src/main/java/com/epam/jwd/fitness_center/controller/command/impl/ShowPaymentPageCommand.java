@@ -39,17 +39,17 @@ public class ShowPaymentPageCommand implements Command {
                 request.addToSession(Attribute.ORDER, order);
             } catch (ServiceException e) {
                 LOG.error("Error during order confirmation", e);
-                return requestFactory.createForwardResponse(PagePath.ERROR500);
+                return requestFactory.createRedirectResponse(PagePath.ERROR500);
             }
         } else {
             Optional<Object> optionalOrder = request.retrieveFromSession(Attribute.ORDER);
             if (!optionalOrder.isPresent()) {
-                return requestFactory.createForwardResponse(PagePath.ERROR);
+                return requestFactory.createRedirectResponse(PagePath.ERROR);
             }
             order = (Order) optionalOrder.get();
         }
         if (order.getOrderStatus() != OrderStatus.PAYMENT_AWAITING) {
-            return requestFactory.createForwardResponse(PagePath.ERROR);
+            return requestFactory.createRedirectResponse(PagePath.ERROR);
         }
         return requestFactory.createForwardResponse(PagePath.SHOW_PAYMENT);
     }

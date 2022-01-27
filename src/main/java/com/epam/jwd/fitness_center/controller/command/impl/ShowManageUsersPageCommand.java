@@ -30,12 +30,12 @@ public class ShowManageUsersPageCommand implements Command {
     public CommandResponse execute(CommandRequest request) {
         List<User> users;
         Optional<User> userOptional = retrieveUserFromSession(request);
-        if (!userOptional.isPresent()) return requestFactory.createForwardResponse(PagePath.ERROR);
+        if (!userOptional.isPresent()) return requestFactory.createRedirectResponse(PagePath.ERROR);
         try {
             users = userService.findAll();
         } catch (ServiceException e) {
             LOG.error(e);
-            return requestFactory.createForwardResponse(PagePath.ERROR500);
+            return requestFactory.createRedirectResponse(PagePath.ERROR500);
         }
         String json = new Gson().toJson(users);
         return requestFactory.createAjaxResponse(json);

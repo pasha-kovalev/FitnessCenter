@@ -51,7 +51,7 @@ public class SignupCommand implements Command {
                             .orElse(Locale.getDefault().toString()));
         } catch (ServiceException e) {
             LOG.error("Error during registering new user", e);
-            return Optional.of(requestFactory.createForwardResponse(PagePath.ERROR500));
+            return Optional.of(requestFactory.createRedirectResponse(PagePath.ERROR500));
         }
         if (!user.isPresent()) {
             request.addToSession(Attribute.ERROR_SIGNUP_BUNDLE_KEY, ResourceBundleKey.SIGNUP_ERROR);

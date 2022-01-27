@@ -30,11 +30,11 @@ public class PaymentCommand implements Command {
     public CommandResponse execute(CommandRequest request) {
         Optional<Object> orderOptional = request.retrieveFromSession(Attribute.ORDER);
         if (!orderOptional.isPresent()) {
-            return requestFactory.createForwardResponse(PagePath.ERROR);
+            return requestFactory.createRedirectResponse(PagePath.ERROR);
         }
         Order order = (Order) orderOptional.get();
         if (order.getOrderStatus() != OrderStatus.PAYMENT_AWAITING) {
-            return requestFactory.createForwardResponse(PagePath.ERROR);
+            return requestFactory.createRedirectResponse(PagePath.ERROR);
         }
         String cardNumber = request.getParameter(RequestParameter.CARD_NUMBER);
         if (request.getParameter(RequestParameter.CREDIT_CHECKBOX) != null) {
@@ -72,7 +72,7 @@ public class PaymentCommand implements Command {
             return Optional.empty();
         } catch (ServiceException e) {
             LOG.error("Error during payment processing", e);
-            return Optional.of(requestFactory.createForwardResponse(PagePath.ERROR500));
+            return Optional.of(requestFactory.createRedirectResponse(PagePath.ERROR500));
         }
     }
 
@@ -94,7 +94,7 @@ public class PaymentCommand implements Command {
             return Optional.empty();
         } catch (ServiceException e) {
             LOG.error("Error during credit processing", e);
-            return Optional.of(requestFactory.createForwardResponse(PagePath.ERROR500));
+            return Optional.of(requestFactory.createRedirectResponse(PagePath.ERROR500));
         }
     }
 }

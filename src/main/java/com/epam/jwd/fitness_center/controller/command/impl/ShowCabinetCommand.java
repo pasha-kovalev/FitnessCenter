@@ -20,7 +20,7 @@ public class ShowCabinetCommand implements Command {
     @Override
     public CommandResponse execute(CommandRequest request) {
         Optional<User> userOptional = retrieveUserFromSession(request);
-        if (!userOptional.isPresent()) return requestFactory.createForwardResponse(PagePath.ERROR);
+        if (!userOptional.isPresent()) return requestFactory.createRedirectResponse(PagePath.ERROR);
         User user = userOptional.get();
         UserRole userRole = user.getRole();
         switch (userRole) {
@@ -33,7 +33,7 @@ public class ShowCabinetCommand implements Command {
             case ADMIN:
                 return requestFactory.createForwardResponse(PagePath.ADMIN_CABINET);
             default:
-                return requestFactory.createForwardResponse(PagePath.ERROR);
+                return requestFactory.createRedirectResponse(PagePath.ERROR);
         }
     }
 }

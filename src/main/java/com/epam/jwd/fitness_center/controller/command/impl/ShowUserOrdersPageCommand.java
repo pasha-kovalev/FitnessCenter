@@ -36,7 +36,7 @@ public class ShowUserOrdersPageCommand implements Command {
         String isCurrentOrdersParam = request.getParameter(RequestParameter.IS_CURRENT);
         Optional<UserDetails> userDetailsOptional = retrieveUserDetailsFromSession(request);
         if (!userDetailsOptional.isPresent() || isCurrentOrdersParam == null) {
-            return requestFactory.createForwardResponse(PagePath.ERROR);
+            return requestFactory.createRedirectResponse(PagePath.ERROR);
         }
         UserDetails userDetails = userDetailsOptional.get();
         long userId = userDetails.getUserId();
@@ -50,7 +50,7 @@ public class ShowUserOrdersPageCommand implements Command {
             }
         } catch (ServiceException e) {
             LOG.error(e);
-            return requestFactory.createForwardResponse(PagePath.ERROR500);
+            return requestFactory.createRedirectResponse(PagePath.ERROR500);
         }
         String json = new Gson().toJson(orders);
         return requestFactory.createAjaxResponse(json);

@@ -1,16 +1,22 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page import="com.epam.jwd.fitness_center.model.entity.UserRole" %>
-<%--
-  Created by IntelliJ IDEA.
-  User: TokyoPashka
-  Date: 13.01.2022
-  Time: 16:57
-  To change this template use File | Settings | File Templates.
---%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<fmt:setLocale value="${sessionScope.locale}"/>
+<fmt:setBundle basename="locale"/>
+<fmt:message var="notValidTitle" key="payment.input.notValid"/>
+<fmt:message var="title" key="view.program.title"/>
+<fmt:message var="clientInfo" key="view.program.clientInfo"/>
+<fmt:message var="intensity" key="view.program.intensity"/>
+<fmt:message var="schedule" key="view.program.schedule"/>
+<fmt:message var="exercises" key="view.program.exercises"/>
+<fmt:message var="diet" key="view.program.diet"/>
+<fmt:message var="equipment" key="view.program.equipment"/>
+<fmt:message var="previous" key="order.button.previous"/>
+<fmt:message var="next" key="order.button.next"/>
+<fmt:message var="submit" key="button.submit"/>
 <html>
 <head>
-    <title>Программа</title>
+    <title>${title}</title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <link href="../../../style/style.css" type="text/css" rel="stylesheet">
 </head>
@@ -35,42 +41,42 @@
         </c:if>
       method="post">
     <h1>Программа</h1>
-    <div class="tooltip">Информация о клиенте
+    <div class="tooltip">${clientInfo}
         <span class="tooltiptext">${requestScope.order.comment}</span>
     </div>
     <div class="tab">
-        <label for="intensity">Интенсивность</label>
+        <label for="intensity">${intensity}</label>
         <textarea id="intensity" name="intensity" rows="3" cols="33" maxlength="1000" required
                   oninvalid="setCustomValidity('${notValidTitle}')"
                   oninput="setCustomValidity('')">${requestScope.program.intensity}</textarea>
 
-        <label for="schedule">Расписание</label>
+        <label for="schedule">${schedule}</label>
         <textarea id="schedule" name="schedule" rows="5" cols="33" maxlength="1000" required
                   oninvalid="setCustomValidity('${notValidTitle}')"
                   oninput="setCustomValidity('')">${requestScope.program.schedule}</textarea>
     </div>
     <div class="tab">
-        <label for="exercises">Упражнения</label>
+        <label for="exercises">${exercises}</label>
         <textarea id="exercises" name="exercises" rows="10" cols="33" maxlength="3000" required
                   oninvalid="setCustomValidity('${notValidTitle}')"
                   oninput="setCustomValidity('')">${requestScope.program.exercises}</textarea>
     </div>
     <div class="tab">
-        <label for="diet">Диета</label>
+        <label for="diet">${diet}</label>
         <textarea id="diet" name="diet" rows="10" cols="33" maxlength="3000" required
                   oninvalid="setCustomValidity('${notValidTitle}')"
                   oninput="setCustomValidity('')">${requestScope.program.diet}</textarea>
     </div>
     <div class="tab">
-        <label for="equipment">Оборудование</label>
+        <label for="equipment">${equipment}</label>
         <textarea id="equipment" name="equipment" rows="10" cols="33" maxlength="1000" required
                   oninvalid="setCustomValidity('${notValidTitle}')"
                   oninput="setCustomValidity('')">${requestScope.program.equipment}</textarea>
     </div>
     <div style="overflow:auto; padding-top: 36px;">
         <div style="float:right;">
-            <button type="button" id="prevBtn" onclick="nextPrev(-1)">Назад</button>
-            <button type="button" id="nextBtn" onclick="nextPrev(1)">Дальше</button>
+            <button type="button" id="prevBtn" onclick="nextPrev(-1)">${previous}</button>
+            <button type="button" id="nextBtn" onclick="nextPrev(1)">${next}</button>
         </div>
     </div>
     <div style="text-align:center;margin-top:40px;">
@@ -94,9 +100,9 @@
             document.getElementById("prevBtn").style.display = "inline";
         }
         if (n == (x.length - 1)) {
-            document.getElementById("nextBtn").innerHTML = "Submit";
+            document.getElementById("nextBtn").innerHTML = "${submit}";
         } else {
-            document.getElementById("nextBtn").innerHTML = "Next";
+            document.getElementById("nextBtn").innerHTML = "${next}";
         }
         fixStepIndicator(n)
     }

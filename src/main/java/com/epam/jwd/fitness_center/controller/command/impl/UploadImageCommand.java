@@ -35,12 +35,12 @@ public class UploadImageCommand implements Command {
         Optional<User> userOptional = retrieveUserFromSession(request);
         Optional<Part> filePartOptional = request.getPart("file");
         if (!userOptional.isPresent() || !filePartOptional.isPresent()) {
-            return requestFactory.createForwardResponse(PagePath.ERROR);
+            return requestFactory.createRedirectResponse(PagePath.ERROR);
         }
         User user = userOptional.get();
         Optional<String> fileNameOptional = uploadImage(request, filePartOptional.get(), user);
         if (!fileNameOptional.isPresent()) {
-            return requestFactory.createForwardResponse(PagePath.ERROR500);
+            return requestFactory.createRedirectResponse(PagePath.ERROR500);
         }
         String photoPath = "./images/" + fileNameOptional.get();
         user.setPhotoPath(photoPath);
@@ -48,7 +48,7 @@ public class UploadImageCommand implements Command {
             userService.update(user);
         } catch (ServiceException e) {
             LOG.error("Unable to update user. {}", e.getMessage());
-            return requestFactory.createForwardResponse(PagePath.ERROR500);
+            return requestFactory.createRedirectResponse(PagePath.ERROR500);
         }
         return requestFactory.createRedirectResponse(PagePath.SHOW_CABINET_REDIRECT);
     }

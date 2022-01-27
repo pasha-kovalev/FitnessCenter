@@ -31,7 +31,7 @@ public class ManageUserDataCommand implements Command {
         String[] values = request.getParameterValues(RequestParameter.VALUE);
         Optional<Long> userIdOptional = retrievePositiveLongParameter(request, RequestParameter.USER_ID);
         if (!userIdOptional.isPresent() || fieldNames == null || values == null || fieldNames.length != values.length) {
-            return requestFactory.createForwardResponse(PagePath.ERROR);
+            return requestFactory.createRedirectResponse(PagePath.ERROR);
         }
         long userId = userIdOptional.get();
         try {
@@ -49,7 +49,7 @@ public class ManageUserDataCommand implements Command {
             }
         } catch (ServiceException e) {
             LOG.error(e);
-            return requestFactory.createForwardResponse(PagePath.ERROR);
+            return requestFactory.createRedirectResponse(PagePath.ERROR);
         }
         String json = new Gson().toJson(ResourceBundleKey.INFO_SUCCESS);
         return requestFactory.createAjaxResponse(json);

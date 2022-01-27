@@ -31,7 +31,7 @@ public class EditUserDataCommand implements Command {
         Optional<User> userOptional = retrieveUserFromSession(request);
         if (!userOptional.isPresent() || fieldName == null || value == null) {
             //todo add logs
-            return requestFactory.createForwardResponse(PagePath.ERROR);
+            return requestFactory.createRedirectResponse(PagePath.ERROR);
         }
         User user = userOptional.get();
         try {
@@ -42,7 +42,7 @@ public class EditUserDataCommand implements Command {
         } catch (ServiceException e) {
             //todo add logs like this
             LOG.error(e);
-            return requestFactory.createForwardResponse(PagePath.ERROR);
+            return requestFactory.createRedirectResponse(PagePath.ERROR);
         }
         String json = new Gson().toJson(ResourceBundleKey.INFO_SUCCESS);
         return requestFactory.createAjaxResponse(json);

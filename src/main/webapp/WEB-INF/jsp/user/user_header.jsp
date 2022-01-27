@@ -4,6 +4,7 @@
 <fmt:setLocale value="${sessionScope.locale}"/>
 <fmt:setBundle basename="locale"/>
 <fmt:message var="home" key="header.home"/>
+<fmt:message var="cabinet" key="user.cabinet.title"/>
 <fmt:message var="logout" key="header.logout"/>
 
 <header>
@@ -18,7 +19,7 @@
                 </button>
                 <div class="w3-dropdown-content w3-bar-block w3-card-4">
                     <a href="${pageContext.request.contextPath}/controller?command=user_cabinet"
-                       class="w3-bar-item w3-button">Личный кабинет</a>
+                       class="w3-bar-item w3-button">${cabinet}</a>
                     <a href="${pageContext.request.contextPath}/controller?command=log_out"
                        class="w3-bar-item w3-button">${logout}</a>
                 </div>

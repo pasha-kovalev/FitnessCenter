@@ -29,7 +29,7 @@ public class ShowAboutPageCommand implements Command {
             trainers = userService.findActiveTrainers();
         } catch (ServiceException e) {
             LOG.error(e);
-            return requestFactory.createForwardResponse(PagePath.ERROR500);
+            return requestFactory.createRedirectResponse(PagePath.ERROR500);
         }
         request.addAttributeToJsp(Attribute.TRAINER_LIST, trainers);
         return requestFactory.createForwardResponse(PagePath.SHOW_ABOUT);

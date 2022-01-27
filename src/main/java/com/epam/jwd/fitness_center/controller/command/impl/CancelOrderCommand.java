@@ -24,7 +24,7 @@ public class CancelOrderCommand implements Command {
     public CommandResponse execute(CommandRequest request) {
         Optional<Long> orderIdOptional = retrievePositiveLongParameter(request, RequestParameter.ORDER_ID);
         if (!orderIdOptional.isPresent()) {
-            return requestFactory.createForwardResponse(PagePath.ERROR);
+            return requestFactory.createRedirectResponse(PagePath.ERROR);
         }
         Optional<Object> optionalUser = request.retrieveFromSession(Attribute.USER);
         long orderId = orderIdOptional.get();
@@ -40,7 +40,7 @@ public class CancelOrderCommand implements Command {
             orderService.updateOrderStatus(OrderStatus.CANCELLED, orderId);
         } catch (ServiceException e) {
             LOG.error("Error during order confirmation", e);
-            return requestFactory.createForwardResponse(PagePath.ERROR500);
+            return requestFactory.createRedirectResponse(PagePath.ERROR500);
         }
         request.addToSession(Attribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_SUCCESS);
         return requestFactory.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);

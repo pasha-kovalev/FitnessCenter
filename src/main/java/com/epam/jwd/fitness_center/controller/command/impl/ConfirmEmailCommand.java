@@ -40,7 +40,7 @@ public class ConfirmEmailCommand implements Command {
             }
         } catch (ServiceException e) {
             LOG.error("Error during user confirmation", e);
-            return requestFactory.createForwardResponse(PagePath.ERROR500);
+            return requestFactory.createRedirectResponse(PagePath.ERROR500);
         }
         request.addToSession(Attribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_VALID_LINK);
         return requestFactory.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);

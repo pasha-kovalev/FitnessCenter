@@ -31,7 +31,7 @@ public class ShowProgramDetails implements Command {
         Optional<Program> optionalProgram;
         Optional<Long> orderIdOptional = retrievePositiveLongParameter(request, RequestParameter.ORDER_ID);
         if (!orderIdOptional.isPresent()) {
-            return requestFactory.createForwardResponse(PagePath.ERROR404);
+            return requestFactory.createRedirectResponse(PagePath.ERROR404);
         }
         long orderId = orderIdOptional.get();
         Optional<Object> optionalUser = request.retrieveFromSession(Attribute.USER);
@@ -55,7 +55,7 @@ public class ShowProgramDetails implements Command {
             }
         } catch (ServiceException e) {
             LOG.error("Error during order confirmation", e);
-            return requestFactory.createForwardResponse(PagePath.ERROR500);
+            return requestFactory.createRedirectResponse(PagePath.ERROR500);
         }
         String json = new Gson().toJson(optionalProgram.get());
         return requestFactory.createAjaxResponse(json);

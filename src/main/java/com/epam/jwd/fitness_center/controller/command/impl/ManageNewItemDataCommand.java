@@ -26,13 +26,13 @@ public class ManageNewItemDataCommand implements Command {
         String itemName = request.getParameter(RequestParameter.NAME);
         String itemPrice = request.getParameter(RequestParameter.PRICE);
         if (itemName == null || itemPrice == null) {
-            return requestFactory.createForwardResponse(PagePath.ERROR);
+            return requestFactory.createRedirectResponse(PagePath.ERROR);
         }
         try {
             itemService.insert(itemName, itemPrice);
         } catch (ServiceException e) {
             LOG.error(e);
-            return requestFactory.createForwardResponse(PagePath.ERROR);
+            return requestFactory.createRedirectResponse(PagePath.ERROR);
         }
         String json = new Gson().toJson(ResourceBundleKey.INFO_SUCCESS);
         return requestFactory.createAjaxResponse(json);

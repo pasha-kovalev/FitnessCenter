@@ -29,7 +29,7 @@ public class SendOrderReviewCommand implements Command {
         String review = request.getParameter(RequestParameter.REVIEW);
         Optional<Long> orderIdOptional = retrievePositiveLongParameter(request, RequestParameter.ORDER_ID);
         if (!orderIdOptional.isPresent() || review == null) {
-            return requestFactory.createForwardResponse(PagePath.ERROR);
+            return requestFactory.createRedirectResponse(PagePath.ERROR);
         }
         Optional<UserDetails> userDetailsOptional = retrieveUserDetailsFromSession(request);
         long orderId = orderIdOptional.get();
@@ -46,7 +46,7 @@ public class SendOrderReviewCommand implements Command {
             }
         } catch (ServiceException e) {
             LOG.error(e);
-            return requestFactory.createForwardResponse(PagePath.ERROR500);
+            return requestFactory.createRedirectResponse(PagePath.ERROR500);
         }
         request.addToSession(Attribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_SUCCESS);
         return requestFactory.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);

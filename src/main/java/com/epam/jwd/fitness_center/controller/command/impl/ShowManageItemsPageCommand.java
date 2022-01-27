@@ -32,7 +32,7 @@ public class ShowManageItemsPageCommand implements Command {
             items = itemService.findAll();
         } catch (ServiceException e) {
             LOG.error(e);
-            return requestFactory.createForwardResponse(PagePath.ERROR500);
+            return requestFactory.createRedirectResponse(PagePath.ERROR500);
         }
         String json = new Gson().toJson(items);
         return requestFactory.createAjaxResponse(json);

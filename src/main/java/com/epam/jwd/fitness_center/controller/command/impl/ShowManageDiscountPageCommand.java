@@ -40,7 +40,7 @@ public class ShowManageDiscountPageCommand implements Command {
             userDetailsList = userService.findAllUserDetails();
         } catch (ServiceException e) {
             LOG.error(e);
-            return requestFactory.createForwardResponse(PagePath.ERROR500);
+            return requestFactory.createRedirectResponse(PagePath.ERROR500);
         }
         Map<String, List<? extends Entity>> response = new HashMap<>();
         response.put(USERS_KEY, users);

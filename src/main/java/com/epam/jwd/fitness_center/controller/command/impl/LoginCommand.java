@@ -34,7 +34,7 @@ public class LoginCommand implements Command {
             optionalUser = userService.authenticate(login, password);
         } catch (ServiceException e) {
             LOG.error("Error during login", e);
-            return requestFactory.createForwardResponse(PagePath.ERROR500);
+            return requestFactory.createRedirectResponse(PagePath.ERROR500);
         }
         if (!optionalUser.isPresent()) {
             request.addToSession(Attribute.ERROR_LOGIN_BUNDLE_KEY, ResourceBundleKey.LOGIN_ERROR);

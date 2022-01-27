@@ -35,13 +35,13 @@ public class MakeProgramCommand implements Command {
         if (orderIdOptional.isPresent()) {
             orderId = orderIdOptional.get();
         } else {
-            return requestFactory.createForwardResponse(PagePath.ERROR);
+            return requestFactory.createRedirectResponse(PagePath.ERROR);
         }
         try {
             programService.insert(orderId, ProgramStatus.PENDING, intensity, schedule, exercises, diet, equipment);
         } catch (ServiceException e) {
             LOG.error(e);
-            return requestFactory.createForwardResponse(PagePath.ERROR500);
+            return requestFactory.createRedirectResponse(PagePath.ERROR500);
         }
         request.addToSession(Attribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_SUCCESS);
         return requestFactory.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);

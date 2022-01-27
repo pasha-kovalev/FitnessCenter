@@ -28,13 +28,13 @@ public class ManageNewDiscountCommand implements Command {
         Optional<Long> userIdOptional = retrievePositiveLongParameter(request, RequestParameter.ID);
         String discountStr = request.getParameter(RequestParameter.DISCOUNT);
         if (!userIdOptional.isPresent() || discountStr == null) {
-            return requestFactory.createForwardResponse(PagePath.ERROR);
+            return requestFactory.createRedirectResponse(PagePath.ERROR);
         }
         try {
             userService.updateUserDetailsDiscount(userIdOptional.get(), discountStr);
         } catch (ServiceException e) {
             LOG.error(e);
-            return requestFactory.createForwardResponse(PagePath.ERROR);
+            return requestFactory.createRedirectResponse(PagePath.ERROR);
         }
         String json = new Gson().toJson(ResourceBundleKey.INFO_SUCCESS);
         return requestFactory.createAjaxResponse(json);

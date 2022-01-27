@@ -29,7 +29,7 @@ public class ShowProgramPageCommand implements Command {
     public CommandResponse execute(CommandRequest request) {
         Optional<Long> orderIdOptional = retrievePositiveLongParameter(request, RequestParameter.ORDER_ID);
         if (!orderIdOptional.isPresent()) {
-            return requestFactory.createForwardResponse(PagePath.ERROR);
+            return requestFactory.createRedirectResponse(PagePath.ERROR);
         }
         long orderId = orderIdOptional.get();
         Optional<Object> optionalUser = request.retrieveFromSession(Attribute.USER);
@@ -56,7 +56,7 @@ public class ShowProgramPageCommand implements Command {
             request.addAttributeToJsp(Attribute.ORDER, order);
         } catch (ServiceException e) {
             LOG.error("Error during order confirmation", e);
-            return requestFactory.createForwardResponse(PagePath.ERROR500);
+            return requestFactory.createRedirectResponse(PagePath.ERROR500);
         }
         return requestFactory.createForwardResponse(PagePath.SHOW_VIEW_EDIT_PROGRAM);
     }

@@ -36,21 +36,21 @@ public class MakeOrderCommand implements Command {
     public CommandResponse execute(CommandRequest request) {
         Optional<Long> itemIdOptional, trainerIdOptional, periodOptional;
         Optional<UserDetails> userDetailsOptional = retrieveUserDetailsFromSession(request);
-        if (!userDetailsOptional.isPresent()) return requestFactory.createForwardResponse(PagePath.ERROR);
+        if (!userDetailsOptional.isPresent()) return requestFactory.createRedirectResponse(PagePath.ERROR);
         UserDetails userDetails = userDetailsOptional.get();
         itemIdOptional = parseLongRequestParameter(request, RequestParameter.PROGRAM);
         periodOptional = parseLongRequestParameter(request, RequestParameter.PERIOD);
-        if (!itemIdOptional.isPresent()) return requestFactory.createForwardResponse(PagePath.ERROR);
+        if (!itemIdOptional.isPresent()) return requestFactory.createRedirectResponse(PagePath.ERROR);
         if (!periodOptional.isPresent()) periodOptional = Optional.of(DEFAULT_PERIOD);
         if (request.getParameter("trainer") != null) {
             trainerIdOptional = parseLongRequestParameter(request, Attribute.TRAINER);
-            if (!trainerIdOptional.isPresent()) return requestFactory.createForwardResponse(PagePath.ERROR);
+            if (!trainerIdOptional.isPresent()) return requestFactory.createRedirectResponse(PagePath.ERROR);
             try {
                 userService.updateUserStatus(UserStatus.ACTIVE, userDetails.getUserId());
                 userService.updateUserDetailsTrainerId(userDetails, trainerIdOptional.get());
             } catch (ServiceException e) {
                 LOG.error(e);
-                return requestFactory.createForwardResponse(PagePath.ERROR500);
+                return requestFactory.createRedirectResponse(PagePath.ERROR500);
             }
         }
         Order order;
@@ -59,7 +59,7 @@ public class MakeOrderCommand implements Command {
                     userDetails.getPersonalTrainerId(), periodOptional.get(), composeCommentForTrainer(request));
         } catch (ServiceException e) {
             LOG.error(e);
-            return requestFactory.createForwardResponse(PagePath.ERROR500);
+            return requestFactory.createRedirectResponse(PagePath.ERROR500);
         }
         request.addToSession(Attribute.ORDER, order);
         request.addToSession(Attribute.CREDIT_PERCENTAGE, PaymentService.DEFAULT_CREDIT_PERCENTAGE);

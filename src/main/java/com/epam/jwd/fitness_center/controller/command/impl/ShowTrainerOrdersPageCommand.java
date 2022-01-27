@@ -34,7 +34,7 @@ public class ShowTrainerOrdersPageCommand implements Command {
         List<Order> orders;
         Optional<User> userOptional = retrieveUserFromSession(request);
         String orderStatusesValue = request.getParameter(RequestParameter.ORDER_STATUSES);
-        if (!userOptional.isPresent()) return requestFactory.createForwardResponse(PagePath.ERROR);
+        if (!userOptional.isPresent()) return requestFactory.createRedirectResponse(PagePath.ERROR);
         User user = userOptional.get();
         try {
             if (orderStatusesValue.equalsIgnoreCase(OrderStatus.ACTIVE.name())) {
@@ -51,7 +51,7 @@ public class ShowTrainerOrdersPageCommand implements Command {
             }
         } catch (ServiceException e) {
             LOG.error(e);
-            return requestFactory.createForwardResponse(PagePath.ERROR500);
+            return requestFactory.createRedirectResponse(PagePath.ERROR500);
         }
         String json = new Gson().toJson(orders);
         return requestFactory.createAjaxResponse(json);

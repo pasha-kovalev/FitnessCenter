@@ -27,14 +27,14 @@ public class DeleteItemCommand implements Command {
     public CommandResponse execute(CommandRequest request) {
         Optional<Long> itemIdOptional = retrievePositiveLongParameter(request, RequestParameter.ID);
         if (!itemIdOptional.isPresent()) {
-            return requestFactory.createForwardResponse(PagePath.ERROR);
+            return requestFactory.createRedirectResponse(PagePath.ERROR);
         }
         long itemId = itemIdOptional.get();
         try {
             itemService.delete(itemId);
         } catch (ServiceException e) {
             LOG.error(e);
-            return requestFactory.createForwardResponse(PagePath.ERROR);
+            return requestFactory.createRedirectResponse(PagePath.ERROR);
         }
         String json = new Gson().toJson(ResourceBundleKey.INFO_SUCCESS);
         return requestFactory.createAjaxResponse(json);

@@ -29,16 +29,16 @@ public class ManageItemDataCommand implements Command {
         String itemPrice = request.getParameter(RequestParameter.PRICE);
         Optional<Long> itemIdOptional = retrievePositiveLongParameter(request, RequestParameter.ID);
         if (!itemIdOptional.isPresent() || itemName == null || itemPrice == null) {
-            return requestFactory.createForwardResponse(PagePath.ERROR);
+            return requestFactory.createRedirectResponse(PagePath.ERROR);
         }
         long itemId = itemIdOptional.get();
         try {
             if (!itemService.update(itemId, itemName, itemPrice)) {
-                return requestFactory.createForwardResponse(PagePath.ERROR);
+                return requestFactory.createRedirectResponse(PagePath.ERROR);
             }
         } catch (ServiceException e) {
             LOG.error(e);
-            return requestFactory.createForwardResponse(PagePath.ERROR);
+            return requestFactory.createRedirectResponse(PagePath.ERROR);
         }
         String json = new Gson().toJson(ResourceBundleKey.INFO_SUCCESS);
         return requestFactory.createAjaxResponse(json);

@@ -10,6 +10,7 @@
 <fmt:message var="personalTrainer" key="user.cabinet.personalTrainer"/>
 <fmt:message var="orders" key="user.cabinet.orders"/>
 <fmt:message var="settings" key="user.cabinet.settings"/>
+<fmt:message var="notValidTitle" key="payment.input.notValid"/>
 
 <html>
 <head>

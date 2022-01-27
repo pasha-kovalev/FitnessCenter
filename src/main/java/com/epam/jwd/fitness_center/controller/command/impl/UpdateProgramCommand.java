@@ -30,7 +30,7 @@ public class UpdateProgramCommand implements Command {
         String comment = request.getParameter(RequestParameter.COMMENT);
         Optional<Long> orderIdOptional = retrievePositiveLongParameter(request, RequestParameter.ORDER_ID);
         if (!orderIdOptional.isPresent() || programChangeMarker == null) {
-            return requestFactory.createForwardResponse(PagePath.ERROR);
+            return requestFactory.createRedirectResponse(PagePath.ERROR);
         }
         Optional<Object> optionalUser = request.retrieveFromSession(Attribute.USER);
         long orderId = orderIdOptional.get();
@@ -69,7 +69,7 @@ public class UpdateProgramCommand implements Command {
                 order.setComment(comment);
             } else {
                 if (!updateProgram(request, program, user.getRole())) {
-                    return requestFactory.createForwardResponse(PagePath.ERROR500);
+                    return requestFactory.createRedirectResponse(PagePath.ERROR500);
                 }
             }
             if (user.getRole() == UserRole.TRAINER) {
@@ -80,7 +80,7 @@ public class UpdateProgramCommand implements Command {
             orderService.update(order);
         } catch (ServiceException e) {
             LOG.error("Error during order confirmation", e);
-            return requestFactory.createForwardResponse(PagePath.ERROR500);
+            return requestFactory.createRedirectResponse(PagePath.ERROR500);
         }
         return requestFactory.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
     }

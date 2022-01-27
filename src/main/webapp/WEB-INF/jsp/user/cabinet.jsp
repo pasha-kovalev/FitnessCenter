@@ -10,6 +10,24 @@
 <fmt:message var="personalTrainer" key="user.cabinet.personalTrainer"/>
 <fmt:message var="orders" key="user.cabinet.orders"/>
 <fmt:message var="settings" key="user.cabinet.settings"/>
+<fmt:message var="notValidTitle" key="payment.input.notValid"/>
+<fmt:message var="date" key="user.cabinet.th.date"/>
+<fmt:message var="program" key="user.cabinet.th.program"/>
+<fmt:message var="trainer" key="user.cabinet.th.trainer"/>
+<fmt:message var="price" key="user.cabinet.th.price"/>
+<fmt:message var="status" key="user.cabinet.th.status"/>
+<fmt:message var="refuse" key="user.cabinet.th.refuse"/>
+<fmt:message var="pay" key="user.cabinet.th.pay"/>
+<fmt:message var="view" key="user.cabinet.th.view"/>
+<fmt:message var="open" key="user.cabinet.th.open"/>
+<fmt:message var="review" key="user.cabinet.th.review"/>
+<fmt:message var="begin" key="user.cabinet.th.begin"/>
+<fmt:message var="end" key="user.cabinet.th.end"/>
+<fmt:message var="intensity" key="user.cabinet.h3.intensity"/>
+<fmt:message var="schedule" key="user.cabinet.h3.schedule"/>
+<fmt:message var="exercises" key="user.cabinet.h3.exercises"/>
+<fmt:message var="diet" key="user.cabinet.h3.diet"/>
+<fmt:message var="equipment" key="user.cabinet.h3.equipment"/>
 
 <html>
 <head>
@@ -71,21 +89,6 @@
     var mainDataLoaded = false;
     var reviewLoaded = false;
 
-    function w3_open() {
-        if (mySidebar.style.display === 'block') {
-            mySidebar.style.display = 'none';
-            overlayBg.style.display = "none";
-        } else {
-            mySidebar.style.display = 'block';
-            overlayBg.style.display = "block";
-        }
-    }
-
-    function w3_close() {
-        mySidebar.style.display = "none";
-        overlayBg.style.display = "none";
-    }
-
     function showOrders(isActive) {
         document.getElementById("mainData").innerHTML = "";
         var isCurrentOrdersStr = isActive ? "true" : "false";
@@ -95,30 +98,30 @@
             success: function (responseJson) {
                 var $table = $("<table class=\"custom-table\">").appendTo($("#mainData"));
                 $("<thead>").appendTo($table)
-                    .append($("<tr><th>Дата заказа</th><th>Программа</th><th>Тренер</th><th>Цена</th>" +
-                        "<th>Статус</th></tr>"));
+                    .append($("<tr><th>${date}</th><th>${program}</th><th>${trainer}</th><th>${price}</th>" +
+                        "<th>${status}</th></tr>"));
                 $.each(responseJson, function (index, order) {
                     var lastTd = "";
                     switch (order.orderStatus) {
                         case "${OrderStatus.PAYMENT_AWAITING.name()}":
                             lastTd = "<a " +
                                 "href=\"${pageContext.request.contextPath}/controller?command=show_payment&orderId="
-                                + order.id + "\" class=\"btn btn-success\">Pay</a>" + `<a style="margin-left: 16px"` +
+                                + order.id + "\" class=\"btn btn-success\">${pay}</a>" + `<a style="margin-left: 16px"` +
                                 "href=\"${pageContext.request.contextPath}/controller?command=cancel_order&orderId="
-                                + order.id + "\" class=\"btn btn-danger\">Отказаться</a>";
+                                + order.id + "\" class=\"btn btn-danger\">${refuse}</a>";
                             break;
                         case "${OrderStatus.PENDING_CLIENT.name()}":
                             lastTd = "<a " +
                                 "href=\"${pageContext.request.contextPath}/controller?command=show_program&orderId="
-                                + order.id + "\" class=\"btn btn-warning\">View</a>";
+                                + order.id + "\" class=\"btn btn-warning\">${view}</a>";
                             break;
                         case "${OrderStatus.ACTIVE.name()}":
-                            lastTd = "<button class=\"btn btn-success\" onclick='showProgram(this)'>Open</button>";
+                            lastTd = "<button class=\"btn btn-success\" onclick='showProgram(this)'>${open}</button>";
                             break;
                         case "${OrderStatus.COMPLETED.name()}":
                             if (order.review == null) {
                                 lastTd = "<button class=\"btn btn-warning\" " +
-                                    "onclick='showReview(this)'>Оставить отзыв</button>";
+                                    "onclick='showReview(this)'>${review}</button>";
                             } else {
                                 lastTd = "";
                             }
@@ -151,27 +154,26 @@
             type: 'GET',
             url: '${pageContext.request.contextPath}/controller?command=show_program_details&orderId=' + orderId,
             success: function (program) {
-                $("#mainData").append($("<h1>").text("Программа"));
+                $("#mainData").append($("<h1>").text("${program}"));
                 var $div = $("<div style='padding-left: 100px'>").appendTo($("#mainData"));
-                $div.append($("<p>").append("<span style='font-weight: bold'>Начало: </span>"
+                $div.append($("<p>").append("<span style='font-weight: bold'>${begin}: </span>"
                     + program.startsAt.date['day'] + '-' +
                     program.startsAt.date['month'] + '-' +
                     program.startsAt.date['year']))
-                    .append($("<p>").append("<span style='font-weight: bold'>Окончание: </span>"
+                    .append($("<p>").append("<span style='font-weight: bold'>${end}: </span>"
                         + program.endsAt.date['day'] + '-' +
                         program.endsAt.date['month'] + '-' +
                         program.endsAt.date['year']))
-                    .append($("<h3>").text("ГРАФИК"))
+                    .append($("<h3>").text("${schedule}"))
                     .append($(`<p style="white-space: pre-line">`).text(program.schedule))
-                    .append($("<h3>").text("ИНТЕНСИВНОСТЬ"))
+                    .append($("<h3>").text("${intensity}"))
                     .append($(`<p style="white-space: pre-line">`).text(program.intensity))
-                    .append($("<h3>").text("СНАРЯЖЕНИЕ"))
+                    .append($("<h3>").text("${equipment}"))
                     .append($(`<p style="white-space: pre-line">`).text(program.equipment))
-                    .append($("<h3>").text("УПРАЖНЕНИЯ"))
+                    .append($("<h3>").text("${exercises}"))
                     .append($(`<p style="white-space: pre-line">`).text(program.exercises))
-                    .append($("<h3>").text("ДИЕТА"))
+                    .append($("<h3>").text("${diet}"))
                     .append($(`<p style="white-space: pre-line">`).text(program.diet));
-
             }
         })
     }

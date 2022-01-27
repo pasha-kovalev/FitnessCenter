@@ -11,6 +11,23 @@
 <fmt:message var="personalTrainer" key="user.cabinet.personalTrainer"/>
 <fmt:message var="orders" key="user.cabinet.orders"/>
 <fmt:message var="settings" key="user.cabinet.settings"/>
+<fmt:message var="notValidTitle" key="payment.input.notValid"/>
+<fmt:message var="usersManage" key="admin.cabinet.button.usersManage"/>
+<fmt:message var="programsManage" key="admin.cabinet.button.programsManage"/>
+<fmt:message var="discountManage" key="admin.cabinet.button.discountManage"/>
+<fmt:message var="login" key="admin.cabinet.button.login"/>
+<fmt:message var="name" key="admin.cabinet.button.name"/>
+<fmt:message var="surname" key="admin.cabinet.button.surname"/>
+<fmt:message var="role" key="admin.cabinet.button.role"/>
+<fmt:message var="status" key="admin.cabinet.button.status"/>
+<fmt:message var="change" key="admin.cabinet.button.change"/>
+<fmt:message var="discount" key="admin.cabinet.button.discount"/>
+<fmt:message var="naming" key="admin.cabinet.button.naming"/>
+<fmt:message var="cost" key="admin.cabinet.button.cost"/>
+<fmt:message var="delete" key="admin.cabinet.button.delete"/>
+<fmt:message var="add" key="admin.cabinet.button.add"/>
+<fmt:message var="save" key="admin.cabinet.button.save"/>
+
 
 <html>
 <head>
@@ -43,13 +60,13 @@
     <hr>
     <div class="w3-bar-block">
         <button class="w3-bar-item w3-button w3-padding" onclick="showUsers()">
-            <i class="fa fa-user fa-fw"></i>Управление Пользователями
+            <i class="fa fa-user fa-fw"></i>${usersManage}
         </button>
         <button class="w3-bar-item w3-button w3-padding" onclick="showItems()">
-            <i class="fa fa-tasks fa-fw"></i>Управление Программами
+            <i class="fa fa-tasks fa-fw"></i>${programsManage}
         </button>
         <button class="w3-bar-item w3-button w3-padding" onclick="showUsersDiscount()">
-            <i class="fa fa-percent fa-fw"></i>Управление Скидками
+            <i class="fa fa-percent fa-fw"></i>${discountManage}
         </button>
     </div>
 </nav>
@@ -94,15 +111,15 @@
                 $("<thead>").appendTo($table)
                     .append($(`<tr>
                                    <th onclick="sortTable(0, true)" style="cursor: pointer">ID</th>
-                                   <th>Логин</th>
-                                   <th>Имя</th>
-                                   <th>Фамилия</th>
-                                   <th onclick="filterBy('role')" style="cursor: pointer">Роль</th>
-                                   <th onclick="filterBy('status')" style="cursor: pointer">Статус</th>
+                                   <th>${login}</th>
+                                   <th>${name}</th>
+                                   <th>${surname}</th>
+                                   <th onclick="filterBy('role')" style="cursor: pointer">${role}</th>
+                                   <th onclick="filterBy('status')" style="cursor: pointer">${status}</th>
                                </tr>`));
                 $.each(responseJson, function (index, user) {
                     var lastTd = `<button onclick="editUser(this)" ` +
-                        `class="btn btn-warning">Изменить</button>`;
+                        `class="btn btn-warning">${change}</button>`;
                     $("<tr style='border-color:'>").appendTo($table)
                         .append($("<td class='user-id'>").text(user.id))
                         .append($("<td>").text(user.email))
@@ -132,17 +149,17 @@
                 $("<thead>").appendTo($table)
                     .append($(`<tr>
                                    <th onclick="sortTable(0, true)" style="cursor: pointer">ID</th>
-                                   <th>Логин</th>
-                                   <th>Имя</th>
-                                   <th>Фамилия</th>
-                                   <th>Роль</th>
-                                   <th>Статус</th>
-                                   <th>Скидка</th>
+                                   <th>${login}</th>
+                                   <th>${name}</th>
+                                   <th>${surname}</th>
+                                   <th>${role}</th>
+                                   <th>${status}</th>
+                                   <th>${discount}</th>
                                </tr>`));
                 console.log(responseJson);
                 $.each(responseJson.users, function (index, user) {
                     var lastTd = `<button onclick="editDiscount(this)" ` +
-                        `class="btn btn-warning">Изменить</button>`;
+                        `class="btn btn-warning">${change}</button>`;
                     $("<tr style='border-color:'>").appendTo($table)
                         .append($("<td class='user-id'>").text(user.id))
                         .append($("<td>").text(user.email))
@@ -178,8 +195,8 @@
                 var $table = $(`<table class="custom-table" id="mainTable" style="min-width: 600px">`).appendTo($("#mainData"));
                 $("<thead>").appendTo($table)
                     .append($(`<tr>
-                                   <th onclick="sortTable(0)" style="cursor: pointer">Название</th>
-                                   <th onclick="sortTable(0, true)" style="cursor: pointer">Стоимость</th>
+                                   <th onclick="sortTable(0)" style="cursor: pointer">${naming}</th>
+                                   <th onclick="sortTable(0, true)" style="cursor: pointer">${cost}</th>
                                </tr>`));
                 $.each(responseJson, function (index, item) {
                     $("<tr style='border-color:'>").appendTo($table)
@@ -191,9 +208,9 @@
                         .append($(`<td><input type="number" required readonly class="inp-adm price" name="price" min="10" max="9999"
                                           value="` + item.price + `" step=".01"></td>`))
                         .append($("<td>").append(`<button onclick="editItem(this)" ` +
-                            `class="btn btn-warning">Изменить</button>`))
+                            `class="btn btn-warning">${change}</button>`))
                         .append($("<td>").append(`<button onclick="editItem(this, true)" ` +
-                            `class="btn btn-danger">Удалить</button>`));
+                            `class="btn btn-danger">${delete}</button>`));
                 });
                 $("<tr style='border-color:'>").appendTo($table)
                     .append($("<td class='item-name' >")
@@ -204,7 +221,7 @@
                     .append($(`<td><input type="number" required class="inp-adm price" name="price" min="10" max="9999"
                                           value="" step=".01" style="border: 1px solid whitesmoke;"></td>`))
                     .append($("<td>").append(`<button onclick="addNewItem(this)" ` +
-                        `class="btn btn-danger">Добавить</button>`));
+                        `class="btn btn-danger">${add}</button>`));
             }
         });
     }
@@ -331,7 +348,7 @@
             deleteItem(id, trClosest[0]);
         } else if (isFormEditing) {
             sendItemData(id, name, price, trClosest[0]);
-            $(el).closest('button')[0].innerText = "Изменить"
+            $(el).closest('button')[0].innerText = "${change}"
             textArea.readOnly = true;
             input.readOnly = true;
             isFormEditing = false;
@@ -339,7 +356,7 @@
         } else {
             textArea.readOnly = false;
             input.readOnly = false;
-            $(el).closest('button')[0].innerText = "Сохранить"
+            $(el).closest('button')[0].innerText = "${save}"
             isFormEditing = true;
         }
     }
@@ -351,12 +368,12 @@
         var discount = input.value;
         if (isFormEditing) {
             sendNewDiscount(id, discount, trClosest[0]);
-            $(el).closest('button')[0].innerText = "Изменить"
+            $(el).closest('button')[0].innerText = "${change}"
             input.readOnly = true;
             isFormEditing = false;
         } else {
             input.readOnly = false;
-            $(el).closest('button')[0].innerText = "Сохранить"
+            $(el).closest('button')[0].innerText = "${save}"
             isFormEditing = true;
         }
     }
@@ -377,7 +394,7 @@
             displayByElem(statusSelectTd, true);
             displayByElem(roleTd);
             displayByElem(statusTd);
-            $(el).closest('button')[0].innerText = "Изменить"
+            $(el).closest('button')[0].innerText = "${change}"
             $(el).attr('class', 'btn btn-warning');
             isFormEditing = false;
         } else {
@@ -387,7 +404,7 @@
             displayByElem(statusTd, true);
             displayByElem(roleSelectTd);
             displayByElem(statusSelectTd);
-            $(el).closest('button')[0].innerText = "Сохранить"
+            $(el).closest('button')[0].innerText = "${save}"
             $(el).attr('class', 'btn btn-danger');
             isFormEditing = true;
         }
