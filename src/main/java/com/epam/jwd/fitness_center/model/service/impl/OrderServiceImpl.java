@@ -92,6 +92,7 @@ public class OrderServiceImpl implements OrderService {
                         .anyMatch(s -> s == o.getOrderStatus()))
                 .collect(Collectors.toList());
     }
+
     private BigDecimal calcPrice(long userDetailsId, long itemId, long itemAmount) throws ServiceException {
         ItemServiceImpl itemService = ServiceProvider.getInstance().getItemService();
         return itemService.calculateItemPriceForUser(userDetailsId, itemId).multiply(new BigDecimal(itemAmount));
@@ -165,10 +166,10 @@ public class OrderServiceImpl implements OrderService {
         Optional<Program> programOptional;
         try {
             programOptional = programService.find(order.getId());
-            if(programOptional.isPresent()) {
+            if (programOptional.isPresent()) {
                 Program program = programOptional.get();
-                if(program.getEndsAt() != null && program.getEndsAt().isBefore(LocalDateTime.now())) {
-                        orderDao.updateStatus(OrderStatus.COMPLETED, order.getId());
+                if (program.getEndsAt() != null && program.getEndsAt().isBefore(LocalDateTime.now())) {
+                    orderDao.updateStatus(OrderStatus.COMPLETED, order.getId());
                 }
             }
         } catch (ServiceException | DaoException e) {
@@ -189,7 +190,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public boolean addOrderReview(String review, long id) throws ServiceException {
         Optional<Order> optionalOrder = findOrderById(id);
-        if(!optionalOrder.isPresent()) {
+        if (!optionalOrder.isPresent()) {
             return false;
         }
         Order order = optionalOrder.get();

@@ -3,7 +3,6 @@ package com.epam.jwd.fitness_center.model.service;
 import com.epam.jwd.fitness_center.exception.ServiceException;
 import com.epam.jwd.fitness_center.model.entity.*;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,7 +31,11 @@ public interface UserService extends EntityService<User> {
 
     List<User> findActiveTrainers() throws ServiceException;
 
-    Optional<UserDetails> findUserDetails(long userId) throws ServiceException;
+    List<User> findActiveClients() throws ServiceException;
+
+    UserDetails findUserDetails(long userId) throws ServiceException;
+
+    List<UserDetails> findAllUserDetails() throws ServiceException;
 
     UserDetails addUserDetails(User user) throws ServiceException;
 
@@ -40,7 +43,7 @@ public interface UserService extends EntityService<User> {
 
     void updateUserData(long id, String fieldName, String value) throws ServiceException;
 
-    void updateUserDetailsDiscount(UserDetails userDetails, BigDecimal discount) throws ServiceException;
+    void updateUserDetailsDiscount(long userId, String discount) throws ServiceException;
 
     void updateUserDetailsTrainerId(UserDetails userDetails, long trainerId) throws ServiceException;
 }

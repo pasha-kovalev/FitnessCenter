@@ -1,9 +1,12 @@
 package com.epam.jwd.fitness_center.model.dao.impl;
+
 import com.epam.jwd.fitness_center.exception.DaoException;
 import com.epam.jwd.fitness_center.exception.ServiceException;
 import com.epam.jwd.fitness_center.model.connection.ConnectionPool;
 import com.epam.jwd.fitness_center.model.dao.BaseDao;
-import com.epam.jwd.fitness_center.model.entity.*;
+import com.epam.jwd.fitness_center.model.entity.Program;
+import com.epam.jwd.fitness_center.model.entity.ProgramStatus;
+import com.epam.jwd.fitness_center.model.entity.UserRole;
 import com.epam.jwd.fitness_center.model.service.impl.ServiceProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,7 +14,6 @@ import org.apache.logging.log4j.Logger;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;

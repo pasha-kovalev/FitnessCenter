@@ -2,8 +2,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="ct" uri="customtag" %>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
-<fmt:setLocale value="${sessionScope.locale}" />
-<fmt:setBundle basename="locale" />
+<fmt:setLocale value="${sessionScope.locale}"/>
+<fmt:setBundle basename="locale"/>
 <fmt:message var="title" key="login.title"/>
 <fmt:message var="loginLabel" key="login.label.login"/>
 <fmt:message var="password" key="login.label.password"/>
@@ -30,11 +30,11 @@
         <input id="email" type="text" name="login" required>
         <label for="password">${password}</label>
         <input id="password" type="password" name="password" required>
-        <input id="login-button" type="submit" value="${button}" />
+        <input id="login-button" type="submit" value="${button}"/>
     </form>
 </div>
 <div>
-<jsp:include page="component/footer.jsp" flush="true"/>
+    <jsp:include page="component/footer.jsp" flush="true"/>
 </div>
 </body>
 </html>

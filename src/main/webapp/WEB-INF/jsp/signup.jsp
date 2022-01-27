@@ -2,8 +2,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="ct" uri="customtag" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<fmt:setLocale value="${sessionScope.locale}" />
-<fmt:setBundle basename="locale" />
+<fmt:setLocale value="${sessionScope.locale}"/>
+<fmt:setBundle basename="locale"/>
 <fmt:message var="title" key="signup.title"/>
 <fmt:message var="login" key="signup.login"/>
 <fmt:message var="password" key="signup.password"/>
@@ -25,7 +25,8 @@
 <body class="form1">
 <jsp:include page="component/header.jsp" flush="true"/>
 <div class="background ">
-    <form id="signup" name="signup-form" action="${pageContext.request.contextPath}/controller?command=signup" method="post">
+    <form id="signup" name="signup-form" action="${pageContext.request.contextPath}/controller?command=signup"
+          method="post">
         <h3>${title}</h3>
         <p id="incorrect">
             <ct:pullSessionAttribute attribute="errorSignupMsg" name="msg"/>
@@ -39,7 +40,7 @@
         <label for="password1">${password}</label>
         <input type="password" name="password" id="password1" autocomplete="new-password"
                oninvalid="setCustomValidity('${passwordTitle}')" oninput="setCustomValidity('')"
-               required pattern="[0-9a-zA-Z]{6,20}" >
+               required pattern="[0-9a-zA-Z]{6,20}">
         <label for="password2">${repeatPassword}</label>
         <input type="password" name="password_repeat" id="password2" required pattern="[0-9a-zA-Z]{6,20}">
         <label for="firstname">${firstname}:</label>
@@ -48,7 +49,7 @@
         <label for="lastname">${lastname}:</label>
         <input id="lastname" type="text" name="lastname" required pattern="([А-Яа-я]{1,20})|([A-Z][a-z]{1,20})"
                oninvalid="setCustomValidity('${notValidTitle}')" oninput="setCustomValidity('')">
-        <input id="signup-button" type="submit" value="${button}" />
+        <input id="signup-button" type="submit" value="${button}"/>
     </form>
 </div>
 <jsp:include page="component/footer.jsp" flush="true"/>
@@ -56,8 +57,8 @@
     var password1 = document.getElementById("password1");
     var password2 = document.getElementById("password2");
 
-    password2.oninput = function(event) {
-        if(password2.value != password1.value) {
+    password2.oninput = function (event) {
+        if (password2.value != password1.value) {
             password2.setCustomValidity("${errorMismatch}");
         } else {
             password2.setCustomValidity("")

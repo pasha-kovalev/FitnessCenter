@@ -8,7 +8,6 @@ import com.epam.jwd.fitness_center.model.entity.UserRole;
 import com.epam.jwd.fitness_center.model.entity.UserStatus;
 import com.epam.jwd.fitness_center.model.service.UserService;
 import com.epam.jwd.fitness_center.model.service.impl.ServiceProvider;
-import com.epam.jwd.fitness_center.model.util.TextEscapeUtil;
 import com.google.gson.Gson;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -52,7 +51,7 @@ public class ManageUserDataCommand implements Command {
             LOG.error(e);
             return requestFactory.createForwardResponse(PagePath.ERROR);
         }
-        String json = new Gson().toJson(TextEscapeUtil.escapeHtml(values[0]));
+        String json = new Gson().toJson(ResourceBundleKey.INFO_SUCCESS);
         return requestFactory.createAjaxResponse(json);
     }
 }

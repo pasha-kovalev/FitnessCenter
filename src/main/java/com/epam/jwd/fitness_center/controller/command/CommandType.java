@@ -48,7 +48,9 @@ public enum CommandType {
     SHOW_MANAGE_ITEMS(ADMIN),
     MANAGE_ITEM_DATA(ADMIN),
     MANAGE_NEW_ITEM_DATA(ADMIN),
-    DELETE_ITEM(ADMIN);
+    DELETE_ITEM(ADMIN),
+    SHOW_MANAGE_DISCOUNT(ADMIN),
+    MANAGE_NEW_DISCOUNT(ADMIN);
 
     private final List<UserRole> allowedRoles;
 

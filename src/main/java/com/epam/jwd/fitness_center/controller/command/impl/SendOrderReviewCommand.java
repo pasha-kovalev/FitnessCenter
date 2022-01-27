@@ -9,11 +9,9 @@ import com.epam.jwd.fitness_center.model.entity.OrderStatus;
 import com.epam.jwd.fitness_center.model.entity.UserDetails;
 import com.epam.jwd.fitness_center.model.service.OrderService;
 import com.epam.jwd.fitness_center.model.service.impl.ServiceProvider;
-import com.google.gson.Gson;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.List;
 import java.util.Optional;
 
 public class SendOrderReviewCommand implements Command {
@@ -37,12 +35,12 @@ public class SendOrderReviewCommand implements Command {
         long orderId = orderIdOptional.get();
         try {
             Optional<Order> optionalOrder = orderService.findOrderById(orderId);
-            if (!userDetailsOptional.isPresent() || !optionalOrder.isPresent())  {
+            if (!userDetailsOptional.isPresent() || !optionalOrder.isPresent()) {
                 return createInfoErrorResponse(requestFactory, request);
             }
             long userId = userDetailsOptional.get().getUserId();
             Order order = optionalOrder.get();
-            if(order.getOrderStatus() != OrderStatus.COMPLETED || order.getUserDetailsId() != userId ||
+            if (order.getOrderStatus() != OrderStatus.COMPLETED || order.getUserDetailsId() != userId ||
                     !orderService.addOrderReview(review, orderId)) {
                 return createInfoErrorResponse(requestFactory, request);
             }

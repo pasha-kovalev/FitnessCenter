@@ -16,7 +16,7 @@ public class PlainCommandResponse implements CommandResponse {
         this(redirect, path, false, path);
     }
 
-    public PlainCommandResponse(boolean redirect, String path,  boolean ajax, String ajaxData) {
+    public PlainCommandResponse(boolean redirect, String path, boolean ajax, String ajaxData) {
         this.redirect = redirect;
         this.ajax = ajax;
         this.path = path;

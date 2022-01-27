@@ -23,6 +23,7 @@ public class DaoProvider {
     public ProgramDaoImpl getProgramDao() {
         return programDao;
     }
+
     public UserDaoImpl getUserDao() {
         return userDao;
     }

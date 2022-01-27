@@ -41,26 +41,31 @@
     <div class="tab">
         <label for="intensity">Интенсивность</label>
         <textarea id="intensity" name="intensity" rows="3" cols="33" maxlength="1000" required
-                  oninvalid="setCustomValidity('${notValidTitle}')" oninput="setCustomValidity('')">${requestScope.program.intensity}</textarea>
+                  oninvalid="setCustomValidity('${notValidTitle}')"
+                  oninput="setCustomValidity('')">${requestScope.program.intensity}</textarea>
 
         <label for="schedule">Расписание</label>
         <textarea id="schedule" name="schedule" rows="5" cols="33" maxlength="1000" required
-                  oninvalid="setCustomValidity('${notValidTitle}')" oninput="setCustomValidity('')">${requestScope.program.schedule}</textarea>
+                  oninvalid="setCustomValidity('${notValidTitle}')"
+                  oninput="setCustomValidity('')">${requestScope.program.schedule}</textarea>
     </div>
     <div class="tab">
         <label for="exercises">Упражнения</label>
         <textarea id="exercises" name="exercises" rows="10" cols="33" maxlength="3000" required
-                  oninvalid="setCustomValidity('${notValidTitle}')" oninput="setCustomValidity('')">${requestScope.program.exercises}</textarea>
+                  oninvalid="setCustomValidity('${notValidTitle}')"
+                  oninput="setCustomValidity('')">${requestScope.program.exercises}</textarea>
     </div>
     <div class="tab">
         <label for="diet">Диета</label>
         <textarea id="diet" name="diet" rows="10" cols="33" maxlength="3000" required
-                  oninvalid="setCustomValidity('${notValidTitle}')" oninput="setCustomValidity('')">${requestScope.program.diet}</textarea>
+                  oninvalid="setCustomValidity('${notValidTitle}')"
+                  oninput="setCustomValidity('')">${requestScope.program.diet}</textarea>
     </div>
     <div class="tab">
         <label for="equipment">Оборудование</label>
         <textarea id="equipment" name="equipment" rows="10" cols="33" maxlength="1000" required
-                  oninvalid="setCustomValidity('${notValidTitle}')" oninput="setCustomValidity('')">${requestScope.program.equipment}</textarea>
+                  oninvalid="setCustomValidity('${notValidTitle}')"
+                  oninput="setCustomValidity('')">${requestScope.program.equipment}</textarea>
     </div>
     <div style="overflow:auto; padding-top: 36px;">
         <div style="float:right;">
@@ -113,7 +118,7 @@
         x = document.getElementsByClassName("tab");
         z = x[currentTab].getElementsByTagName("textarea");
         for (i = 0; i < z.length; i++) {
-            if(typeof z[i] !== "undefined" && !z[i].checkValidity()) {
+            if (typeof z[i] !== "undefined" && !z[i].checkValidity()) {
                 z[i].className += " invalid"
                 valid = false;
                 z[i].reportValidity();

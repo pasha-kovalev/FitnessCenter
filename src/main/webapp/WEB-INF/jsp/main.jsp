@@ -1,16 +1,16 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<fmt:setLocale value="${sessionScope.locale}" />
-<fmt:setBundle basename="locale" />
+<fmt:setLocale value="${sessionScope.locale}"/>
+<fmt:setBundle basename="locale"/>
 <fmt:message var="title" key="brand.name"/>
 <fmt:message var="contactTitle" key="main.contact.title"/>
 <fmt:message var="location" key="main.contact.location"/>
 <fmt:message var="phone" key="main.contact.phone"/>
 <fmt:message var="email" key="main.contact.email"/>
-<fmt:message var="meetTitle" key="main.meet.title" />
-<fmt:message var="subtitle11" key="main.meet.subtitle1.p1" />
-<fmt:message var="subtitle12" key="main.meet.subtitle1.p2" />
+<fmt:message var="meetTitle" key="main.meet.title"/>
+<fmt:message var="subtitle11" key="main.meet.subtitle1.p1"/>
+<fmt:message var="subtitle12" key="main.meet.subtitle1.p2"/>
 <fmt:message var="subtitle21" key="main.meet.subtitle2.p1"/>
 <fmt:message var="subtitle22" key="main.meet.subtitle2.p2"/>
 <fmt:message var="seeMore" key="main.meet.button.see"/>
@@ -36,7 +36,8 @@
                 <p style="margin: 0">${subtitle12}</p>
                 <img src="../../images/crossfit.jpg" style="width:70%; padding-top: 8px">
             </div>
-            <div class="w3-half" style="text-align: center; font-size: 24px; font-weight: 600; font-family: 'Open Sans';">
+            <div class="w3-half"
+                 style="text-align: center; font-size: 24px; font-weight: 600; font-family: 'Open Sans';">
                 <p style="margin-bottom: 0;">${subtitle21}</p>
                 <p style="margin: 0">${subtitle22}</p>
                 <img src="../../images/beach.jpg" style="width:70%; padding-top: 8px ">

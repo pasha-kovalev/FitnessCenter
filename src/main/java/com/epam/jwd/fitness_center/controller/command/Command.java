@@ -3,7 +3,6 @@ package com.epam.jwd.fitness_center.controller.command;
 import com.epam.jwd.fitness_center.controller.PagePath;
 import com.epam.jwd.fitness_center.controller.RequestFactory;
 import com.epam.jwd.fitness_center.controller.command.impl.CommandProvider;
-import com.epam.jwd.fitness_center.model.entity.Order;
 import com.epam.jwd.fitness_center.model.entity.User;
 import com.epam.jwd.fitness_center.model.entity.UserDetails;
 import com.epam.jwd.fitness_center.model.validator.NumberValidator;

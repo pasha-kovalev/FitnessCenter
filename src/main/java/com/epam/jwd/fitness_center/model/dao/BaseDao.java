@@ -25,11 +25,11 @@ public abstract class BaseDao<T extends Entity> implements EntityDao<T> {
     protected static final int FIRST_COLUMN_INDEX = 1;
     protected final ConnectionPool pool;
     private final Logger logger;
+    private final String deleteById;
     protected String insertQuery;
     protected String updateQuery;
     protected String selectAllQuery;
     protected String selectByIdQuery;
-    private final String deleteById;
 
     protected BaseDao(ConnectionPool pool, Logger logger) {
         this.pool = pool;

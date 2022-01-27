@@ -5,7 +5,6 @@ import com.epam.jwd.fitness_center.exception.ServiceException;
 import com.epam.jwd.fitness_center.model.dao.impl.DaoProvider;
 import com.epam.jwd.fitness_center.model.dao.impl.ProgramDaoImpl;
 import com.epam.jwd.fitness_center.model.entity.*;
-import com.epam.jwd.fitness_center.model.service.EntityService;
 import com.epam.jwd.fitness_center.model.service.OrderService;
 import com.epam.jwd.fitness_center.model.service.ProgramService;
 import com.epam.jwd.fitness_center.model.util.TextEscapeUtil;
@@ -72,7 +71,7 @@ public class ProgramServiceImpl implements ProgramService {
         final int DAY_TO_START = 3;
         OrderService orderService = ServiceProvider.getInstance().getOrderService();
         Order order = orderService.findOrderById(orderId)
-                                  .orElseThrow(() -> new ServiceException("Unable to find order by id"));
+                .orElseThrow(() -> new ServiceException("Unable to find order by id"));
         orderService.updateOrderStatus(OrderStatus.PENDING_CLIENT, orderId);
         Program program = new Program.Builder()
                 .setOrder(order)
@@ -106,7 +105,7 @@ public class ProgramServiceImpl implements ProgramService {
     public Optional<Program> findByOrderAndClientId(Long orderId, Long clientId) throws ServiceException {
         Order order = ServiceProvider.getInstance().getOrderService().findOrderById(orderId)
                 .orElseThrow(() -> new ServiceException("Unable to find order by id: " + orderId));
-        if(!order.getUserDetailsId().equals(clientId)) {
+        if (!order.getUserDetailsId().equals(clientId)) {
             return Optional.empty();
         }
         return findById(orderId);

@@ -2,8 +2,8 @@
 <%@ taglib prefix="ct" uri="customtag" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<fmt:setLocale value="${sessionScope.locale}" />
-<fmt:setBundle basename="locale" />
+<fmt:setLocale value="${sessionScope.locale}"/>
+<fmt:setBundle basename="locale"/>
 <fmt:message var="title" key="payment.title"/>
 <fmt:message var="name" key="payment.label.name"/>
 <fmt:message var="month01" key="payment.option.month01"/>
@@ -35,7 +35,8 @@
 </head>
 <body class="form2" onload="outPayment()">
 <jsp:include page="../component/header.jsp" flush="true"/>
-<form id="order" name="payment-form" action="${pageContext.request.contextPath}/controller?command=payment" method="post">
+<form id="order" name="payment-form" action="${pageContext.request.contextPath}/controller?command=payment"
+      method="post">
     <h1>${title}</h1>
     <p id="incorrect">
         <ct:pullSessionAttribute attribute="errorPaymentMsg" name="msg"/>
@@ -48,7 +49,7 @@
         <input id="name" type="text" maxlength="20" required
                oninvalid="setCustomValidity('${notValidTitle}')" oninput="setCustomValidity('')">
         <label for="cvv">CVV</label>
-        <input id="cvv" type="text" pattern="[0-9]{3}"  type="text" required
+        <input id="cvv" type="text" pattern="[0-9]{3}" type="text" required
                oninvalid="setCustomValidity('${notValidTitle}')" oninput="setCustomValidity('')">
         <label>Срок</label>
         <select>
@@ -84,7 +85,7 @@
     </div>
     <div style="overflow:auto; padding-top: 36px;">
         <div style="float:right;">
-            <input id="payment-button" type="submit" value="${submit}" />
+            <input id="payment-button" type="submit" value="${submit}"/>
         </div>
     </div>
 </form>
@@ -102,8 +103,8 @@
     function outPayment() {
         if (checkBox.checked == true) {
             var pricePerMonth = price * (1 + (creditPercentage / 100)) / creditPeriod;
-            creditInfo.innerHTML = "${period} "+ creditPeriod +" ${month2}. " + "${perMonth} " + pricePerMonth
-                                + " ${money}";
+            creditInfo.innerHTML = "${period} " + creditPeriod + " ${month2}. " + "${perMonth} " + pricePerMonth
+                + " ${money}";
             priceElem.innerHTML = pricePerMonth + " ${money}";
             creditInfo.style.display = "block";
         } else {

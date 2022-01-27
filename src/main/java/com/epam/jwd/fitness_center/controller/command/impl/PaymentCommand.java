@@ -33,7 +33,7 @@ public class PaymentCommand implements Command {
             return requestFactory.createForwardResponse(PagePath.ERROR);
         }
         Order order = (Order) orderOptional.get();
-        if(order.getOrderStatus() != OrderStatus.PAYMENT_AWAITING) {
+        if (order.getOrderStatus() != OrderStatus.PAYMENT_AWAITING) {
             return requestFactory.createForwardResponse(PagePath.ERROR);
         }
         String cardNumber = request.getParameter(RequestParameter.CARD_NUMBER);

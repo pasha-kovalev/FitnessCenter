@@ -9,7 +9,6 @@ import com.epam.jwd.fitness_center.model.entity.OrderStatus;
 import com.epam.jwd.fitness_center.model.entity.User;
 import com.epam.jwd.fitness_center.model.service.OrderService;
 import com.epam.jwd.fitness_center.model.service.impl.ServiceProvider;
-import com.epam.jwd.fitness_center.model.validator.NumberValidator;
 
 import java.util.Optional;
 
@@ -32,7 +31,7 @@ public class ShowPaymentPageCommand implements Command {
                 Optional<Order> optionalOrder = orderService.findOrderById(orderId);
                 Optional<Object> optionalUser = request.retrieveFromSession(Attribute.USER);
                 if (!optionalOrder.isPresent() || !optionalUser.isPresent()
-                        || !optionalOrder.get().getUserDetailsId().equals(((User) optionalUser.get()).getId()))  {
+                        || !optionalOrder.get().getUserDetailsId().equals(((User) optionalUser.get()).getId())) {
                     request.addToSession(Attribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_ERROR_LINK);
                     return requestFactory.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
                 }
@@ -49,7 +48,7 @@ public class ShowPaymentPageCommand implements Command {
             }
             order = (Order) optionalOrder.get();
         }
-        if(order.getOrderStatus() != OrderStatus.PAYMENT_AWAITING) {
+        if (order.getOrderStatus() != OrderStatus.PAYMENT_AWAITING) {
             return requestFactory.createForwardResponse(PagePath.ERROR);
         }
         return requestFactory.createForwardResponse(PagePath.SHOW_PAYMENT);

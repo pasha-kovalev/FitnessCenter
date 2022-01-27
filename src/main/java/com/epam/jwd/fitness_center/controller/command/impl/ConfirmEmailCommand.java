@@ -6,7 +6,6 @@ import com.epam.jwd.fitness_center.controller.command.*;
 import com.epam.jwd.fitness_center.exception.ServiceException;
 import com.epam.jwd.fitness_center.model.service.UserService;
 import com.epam.jwd.fitness_center.model.service.impl.ServiceProvider;
-import com.epam.jwd.fitness_center.model.validator.NumberValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -29,7 +28,7 @@ public class ConfirmEmailCommand implements Command {
         //todo validation on services
         request.removeFromSession(Attribute.ADDITIONAL_INFO);
         Optional<Long> optionalTokenId = retrievePositiveLongParameter(request, RequestParameter.TOKEN_ID);
-        if(!optionalTokenId.isPresent()) {
+        if (!optionalTokenId.isPresent()) {
             request.addToSession(Attribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_ERROR_LINK);
             return requestFactory.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
         }

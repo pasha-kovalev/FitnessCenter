@@ -30,19 +30,19 @@ public class ShowMakeProgramPageCommand implements Command {
             try {
                 Optional<Object> optionalUser = request.retrieveFromSession(Attribute.USER);
                 Optional<Order> optionalOrder = orderService.findOrderById(orderId);
-                if (!optionalOrder.isPresent() || !optionalUser.isPresent())  {
+                if (!optionalOrder.isPresent() || !optionalUser.isPresent()) {
                     request.addToSession(Attribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_ERROR_LINK);
                     return requestFactory.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
                 }
                 order = optionalOrder.get();
                 request.addAttributeToJsp(Attribute.ORDER, order);
-                if(order.getOrderStatus() == OrderStatus.TAKEN) {
+                if (order.getOrderStatus() == OrderStatus.TAKEN) {
                     return requestFactory.createForwardResponse(PagePath.SHOW_NEW_PROGRAM);
                 }
-                if(order.getOrderStatus() != OrderStatus.UNTAKEN) {
+                if (order.getOrderStatus() != OrderStatus.UNTAKEN) {
                     return requestFactory.createForwardResponse(PagePath.ERROR);
                 }
-                order.setAssignmentTrainerId(((User)optionalUser.get()).getId());
+                order.setAssignmentTrainerId(((User) optionalUser.get()).getId());
                 order.setOrderStatus(OrderStatus.TAKEN);
                 orderService.update(order);
             } catch (ServiceException e) {
@@ -50,7 +50,7 @@ public class ShowMakeProgramPageCommand implements Command {
                 return requestFactory.createForwardResponse(PagePath.ERROR500);
             }
         } else {
-                return requestFactory.createForwardResponse(PagePath.ERROR);
+            return requestFactory.createForwardResponse(PagePath.ERROR);
         }
 
         return requestFactory.createForwardResponse(PagePath.SHOW_NEW_PROGRAM);

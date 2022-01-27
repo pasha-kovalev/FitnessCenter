@@ -54,7 +54,8 @@ public class CommandProvider {
         commands.put(MANAGE_ITEM_DATA, new ManageItemDataCommand(requestFactory));
         commands.put(MANAGE_NEW_ITEM_DATA, new ManageNewItemDataCommand(requestFactory));
         commands.put(DELETE_ITEM, new DeleteItemCommand(requestFactory));
-
+        commands.put(SHOW_MANAGE_DISCOUNT, new ShowManageDiscountPageCommand(requestFactory));
+        commands.put(MANAGE_NEW_DISCOUNT, new ManageNewDiscountCommand(requestFactory));
     }
 
     public static CommandProvider getInstance() {

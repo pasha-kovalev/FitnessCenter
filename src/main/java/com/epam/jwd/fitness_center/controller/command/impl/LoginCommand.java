@@ -29,7 +29,7 @@ public class LoginCommand implements Command {
         final String login = request.getParameter(RequestParameter.LOGIN);
         final String password = request.getParameter(RequestParameter.PASSWORD);
         Optional<User> optionalUser;
-        Optional<UserDetails> userDetailsOptional;
+        UserDetails userDetails;
         try {
             optionalUser = userService.authenticate(login, password);
         } catch (ServiceException e) {
@@ -45,12 +45,11 @@ public class LoginCommand implements Command {
         request.createSession();
         request.addToSession(Attribute.USER, user);
         try {
-            userDetailsOptional = userService.findUserDetails(user.getId());
+            userDetails = userService.findUserDetails(user.getId());
         } catch (ServiceException e) {
-            LOG.error("Error during searching user details. User id: {}. {}", user.getId(), e.getMessage());
-            return requestFactory.createForwardResponse(PagePath.ERROR500);
+            userDetails = null;
         }
-        userDetailsOptional.ifPresent(details -> request.addToSession(Attribute.USER_DETAILS, details));
+        if (userDetails != null) request.addToSession(Attribute.USER_DETAILS, userDetails);
         return requestFactory.createRedirectResponse(PagePath.INDEX);
     }
 }

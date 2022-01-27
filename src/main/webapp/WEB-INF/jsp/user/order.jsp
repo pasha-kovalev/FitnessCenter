@@ -1,8 +1,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<fmt:setLocale value="${sessionScope.locale}" />
-<fmt:setBundle basename="locale" />
+<fmt:setLocale value="${sessionScope.locale}"/>
+<fmt:setBundle basename="locale"/>
 <fmt:message var="title" key="order.title"/>
 <fmt:message var="chooseProgram" key="order.label.chooseProgram"/>
 <fmt:message var="choosePeriod" key="order.label.choosePeriod"/>
@@ -52,7 +52,7 @@
         <c:if test="${sessionScope.userDetails == null || sessionScope.userDetails.personalTrainerId == 0}">
             <label style="margin-top: 20px;" for="trainer">${choosePersonal}</label>
             <select id="trainer" name="trainer" form="order" required>
-                <c:forEach var="trainer" items="${requestScope.trainerList}" >
+                <c:forEach var="trainer" items="${requestScope.trainerList}">
                     <option value="${trainer.id}">${trainer.firstName} ${trainer.secondName}</option>
                 </c:forEach>
             </select>
@@ -101,8 +101,8 @@
     var price = document.getElementById("price");
     var totalPrice = document.getElementById("total");
     showTab(currentTab);
-    program.onchange = function() {
-        if(program.options[program.selectedIndex].text === 'transformation') {
+    program.onchange = function () {
+        if (program.options[program.selectedIndex].text === 'transformation') {
             periods.value = "3";
             periods.disabled = true;
         } else {
@@ -112,12 +112,12 @@
         refreshPrice();
     }
 
-    periods.onchange = function() {
+    periods.onchange = function () {
         refreshPrice();
     }
 
     function refreshPrice() {
-        if(program.options[program.selectedIndex].text === 'transformation') {
+        if (program.options[program.selectedIndex].text === 'transformation') {
             price.innerHTML = parseFloat(program.options[program.selectedIndex].getAttribute("price")) + " ";
             totalPrice.innerHTML = parseFloat(program.options[program.selectedIndex].getAttribute("total")) + " ";
         } else {
@@ -128,6 +128,7 @@
         }
 
     }
+
     function showTab(n) {
         var x = document.getElementsByClassName("tab");
         x[n].style.display = "block";
@@ -162,11 +163,11 @@
         y = x[currentTab].getElementsByTagName("input");
         z = x[currentTab].getElementsByTagName("textarea");
         for (i = 0; i < y.length; i++) {
-            if(!y[i].checkValidity()) {
+            if (!y[i].checkValidity()) {
                 y[i].className += " invalid"
                 valid = false;
                 y[i].reportValidity();
-            } else if(typeof z.comment !== "undefined"
+            } else if (typeof z.comment !== "undefined"
                 && !z.comment.checkValidity()) {
                 y[i].className += " invalid"
                 valid = false;

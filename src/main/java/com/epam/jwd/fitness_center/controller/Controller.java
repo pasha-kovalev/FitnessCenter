@@ -12,12 +12,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Locale;
 
 @WebServlet("/controller")
 @MultipartConfig(fileSizeThreshold = 1024 * 1024,
-        maxFileSize = 1024 * 1024 *5,
-        maxRequestSize = 1024*1024*5*5)
+        maxFileSize = 1024 * 1024 * 5,
+        maxRequestSize = 1024 * 1024 * 5 * 5)
 public class Controller extends HttpServlet {
     public static final String COMMAND_NAME_PARAM = "command";
     private static final long serialVersionUID = -5223997271791449828L;
@@ -41,7 +40,7 @@ public class Controller extends HttpServlet {
         final Command command = Command.of(commandName);
         final CommandRequest commandRequest = requestFactory.createRequest(req);
         final CommandResponse commandResponse = command.execute(commandRequest);
-        if(commandResponse.getPath() != null &&
+        if (commandResponse.getPath() != null &&
                 !commandResponse.getPath().contains(CommandType.SWITCH_LOCALE.name().toLowerCase())) {
             req.getSession().setAttribute(Attribute.CURRENT_PAGE, commandResponse.getPath());
         }
@@ -51,12 +50,11 @@ public class Controller extends HttpServlet {
     private void proceedWithResponse(HttpServletRequest req, HttpServletResponse resp,
                                      CommandResponse commandResponse) {
         try {
-            if(commandResponse.isAjax()) {
+            if (commandResponse.isAjax()) {
                 resp.setContentType("application/json");
                 resp.setCharacterEncoding("UTF-8");
                 resp.getWriter().write(commandResponse.getAjaxData());
-            }
-            else {
+            } else {
                 forwardOrRedirectToResponseLocation(req, resp, commandResponse);
             }
         } catch (ServletException e) {

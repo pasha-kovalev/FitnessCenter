@@ -241,7 +241,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserDetails> findUserDetails(long userId) throws ServiceException {
+    public List<User> findActiveClients() throws ServiceException {
+        try {
+            return userDao.findActiveClients();
+        } catch (DaoException e) {
+            throw new ServiceException("Unable to find all active clients", e);
+        }
+    }
+
+    @Override
+    public List<UserDetails> findAllUserDetails() throws ServiceException {
+        final UserDetailsDaoImpl userDetailsDao = DaoProvider.getInstance().getUserDetailsDao();
+        try {
+            return userDetailsDao.read();
+        } catch (DaoException e) {
+            throw new ServiceException("Unable to find all user details", e);
+        }
+    }
+
+    @Override
+    public UserDetails findUserDetails(long userId) throws ServiceException {
         final UserDetailsDaoImpl userDetailsDao = DaoProvider.getInstance().getUserDetailsDao();
         List<UserDetails> userDetailsList;
         try {
@@ -249,7 +268,10 @@ public class UserServiceImpl implements UserService {
         } catch (DaoException e) {
             throw new ServiceException("Unable to find user details by id", e);
         }
-        return Optional.ofNullable(userDetailsList.isEmpty() ? null : userDetailsList.get(0));
+        if (userDetailsList.isEmpty()) {
+            throw new ServiceException("Unable to find user details by id");
+        }
+        return userDetailsList.get(0);
     }
 
     @Override
@@ -277,7 +299,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateUserData(long id, String fieldName, String value) throws ServiceException {
         Optional<User> optionalUser = findUserById(id);
-        if(!optionalUser.isPresent()) {
+        if (!optionalUser.isPresent()) {
             LOG.warn("User not found by id {}", id);
             throw new ServiceException("Unable to update user. User not found by id");
         }
@@ -307,8 +329,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateUserDetailsDiscount(UserDetails userDetails, BigDecimal discount) throws ServiceException {
-        userDetails.setDiscount(discount);
+    public void updateUserDetailsDiscount(long userId, String discount) throws ServiceException {
+        BigDecimal discountNumber = new BigDecimal(TextEscapeUtil.escapeHtml(discount));
+        UserDetails userDetails = findUserDetails(userId);
+        userDetails.setDiscount(discountNumber);
         updateUserDetails(userDetails);
     }
 

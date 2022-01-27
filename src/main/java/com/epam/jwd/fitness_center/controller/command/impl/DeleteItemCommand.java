@@ -2,10 +2,7 @@ package com.epam.jwd.fitness_center.controller.command.impl;
 
 import com.epam.jwd.fitness_center.controller.PagePath;
 import com.epam.jwd.fitness_center.controller.RequestFactory;
-import com.epam.jwd.fitness_center.controller.command.Command;
-import com.epam.jwd.fitness_center.controller.command.CommandRequest;
-import com.epam.jwd.fitness_center.controller.command.CommandResponse;
-import com.epam.jwd.fitness_center.controller.command.RequestParameter;
+import com.epam.jwd.fitness_center.controller.command.*;
 import com.epam.jwd.fitness_center.exception.ServiceException;
 import com.epam.jwd.fitness_center.model.service.impl.ItemServiceImpl;
 import com.epam.jwd.fitness_center.model.service.impl.ServiceProvider;
@@ -39,7 +36,7 @@ public class DeleteItemCommand implements Command {
             LOG.error(e);
             return requestFactory.createForwardResponse(PagePath.ERROR);
         }
-        String json = new Gson().toJson(itemId);
+        String json = new Gson().toJson(ResourceBundleKey.INFO_SUCCESS);
         return requestFactory.createAjaxResponse(json);
     }
 }

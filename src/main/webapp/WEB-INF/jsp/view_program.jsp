@@ -9,7 +9,10 @@
     <link href="../../style/style.css" type="text/css" rel="stylesheet">
 </head>
 <style>
-    footer {top: 160%; bottom: 0;}
+    footer {
+        top: 160%;
+        bottom: 0;
+    }
 </style>
 <body class="form2">
 <jsp:include page="component/header.jsp" flush="true"/>
@@ -34,23 +37,28 @@
         <input type="hidden" id="changeMarker" name="changeMarker" value="false">
         <label for="intensity">Интенсивность</label>
         <textarea id="intensity" name="intensity" rows="3" cols="33" maxlength="1000" required readonly
-                  oninvalid="setCustomValidity('${notValidTitle}')" oninput="setCustomValidity('')">${requestScope.program.intensity}</textarea>
+                  oninvalid="setCustomValidity('${notValidTitle}')"
+                  oninput="setCustomValidity('')">${requestScope.program.intensity}</textarea>
 
         <label for="schedule">Расписание</label>
         <textarea id="schedule" name="schedule" rows="5" cols="33" maxlength="1000" required readonly
-                  oninvalid="setCustomValidity('${notValidTitle}')" oninput="setCustomValidity('')">${requestScope.program.schedule}</textarea>
+                  oninvalid="setCustomValidity('${notValidTitle}')"
+                  oninput="setCustomValidity('')">${requestScope.program.schedule}</textarea>
 
         <label for="exercises">Упражнения</label>
         <textarea id="exercises" name="exercises" rows="10" cols="33" maxlength="3000" required readonly
-                  oninvalid="setCustomValidity('${notValidTitle}')" oninput="setCustomValidity('')">${requestScope.program.exercises}</textarea>
+                  oninvalid="setCustomValidity('${notValidTitle}')"
+                  oninput="setCustomValidity('')">${requestScope.program.exercises}</textarea>
 
         <label for="diet">Диета</label>
         <textarea id="diet" name="diet" rows="10" cols="33" maxlength="3000" required readonly
-                  oninvalid="setCustomValidity('${notValidTitle}')" oninput="setCustomValidity('')">${requestScope.program.diet}</textarea>
+                  oninvalid="setCustomValidity('${notValidTitle}')"
+                  oninput="setCustomValidity('')">${requestScope.program.diet}</textarea>
 
         <label for="equipment">Оборудование</label>
         <textarea id="equipment" name="equipment" rows="10" cols="33" maxlength="1000" required readonly
-                  oninvalid="setCustomValidity('${notValidTitle}')" oninput="setCustomValidity('')">${requestScope.program.equipment}</textarea>
+                  oninvalid="setCustomValidity('${notValidTitle}')"
+                  oninput="setCustomValidity('')">${requestScope.program.equipment}</textarea>
         <label id="comment-label" for="comment" style="visibility: hidden;">Комментарий для тренера</label>
         <textarea id="comment" name="comment" rows="1" cols="33" maxlength="1000" style="visibility: hidden;"
                   oninvalid="setCustomValidity('${notValidTitle}')" oninput="setCustomValidity('')"></textarea>
@@ -58,10 +66,10 @@
     <div style="overflow:auto; padding-top: 36px;">
         <div style="float:right;">
             <c:if test="${sessionScope.user.role ne UserRole.TRAINER}">
-                <input id="refuse-button" type="button" value="Отказ" onclick="refuseProgram()" />
+                <input id="refuse-button" type="button" value="Отказ" onclick="refuseProgram()"/>
             </c:if>
-            <input id="edit-button" type="button" value="Изменить" onclick="editForm()" />
-            <input id="send-button" type="submit" value="Отправить" />
+            <input id="edit-button" type="button" value="Изменить" onclick="editForm()"/>
+            <input id="send-button" type="submit" value="Отправить"/>
         </div>
     </div>
 </form>
@@ -72,7 +80,7 @@
         x = document.getElementsByClassName("tab");
         z = x[currentTab].getElementsByTagName("textarea");
         for (i = 0; i < z.length; i++) {
-            if(typeof z[i] !== "undefined" && !z[i].checkValidity()) {
+            if (typeof z[i] !== "undefined" && !z[i].checkValidity()) {
                 z[i].className += " invalid"
                 valid = false;
                 z[i].reportValidity();
@@ -93,7 +101,7 @@
         var button = document.getElementById('refuse-button');
         z = document.getElementsByTagName("textarea");
         document.getElementById('edit-button').style.visibility = 'hidden';
-        if(button != null) document.getElementById('refuse-button').style.visibility = 'hidden';
+        if (button != null) document.getElementById('refuse-button').style.visibility = 'hidden';
         document.getElementById('changeMarker').value = 'changed';
         for (i = 0; i < z.length; i++) {
             z[i].readOnly = false;

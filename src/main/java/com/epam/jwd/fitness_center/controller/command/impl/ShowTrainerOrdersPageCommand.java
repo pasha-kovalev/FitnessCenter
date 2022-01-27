@@ -37,13 +37,13 @@ public class ShowTrainerOrdersPageCommand implements Command {
         if (!userOptional.isPresent()) return requestFactory.createForwardResponse(PagePath.ERROR);
         User user = userOptional.get();
         try {
-            if(orderStatusesValue.equalsIgnoreCase(OrderStatus.ACTIVE.name())) {
+            if (orderStatusesValue.equalsIgnoreCase(OrderStatus.ACTIVE.name())) {
                 orders = orderService.findOrderByAssignmentTrainerIdAndStatus(user.getId(), OrderStatus.ACTIVE,
                         OrderStatus.PENDING_TRAINER,
                         OrderStatus.PENDING_CLIENT,
                         OrderStatus.TAKEN);
 
-            } else if (orderStatusesValue.equalsIgnoreCase(OrderStatus.UNTAKEN.name())){
+            } else if (orderStatusesValue.equalsIgnoreCase(OrderStatus.UNTAKEN.name())) {
                 orders = orderService.findOrderByStatus(OrderStatus.UNTAKEN);
             } else {
                 orders = orderService.findOrderByAssignmentTrainerIdAndStatus(user.getId(), OrderStatus.COMPLETED,

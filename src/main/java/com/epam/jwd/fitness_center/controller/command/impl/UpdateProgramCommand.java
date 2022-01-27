@@ -36,30 +36,30 @@ public class UpdateProgramCommand implements Command {
         long orderId = orderIdOptional.get();
         try {
             Optional<Order> optionalOrder = orderService.findOrderById(orderId);
-            if (!optionalUser.isPresent() || !optionalOrder.isPresent())  {
+            if (!optionalUser.isPresent() || !optionalOrder.isPresent()) {
                 return createInfoErrorResponse(requestFactory, request);
             }
             Order order = optionalOrder.get();
             User user = (User) optionalUser.get();
             Optional<Program> programOptional;
-            if(order.getOrderStatus() != OrderStatus.PENDING_CLIENT
+            if (order.getOrderStatus() != OrderStatus.PENDING_CLIENT
                     && order.getOrderStatus() != OrderStatus.PENDING_TRAINER) {
                 return createInfoErrorResponse(requestFactory, request);
             }
-            if(user.getRole() == UserRole.TRAINER) {
-                if(!order.getAssignmentTrainerId().equals(user.getId()) && !order.getTrainerId().equals(user.getId())) {
+            if (user.getRole() == UserRole.TRAINER) {
+                if (!order.getAssignmentTrainerId().equals(user.getId()) && !order.getTrainerId().equals(user.getId())) {
                     return createInfoErrorResponse(requestFactory, request);
                 }
                 programOptional = programService.find(orderId);
             } else {
                 programOptional = programService.findByOrderAndClientId(orderId, user.getId());
             }
-            if(!programOptional.isPresent()) {
+            if (!programOptional.isPresent()) {
                 return createInfoErrorResponse(requestFactory, request);
             }
             Program program = programOptional.get();
             request.addToSession(Attribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_SUCCESS);
-            if(programChangeMarker.equals(PROGRAM_NOT_CHANGED_MARKER)) {
+            if (programChangeMarker.equals(PROGRAM_NOT_CHANGED_MARKER)) {
                 orderService.updateOrderStatus(OrderStatus.ACTIVE, orderId);
                 return requestFactory.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
             }
@@ -68,11 +68,11 @@ public class UpdateProgramCommand implements Command {
                 programService.update(program);
                 order.setComment(comment);
             } else {
-                if(!updateProgram(request, program, user.getRole())) {
+                if (!updateProgram(request, program, user.getRole())) {
                     return requestFactory.createForwardResponse(PagePath.ERROR500);
                 }
             }
-            if(user.getRole() == UserRole.TRAINER) {
+            if (user.getRole() == UserRole.TRAINER) {
                 order.setOrderStatus(OrderStatus.PENDING_CLIENT);
             } else {
                 order.setOrderStatus(OrderStatus.PENDING_TRAINER);

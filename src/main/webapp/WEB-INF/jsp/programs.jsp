@@ -1,8 +1,8 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<fmt:setLocale value="${sessionScope.locale}" />
-<fmt:setBundle basename="locale" />
+<fmt:setLocale value="${sessionScope.locale}"/>
+<fmt:setBundle basename="locale"/>
 <fmt:message var="title" key="programs.title"/>
 <fmt:message var="meetingTitle" key="programs.meeting.title"/>
 <fmt:message var="specTitle" key="programs.spec.title"/>
@@ -46,7 +46,10 @@
     <link href="../../style/style.css" type="text/css" rel="stylesheet">
 </head>
 <style>
-    body {font-family: "Open sans";}
+    body {
+        font-family: "Open sans";
+    }
+
     h1, h2, h3, h4, h5, h6 {
         font-family: "PT serif";
     }
@@ -55,7 +58,8 @@
 <jsp:include page="component/header.jsp" flush="true"/>
 
 <div class="w3-content" style="max-width:1100px;margin-top:40px;margin-bottom:80px">
-    <p class="w3-center" style="font-size: 48px;  margin-bottom: 0; margin-top: 10px; font-weight: bold; font-family: 'PT serif';">${meetingTitle}</p>
+    <p class="w3-center"
+       style="font-size: 48px;  margin-bottom: 0; margin-top: 10px; font-weight: bold; font-family: 'PT serif';">${meetingTitle}</p>
     <div class="w3-display-container w3-center">
         <img src="../../images/gym4.jpg" style="width:100%">
     </div>
@@ -86,7 +90,7 @@
         <div class="w3-center w3-padding-64">
             <span class="w3-bottombar w3-border-dark-grey w3-padding-16" style="font-size: 32px">${resultsTitle}</span>
         </div>
-        <div class="w3-display-container w3-center" >
+        <div class="w3-display-container w3-center">
             <img src="../../images/beforeafter2.png" style="width:100%">
         </div>
         <div class="w3-display-container w3-center" style="padding-top: 20px">
@@ -109,7 +113,7 @@
                 <li class="w3-padding-16"> ${basicLi1}</li>
                 <li class="w3-padding-16">${basicLi2}</li>
                 <li class="w3-padding-16">
-                   ${basicLi3}</li>
+                    ${basicLi3}</li>
                 <li class="w3-padding-16">
                     ${basicLi4}</li>
                 <li class="w3-padding-16">
@@ -140,9 +144,9 @@
                 <li class="w3-padding-16"> ${proLi2}</li>
                 <li class="w3-padding-16">${proLi3}</li>
                 <li class="w3-padding-16">
-                   ${proLi4}</li>
+                    ${proLi4}</li>
                 <li class="w3-padding-16">
-                   ${proLi5}</li>
+                    ${proLi5}</li>
 
                 <li class="w3-padding-16">
                     <h2 class="w3-wide">${proPrice}</h2>

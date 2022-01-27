@@ -2,19 +2,21 @@ package com.epam.jwd.fitness_center.controller.command.impl;
 
 import com.epam.jwd.fitness_center.controller.PagePath;
 import com.epam.jwd.fitness_center.controller.RequestFactory;
-import com.epam.jwd.fitness_center.controller.command.*;
+import com.epam.jwd.fitness_center.controller.command.Command;
+import com.epam.jwd.fitness_center.controller.command.CommandRequest;
+import com.epam.jwd.fitness_center.controller.command.CommandResponse;
 import com.epam.jwd.fitness_center.exception.ServiceException;
-import com.epam.jwd.fitness_center.model.entity.*;
-import com.epam.jwd.fitness_center.model.service.OrderService;
-import com.epam.jwd.fitness_center.model.service.ProgramService;
+import com.epam.jwd.fitness_center.model.entity.User;
 import com.epam.jwd.fitness_center.model.service.UserService;
 import com.epam.jwd.fitness_center.model.service.impl.ServiceProvider;
-import com.google.gson.Gson;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.servlet.http.Part;
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.Optional;
 
@@ -37,7 +39,7 @@ public class UploadImageCommand implements Command {
         }
         User user = userOptional.get();
         Optional<String> fileNameOptional = uploadImage(request, filePartOptional.get(), user);
-        if(!fileNameOptional.isPresent()) {
+        if (!fileNameOptional.isPresent()) {
             return requestFactory.createForwardResponse(PagePath.ERROR500);
         }
         String photoPath = "./images/" + fileNameOptional.get();
@@ -55,13 +57,13 @@ public class UploadImageCommand implements Command {
         String fileName = user.getId() + Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
         File uploadedFile;
         byte[] imageBytes;
-        try (InputStream fileContent = filePart.getInputStream()){
+        try (InputStream fileContent = filePart.getInputStream()) {
             imageBytes = new byte[fileContent.available()];
             fileContent.read(imageBytes);
             uploadedFile = new File(request.getServletContext().getRealPath("/images"), fileName);
         } catch (IOException e) {
             LOG.error("Unable to read image. {}", e.getMessage());
-           return Optional.empty();
+            return Optional.empty();
         }
         try (FileOutputStream fos = new FileOutputStream(uploadedFile)) {
             fos.write(imageBytes);

@@ -3,8 +3,8 @@
 <%@ page import="com.epam.jwd.fitness_center.model.entity.UserStatus" %>
 <%@ page import="com.epam.jwd.fitness_center.model.entity.UserRole" %>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
-<fmt:setLocale value="${sessionScope.locale}" />
-<fmt:setBundle basename="locale" />
+<fmt:setLocale value="${sessionScope.locale}"/>
+<fmt:setBundle basename="locale"/>
 <fmt:message var="title" key="user.cabinet.title"/>
 <fmt:message var="welcome" key="user.cabinet.welcome"/>
 <fmt:message var="currentOrders" key="user.cabinet.currentOrders"/>
@@ -19,13 +19,19 @@
     <link href="../../style/style.css" type="text/css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
     <style>
-        footer {position: relative;}
-        th { text-align: inherit;}
+        footer {
+            position: relative;
+        }
+
+        th {
+            text-align: inherit;
+        }
     </style>
 </head>
 <body onload="showUsers()">
 <jsp:include page="../component/header.jsp" flush="true"/>
-<nav class="w3-sidebar w3-collapse w3-white w3-animate-left" style="z-index:3;width:300px;margin-top: 46px" id="mySidebar"><br>
+<nav class="w3-sidebar w3-collapse w3-white w3-animate-left" style="z-index:3;width:300px;margin-top: 46px"
+     id="mySidebar"><br>
     <div class="w3-container w3-row">
         <div class="w3-col s2">
             <i class="fa fa-user-circle fa-2x w3-margin-right" style="width:46px"></i>
@@ -37,11 +43,14 @@
     <hr>
     <div class="w3-bar-block">
         <button class="w3-bar-item w3-button w3-padding" onclick="showUsers()">
-            <i class="fa fa-user fa-fw"></i>Управление Пользователями</button>
+            <i class="fa fa-user fa-fw"></i>Управление Пользователями
+        </button>
         <button class="w3-bar-item w3-button w3-padding" onclick="showItems()">
-            <i class="fa fa-tasks fa-fw"></i>Управление Программами</button>
+            <i class="fa fa-tasks fa-fw"></i>Управление Программами
+        </button>
         <button class="w3-bar-item w3-button w3-padding" onclick="showUsersDiscount()">
-            <i class="fa fa-percent fa-fw"></i>Управление Скидками</button>
+            <i class="fa fa-percent fa-fw"></i>Управление Скидками
+        </button>
     </div>
 </nav>
 <div class="w3-main" style="margin-left:300px;padding-top:90px; height: auto; padding-bottom: 50px; min-height: 95%">
@@ -78,8 +87,8 @@
     function showUsers() {
         jQuery.ajax({
             type: 'GET',
-            url : '${pageContext.request.contextPath}/controller?command=show_manage_users',
-            success : function(responseJson) {
+            url: '${pageContext.request.contextPath}/controller?command=show_manage_users',
+            success: function (responseJson) {
                 document.getElementById("mainData").innerHTML = "";
                 var $table = $(`<table class="custom-table" id="mainTable">`).appendTo($("#mainData"));
                 $("<thead>").appendTo($table)
@@ -91,7 +100,7 @@
                                    <th onclick="filterBy('role')" style="cursor: pointer">Роль</th>
                                    <th onclick="filterBy('status')" style="cursor: pointer">Статус</th>
                                </tr>`));
-                $.each(responseJson, function(index, user) {
+                $.each(responseJson, function (index, user) {
                     var lastTd = `<button onclick="editUser(this)" ` +
                         `class="btn btn-warning">Изменить</button>`;
                     $("<tr style='border-color:'>").appendTo($table)
@@ -116,8 +125,8 @@
     function showUsersDiscount() {
         jQuery.ajax({
             type: 'GET',
-            url : '${pageContext.request.contextPath}/controller?command=show_manage_discount',
-            success : function(responseJson) {
+            url: '${pageContext.request.contextPath}/controller?command=show_manage_discount',
+            success: function (responseJson) {
                 document.getElementById("mainData").innerHTML = "";
                 var $table = $(`<table class="custom-table" id="mainTable">`).appendTo($("#mainData"));
                 $("<thead>").appendTo($table)
@@ -131,7 +140,7 @@
                                    <th>Скидка</th>
                                </tr>`));
                 console.log(responseJson);
-                $.each(responseJson.users, function(index, user) {
+                $.each(responseJson.users, function (index, user) {
                     var lastTd = `<button onclick="editDiscount(this)" ` +
                         `class="btn btn-warning">Изменить</button>`;
                     $("<tr style='border-color:'>").appendTo($table)
@@ -143,8 +152,8 @@
                         .append($(`<td class="status-td">`).text(user.status))
                         .append($(`<td><input type="number" required readonly class="inp-adm discount" name="discount"
                                               min="0" max="99"
-                                              value="`+ getDetailsById(responseJson.userDetails, user.id) +
-                                              `" step=".5"></td>`))
+                                              value="` + getDetailsById(responseJson.userDetails, user.id) +
+                            `" step=".5"></td>`))
                         .append($("<td>").append(lastTd));
                     console.log(getDetailsById(responseJson.userDetails, user.id));
                 });
@@ -154,15 +163,17 @@
 
     function getDetailsById(data, id) {
         return data.filter(
-            function(data){ return data.userId == id }
+            function (data) {
+                return data.userId == id
+            }
         )[0].discount;
     }
 
     function showItems() {
         jQuery.ajax({
             type: 'GET',
-            url : '${pageContext.request.contextPath}/controller?command=show_manage_items',
-            success : function(responseJson) {
+            url: '${pageContext.request.contextPath}/controller?command=show_manage_items',
+            success: function (responseJson) {
                 document.getElementById("mainData").innerHTML = "";
                 var $table = $(`<table class="custom-table" id="mainTable" style="min-width: 600px">`).appendTo($("#mainData"));
                 $("<thead>").appendTo($table)
@@ -170,7 +181,7 @@
                                    <th onclick="sortTable(0)" style="cursor: pointer">Название</th>
                                    <th onclick="sortTable(0, true)" style="cursor: pointer">Стоимость</th>
                                </tr>`));
-                $.each(responseJson, function(index, item) {
+                $.each(responseJson, function (index, item) {
                     $("<tr style='border-color:'>").appendTo($table)
                         .append($("<td class='item-id' style='display: none'>").text(item.id))
                         .append($("<td class='item-name' >")
@@ -178,11 +189,11 @@
                                              cols="11" minlength="2" maxlength="45" oninvalid="setCustomValidity('${notValidTitle}')"
                                              oninput="setCustomValidity('')">`).text(item.name)))
                         .append($(`<td><input type="number" required readonly class="inp-adm price" name="price" min="10" max="9999"
-                                          value="` + item.price +`" step=".01"></td>`))
+                                          value="` + item.price + `" step=".01"></td>`))
                         .append($("<td>").append(`<button onclick="editItem(this)" ` +
                             `class="btn btn-warning">Изменить</button>`))
                         .append($("<td>").append(`<button onclick="editItem(this, true)" ` +
-                                `class="btn btn-danger">Удалить</button>`));
+                            `class="btn btn-danger">Удалить</button>`));
                 });
                 $("<tr style='border-color:'>").appendTo($table)
                     .append($("<td class='item-name' >")
@@ -199,16 +210,21 @@
     }
 
     function sendUserData(id, name1, name2, value1, value2, elem) {
-        if(value1 === '' || value2 === '') {
+        if (value1 === '' || value2 === '') {
             elem.style.border = '1px solid red';
             return;
         }
         jQuery.ajax({
             type: 'POST',
             url: '${pageContext.request.contextPath}/controller',
-            data: jQuery.param({command: 'manage_user_data', userId: id, name: [name1, name2], value: [value1, value2]}, true),
-            success : function(responseJson) {
-                if(responseJson.includes('error')) {
+            data: jQuery.param({
+                command: 'manage_user_data',
+                userId: id,
+                name: [name1, name2],
+                value: [value1, value2]
+            }, true),
+            success: function (responseJson) {
+                if (responseJson.includes('error')) {
                     elem.style.border = '1px solid red';
                 } else {
                     elem.style.border = '1px solid green';
@@ -218,17 +234,17 @@
     }
 
     function sendItemData(id, name, price, elem) {
-        if(name === '' || price === '' || price === '0') {
+        if (name === '' || price === '' || price === '0') {
             elem.style.border = '1px solid red';
             return;
         }
         jQuery.ajax({
-            type : 'POST',
-            url : '${pageContext.request.contextPath}/controller',
+            type: 'POST',
+            url: '${pageContext.request.contextPath}/controller',
             data: jQuery.param({command: 'manage_item_data', id: id, name: name, price: price}),
-            success : function(responseJson) {
+            success: function (responseJson) {
                 console.log(responseJson);
-                if(responseJson.includes('error')) {
+                if (responseJson.includes('error')) {
                     elem.style.border = '1px solid red';
                 } else {
                     elem.style.border = '1px solid green';
@@ -239,12 +255,12 @@
 
     function deleteItem(id, elem) {
         jQuery.ajax({
-            type : 'POST',
-            url : '${pageContext.request.contextPath}/controller',
+            type: 'POST',
+            url: '${pageContext.request.contextPath}/controller',
             data: jQuery.param({command: 'delete_item', id: id}),
-            success : function(responseJson) {
+            success: function (responseJson) {
                 console.log(responseJson);
-                if(responseJson.toString().includes('error')) {
+                if (responseJson.toString().includes('error')) {
                     elem.style.border = '1px solid red';
                 } else {
                     elem.style.border = '1px solid green';
@@ -255,17 +271,17 @@
     }
 
     function sendNewItemData(name, price, elem) {
-        if(name === '' || price === '' || price === '0') {
+        if (name === '' || price === '' || price === '0') {
             elem.style.border = '1px solid red';
             return;
         }
         jQuery.ajax({
-            type : 'POST',
-            url : '${pageContext.request.contextPath}/controller',
+            type: 'POST',
+            url: '${pageContext.request.contextPath}/controller',
             data: jQuery.param({command: 'manage_new_item_data', name: name, price: price}),
-            success : function(responseJson) {
+            success: function (responseJson) {
                 console.log(responseJson);
-                if(responseJson.includes('error')) {
+                if (responseJson.includes('error')) {
                     elem.style.border = '1px solid red';
                 } else {
                     elem.style.border = '1px solid green';
@@ -275,17 +291,17 @@
     }
 
     function sendNewDiscount(id, discount, elem) {
-        if(discount < 0 || discount > 99) {
+        if (discount < 0 || discount > 99) {
             elem.style.border = '1px solid red';
             return;
         }
         jQuery.ajax({
-            type : 'POST',
-            url : '${pageContext.request.contextPath}/controller',
+            type: 'POST',
+            url: '${pageContext.request.contextPath}/controller',
             data: jQuery.param({command: 'manage_new_discount', id: id, discount: discount}),
-            success : function(responseJson) {
+            success: function (responseJson) {
                 console.log(responseJson);
-                if(responseJson.includes('error')) {
+                if (responseJson.includes('error')) {
                     elem.style.border = '1px solid red';
                 } else {
                     elem.style.border = '1px solid green';
@@ -311,20 +327,20 @@
         var input = trClosest.find('.price')[0];
         var name = textArea.value;
         var price = input.value;
-        if(isToDelete) {
+        if (isToDelete) {
             deleteItem(id, trClosest[0]);
-        } else if(isFormEditing) {
-                sendItemData(id, name, price, trClosest[0]);
-                $(el).closest('button')[0].innerText = "Изменить"
-                textArea.readOnly = true;
-                input.readOnly = true;
-                isFormEditing = false;
+        } else if (isFormEditing) {
+            sendItemData(id, name, price, trClosest[0]);
+            $(el).closest('button')[0].innerText = "Изменить"
+            textArea.readOnly = true;
+            input.readOnly = true;
+            isFormEditing = false;
 
         } else {
-                textArea.readOnly = false;
-                input.readOnly = false;
-                $(el).closest('button')[0].innerText = "Сохранить"
-                isFormEditing = true;
+            textArea.readOnly = false;
+            input.readOnly = false;
+            $(el).closest('button')[0].innerText = "Сохранить"
+            isFormEditing = true;
         }
     }
 
@@ -333,7 +349,7 @@
         var id = trClosest.find('.user-id')[0].innerHTML;
         var input = trClosest.find('.discount')[0];
         var discount = input.value;
-        if(isFormEditing) {
+        if (isFormEditing) {
             sendNewDiscount(id, discount, trClosest[0]);
             $(el).closest('button')[0].innerText = "Изменить"
             input.readOnly = true;
@@ -352,11 +368,11 @@
         var statusTd = trClosest.find('.status-td')[0];
         var roleSelectTd = trClosest.find('.role-select-td')[0];
         var statusSelectTd = trClosest.find('.status-select-td')[0];
-        if(isFormEditing) {
+        if (isFormEditing) {
             console.log(roleSelectTd.firstChild);
             console.log();
             sendUserData(id, 'role', 'status', $(roleSelectTd.firstChild).val(), $(statusSelectTd.firstChild).val(),
-                         trClosest[0]);
+                trClosest[0]);
             displayByElem(roleSelectTd, true);
             displayByElem(statusSelectTd, true);
             displayByElem(roleTd);
@@ -379,7 +395,7 @@
 
     function displayByElem(elem, isToHide = false) {
         var displayVal = '';
-        if(isToHide) {
+        if (isToHide) {
             displayVal = 'none';
         }
         elem.style.display = displayVal;
@@ -398,24 +414,22 @@
                 x = rows[i].getElementsByTagName("TD")[n];
                 y = rows[i + 1].getElementsByTagName("TD")[n];
                 if (dir == "asc") {
-                    if(isNumber) {
+                    if (isNumber) {
                         if (Number(x.innerHTML) > Number(y.innerHTML)) {
                             shouldSwitch = true;
                             break;
                         }
-                    }
-                    else if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                    } else if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
                         shouldSwitch = true;
                         break;
                     }
                 } else if (dir == "desc") {
-                    if(isNumber) {
+                    if (isNumber) {
                         if (Number(x.innerHTML) < Number(y.innerHTML)) {
                             shouldSwitch = true;
                             break;
                         }
-                    }
-                    else if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                    } else if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
                         shouldSwitch = true;
                         break;
                     }
@@ -437,7 +451,7 @@
     function getRoles() {
         var arr = [];
         <c:forEach var="entry" items="${UserRole.values()}">
-            arr.push('${entry}');
+        arr.push('${entry}');
         </c:forEach>
         return arr;
     }
@@ -445,13 +459,13 @@
     function getStatuses() {
         var arr = [];
         <c:forEach var="entry" items="${UserStatus.values()}">
-            arr.push('${entry}');
+        arr.push('${entry}');
         </c:forEach>
         return arr;
     }
 
     function insertOptions(arr, id) {
-        $.each(arr, function(i, p) {
+        $.each(arr, function (i, p) {
             $('.' + id).append($(`<option value="${p}"></option>`)
                 .val(p).html(p));
         });
@@ -459,7 +473,7 @@
 
     function filterBy(columnName) {
         var arr = [];
-        var  className = '';
+        var className = '';
         switch (columnName) {
             case 'role':
                 arr = getRoles();
@@ -475,7 +489,7 @@
         filter = arr[statusArrCurrentPos];
         table = document.getElementById("mainTable");
         tr = table.getElementsByTagName("tr");
-        if(statusArrCurrentPos  === size || filter === '${UserRole.GUEST.name()}') {
+        if (statusArrCurrentPos === size || filter === '${UserRole.GUEST.name()}') {
             for (i = 0; i < tr.length; i++) {
                 tr[i].style.display = "";
             }
@@ -491,9 +505,9 @@
                     }
                 }
             }
+        }
+        statusArrCurrentPos = ++statusArrCurrentPos % (size + 1);
     }
-    statusArrCurrentPos = ++statusArrCurrentPos % (size + 1);
-}
 </script>
 </body>
 </html>

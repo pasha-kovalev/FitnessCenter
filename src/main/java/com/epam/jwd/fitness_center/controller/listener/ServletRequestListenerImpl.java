@@ -1,8 +1,5 @@
 package com.epam.jwd.fitness_center.controller.listener;
 
-import com.epam.jwd.fitness_center.controller.command.CommandType;
-import com.epam.jwd.fitness_center.controller.command.RequestParameter;
-import com.epam.jwd.fitness_center.controller.command.Attribute;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -10,7 +7,6 @@ import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
 import javax.servlet.annotation.WebListener;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
 
 @WebListener

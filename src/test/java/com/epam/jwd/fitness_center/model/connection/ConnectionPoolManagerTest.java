@@ -1,20 +1,16 @@
 package com.epam.jwd.fitness_center.model.connection;
 
-import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.epam.jwd.fitness_center.exception.DatabaseConnectionException;
-import com.epam.jwd.fitness_center.exception.ServiceException;
-import com.epam.jwd.fitness_center.model.entity.User;
-import com.epam.jwd.fitness_center.model.service.impl.ServiceProvider;
-import com.epam.jwd.fitness_center.model.service.impl.UserServiceImpl;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import java.lang.reflect.Field;
-import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
-import java.util.Optional;
 
-import static at.favre.lib.crypto.bcrypt.BCrypt.MIN_COST;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ConnectionPoolManagerTest {
@@ -40,7 +36,7 @@ public class ConnectionPoolManagerTest {
     }
 
     @Test
-    public void takeConnection_shouldReturnValidConnection_always() throws Exception{
+    public void takeConnection_shouldReturnValidConnection_always() throws Exception {
         assertTrue(cp.takeConnection().isValid(TIMEOUT));
     }
 

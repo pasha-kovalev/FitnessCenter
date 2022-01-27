@@ -1,6 +1,5 @@
 package com.epam.jwd.fitness_center.model.service.impl;
 
-import com.epam.jwd.fitness_center.controller.PagePath;
 import com.epam.jwd.fitness_center.exception.DaoException;
 import com.epam.jwd.fitness_center.exception.ServiceException;
 import com.epam.jwd.fitness_center.model.dao.impl.DaoProvider;
@@ -68,7 +67,7 @@ public class ItemServiceImpl implements EntityService<Item> {
 
     public boolean update(Long id, String name, String price) throws ServiceException {
         Optional<Item> optionalItem = find(id);
-        if(!optionalItem.isPresent()) {
+        if (!optionalItem.isPresent()) {
             return false;
         }
         Item item = optionalItem.get();
@@ -76,7 +75,7 @@ public class ItemServiceImpl implements EntityService<Item> {
         BigDecimal priceNumber = new BigDecimal(TextEscapeUtil.escapeHtml(price));
         item.setName(name);
         item.setPrice(priceNumber);
-        if(!ItemValidator.isValidItem(item)) {
+        if (!ItemValidator.isValidItem(item)) {
             LOG.error("Item is not valid: {}", item);
             throw new ServiceException("Item is not valid");
         }
@@ -92,7 +91,7 @@ public class ItemServiceImpl implements EntityService<Item> {
         name = TextEscapeUtil.escapeHtml(name);
         BigDecimal priceNumber = new BigDecimal(TextEscapeUtil.escapeHtml(price));
         Item item = new Item(name, priceNumber);
-        if(!ItemValidator.isValidItem(item)) {
+        if (!ItemValidator.isValidItem(item)) {
             LOG.error("Item is not valid: {}", item);
             throw new ServiceException("Item is not valid");
         }
@@ -118,12 +117,12 @@ public class ItemServiceImpl implements EntityService<Item> {
     public BigDecimal calculateItemPriceForUser(long userId, long itemId) throws ServiceException {
         UserService userService = ServiceProvider.getInstance().getUserService();
         userService.findUserDetails(userId);
-        Optional<UserDetails> optionalUserDetails = userService.findUserDetails(userId);
+        UserDetails userDetails = userService.findUserDetails(userId);
         Optional<Item> optionalItem = find(itemId);
-        if (!optionalUserDetails.isPresent() || !optionalItem.isPresent()) {
+        if (!optionalItem.isPresent()) {
             throw new ServiceException("Unable to calculate price. User ID: " + userId + " Item ID: " + itemId);
         }
-        return calcFinalPrice(optionalItem.get().getPrice(), optionalUserDetails.get().getDiscount());
+        return calcFinalPrice(optionalItem.get().getPrice(), userDetails.getDiscount());
     }
 
     public List<Item> modifyItemsByDiscount(List<Item> items, BigDecimal discount) {

@@ -7,8 +7,6 @@ import com.epam.jwd.fitness_center.controller.command.CommandRequest;
 import com.epam.jwd.fitness_center.controller.command.CommandResponse;
 import com.epam.jwd.fitness_center.exception.ServiceException;
 import com.epam.jwd.fitness_center.model.entity.Item;
-import com.epam.jwd.fitness_center.model.entity.User;
-import com.epam.jwd.fitness_center.model.service.UserService;
 import com.epam.jwd.fitness_center.model.service.impl.ItemServiceImpl;
 import com.epam.jwd.fitness_center.model.service.impl.ServiceProvider;
 import com.google.gson.Gson;
@@ -16,7 +14,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
-import java.util.Optional;
 
 public class ShowManageItemsPageCommand implements Command {
     private static final Logger LOG = LogManager.getLogger(ShowManageItemsPageCommand.class);

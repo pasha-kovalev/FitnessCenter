@@ -29,11 +29,11 @@ public class SwitchLocaleCommand implements Command {
         Optional<Object> optionalPage = request.retrieveFromSession(Attribute.CURRENT_PAGE);
         if (optionalPage.isPresent()) {
             String page = (String) optionalPage.get();
-            if(page.contains(PagePath.CONTROLLER.getPath())) {
+            if (page.contains(PagePath.CONTROLLER.getPath())) {
                 return requestFactory.createRedirectResponse(page);
             } else {
                 String pagePathRedirectStr = PagePath.of(page).name() + "_REDIRECT";
-                if(PagePath.contains(pagePathRedirectStr)) {
+                if (PagePath.contains(pagePathRedirectStr)) {
                     return requestFactory.createRedirectResponse(PagePath.of(pagePathRedirectStr));
                 }
                 return requestFactory.createForwardResponse(PagePath.of(page));

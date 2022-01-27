@@ -10,7 +10,10 @@ import com.epam.jwd.fitness_center.model.entity.UserStatus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -63,6 +66,14 @@ public class UserDaoImpl extends BaseDao<User> implements UserDao {
             "JOIN user_role r on r.id = user.role_id\n" +
             "JOIN user_status us on us.id = user.user_status_id\n" +
             "WHERE account_role = 'trainer' AND status = 'active'";
+
+    private static final String SELECT_ACTIVE_CLIENTS = "SELECT user.id,  email, password_hash, account_role,\n" +
+            "status, first_name, second_name, description, photo_path\n" +
+            "FROM user\n" +
+            "JOIN user_role r on r.id = user.role_id\n" +
+            "JOIN user_status us on us.id = user.user_status_id\n" +
+            "WHERE (account_role = 'user' OR account_role = 'corporate_user' OR account_role = 'regular_user') " +
+            "      AND status = 'active'";
 
     private static final String SELECT_USER_BY_EMAIL = "SELECT user.id,  email, password_hash, account_role,\n" +
             "status, first_name, second_name, description, photo_path\n" +
@@ -123,12 +134,12 @@ public class UserDaoImpl extends BaseDao<User> implements UserDao {
         statement.setString(4, entity.getStatus().name().toLowerCase());
         statement.setString(5, entity.getFirstName());
         statement.setString(6, entity.getSecondName());
-        if(entity.getDescription() == null) {
+        if (entity.getDescription() == null) {
             statement.setNull(7, Types.VARCHAR);
         } else {
             statement.setString(7, entity.getDescription());
         }
-        if(entity.getPhotoPath() == null) {
+        if (entity.getPhotoPath() == null) {
             statement.setNull(8, Types.VARCHAR);
         } else {
             statement.setString(8, entity.getPhotoPath());
@@ -174,6 +185,10 @@ public class UserDaoImpl extends BaseDao<User> implements UserDao {
 */
     public List<User> findActiveTrainers() throws DaoException {
         return executeStatement(SELECT_ACTIVE_TRAINERS, this::extractResult);
+    }
+
+    public List<User> findActiveClients() throws DaoException {
+        return executeStatement(SELECT_ACTIVE_CLIENTS, this::extractResult);
     }
 
     //todo make roleOf [instead of valueOf] like nmikle did
