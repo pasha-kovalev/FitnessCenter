@@ -33,9 +33,6 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <link href="../../../style/style.css" type="text/css" rel="stylesheet">
 </head>
-<style>
-
-</style>
 <body class="form2" onload="outPayment()">
 <jsp:include page="../component/header.jsp" flush="true"/>
 <form id="order" name="payment-form" action="${pageContext.request.contextPath}/controller?command=payment" method="post">

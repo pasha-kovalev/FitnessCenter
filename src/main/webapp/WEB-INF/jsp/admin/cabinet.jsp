@@ -19,69 +19,8 @@
     <link href="../../style/style.css" type="text/css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
     <style>
-        .ta-adm, .inp-adm {
-            background-color: inherit;
-            border: none;
-            color: white;
-            width: 150px;
-        }
-        footer {
-            position: relative;
-        }
-        .custom-table {
-            min-width: 1100px;
-            margin: 0 auto;
-            color: #212529;
-            font-family: "Roboto",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
-            border-collapse: collapse;
-        }
-
-        .custom-table thead tr, .custom-table thead th {
-            padding-bottom: 30px;
-            border-top: none;
-            border-bottom: none!important;
-            color: #F5F5F5;
-            font-size: 16px;
-            text-transform: uppercase;
-            letter-spacing: .2rem;
-        }
-        .custom-table thead th {
-            vertical-align: bottom;
-            border-bottom: 2px solid #dee2e6;
-        }
-        .custom-table th, .custom-table td {
-            padding: .75rem;
-            vertical-align: top;
-            border-top: 1px solid #dee2e6;
-        }
-        th {
-            text-align: inherit;
-        }
-
-        .custom-table tbody tr:nth-of-type(odd) {
-            background-color: rgba(0,0,0,.2);
-        }
-        .custom-table tbody tr {
-            -webkit-transition: .3s all ease;
-            -o-transition: .3s all ease;
-            transition: .3s all ease;
-        }
-        .custom-table tbody th, .custom-table tbody td {
-            color: #DCDCDC;
-            font-weight: 400;
-            padding-bottom: 15px;
-            padding-top: 15px;
-            font-weight: 300;
-            border: none;
-            -webkit-transition: .3s all ease;
-            -o-transition: .3s all ease;
-            transition: .3s all ease;
-        }
-        .custom-table th, .custom-table td {
-            padding: .75rem;
-            vertical-align: top;
-            border-top: 1px solid #dee2e6;
-        }
+        footer {position: relative;}
+        th { text-align: inherit;}
     </style>
 </head>
 <body onload="showUsers()">
@@ -101,7 +40,7 @@
             <i class="fa fa-user fa-fw"></i>Управление Пользователями</button>
         <button class="w3-bar-item w3-button w3-padding" onclick="showItems()">
             <i class="fa fa-tasks fa-fw"></i>Управление Программами</button>
-        <button class="w3-bar-item w3-button w3-padding" onclick="manageDiscount()">
+        <button class="w3-bar-item w3-button w3-padding" onclick="showUsersDiscount()">
             <i class="fa fa-percent fa-fw"></i>Управление Скидками</button>
     </div>
 </nav>
@@ -172,6 +111,51 @@
                 insertOptions(getStatuses(), 'status-select');
             }
         });
+    }
+
+    function showUsersDiscount() {
+        jQuery.ajax({
+            type: 'GET',
+            url : '${pageContext.request.contextPath}/controller?command=show_manage_discount',
+            success : function(responseJson) {
+                document.getElementById("mainData").innerHTML = "";
+                var $table = $(`<table class="custom-table" id="mainTable">`).appendTo($("#mainData"));
+                $("<thead>").appendTo($table)
+                    .append($(`<tr>
+                                   <th onclick="sortTable(0, true)" style="cursor: pointer">ID</th>
+                                   <th>Логин</th>
+                                   <th>Имя</th>
+                                   <th>Фамилия</th>
+                                   <th>Роль</th>
+                                   <th>Статус</th>
+                                   <th>Скидка</th>
+                               </tr>`));
+                console.log(responseJson);
+                $.each(responseJson.users, function(index, user) {
+                    var lastTd = `<button onclick="editDiscount(this)" ` +
+                        `class="btn btn-warning">Изменить</button>`;
+                    $("<tr style='border-color:'>").appendTo($table)
+                        .append($("<td class='user-id'>").text(user.id))
+                        .append($("<td>").text(user.email))
+                        .append($("<td>").text(user.firstName))
+                        .append($("<td>").text(user.secondName))
+                        .append($(`<td class="role-td">`).text(user.role))
+                        .append($(`<td class="status-td">`).text(user.status))
+                        .append($(`<td><input type="number" required readonly class="inp-adm discount" name="discount"
+                                              min="0" max="99"
+                                              value="`+ getDetailsById(responseJson.userDetails, user.id) +
+                                              `" step=".5"></td>`))
+                        .append($("<td>").append(lastTd));
+                    console.log(getDetailsById(responseJson.userDetails, user.id));
+                });
+            }
+        });
+    }
+
+    function getDetailsById(data, id) {
+        return data.filter(
+            function(data){ return data.userId == id }
+        )[0].discount;
     }
 
     function showItems() {
@@ -290,6 +274,26 @@
         });
     }
 
+    function sendNewDiscount(id, discount, elem) {
+        if(discount < 0 || discount > 99) {
+            elem.style.border = '1px solid red';
+            return;
+        }
+        jQuery.ajax({
+            type : 'POST',
+            url : '${pageContext.request.contextPath}/controller',
+            data: jQuery.param({command: 'manage_new_discount', id: id, discount: discount}),
+            success : function(responseJson) {
+                console.log(responseJson);
+                if(responseJson.includes('error')) {
+                    elem.style.border = '1px solid red';
+                } else {
+                    elem.style.border = '1px solid green';
+                }
+            }
+        });
+    }
+
     function addNewItem(el) {
         var trClosest = $(el).closest('tr');
         var textArea = trClosest.find('textarea')[0];
@@ -323,6 +327,24 @@
                 isFormEditing = true;
         }
     }
+
+    function editDiscount(el) {
+        var trClosest = $(el).closest('tr');
+        var id = trClosest.find('.user-id')[0].innerHTML;
+        var input = trClosest.find('.discount')[0];
+        var discount = input.value;
+        if(isFormEditing) {
+            sendNewDiscount(id, discount, trClosest[0]);
+            $(el).closest('button')[0].innerText = "Изменить"
+            input.readOnly = true;
+            isFormEditing = false;
+        } else {
+            input.readOnly = false;
+            $(el).closest('button')[0].innerText = "Сохранить"
+            isFormEditing = true;
+        }
+    }
+
     function editUser(el) {
         var trClosest = $(el).closest('tr');
         var id = trClosest.find('.user-id')[0].innerHTML;

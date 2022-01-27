@@ -10,11 +10,11 @@
 <head>
     <meta charset="UTF-8">
     <title>${title}</title>
-    <link href="../../style/style.css" type="text/css" rel="stylesheet">
+    <link href="../../../style/style.css" type="text/css" rel="stylesheet">
 </head>
 <meta charset="UTF-8">
 <body class="form1">
-<jsp:include page="component/header.jsp" flush="true"/>
+<jsp:include page="../component/header.jsp" flush="true"/>
 <div class="center-text">
     <c:choose>
         <c:when test="${requestScope.errorConfirmEmail != null}">
@@ -25,7 +25,7 @@
         </c:otherwise>
     </c:choose>
 </div>
-<jsp:include page="component/footer.jsp" flush="true"/>
+<jsp:include page="../component/footer.jsp" flush="true"/>
 </div>
 </body>
 </html>

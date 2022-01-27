@@ -18,63 +18,8 @@
     <link href="../../style/style.css" type="text/css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
     <style>
-        footer {
-            position: relative;
-        }
-        .custom-table {
-            min-width: 1100px;
-            margin: 0 auto;
-            color: #212529;
-            font-family: "Roboto",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
-            border-collapse: collapse;
-        }
-
-        .custom-table thead tr, .custom-table thead th {
-            padding-bottom: 30px;
-            border-top: none;
-            border-bottom: none!important;
-            color: #F5F5F5;
-            font-size: 16px;
-            text-transform: uppercase;
-            letter-spacing: .2rem;
-        }
-        .custom-table thead th {
-            vertical-align: bottom;
-            border-bottom: 2px solid #dee2e6;
-        }
-        .custom-table th, .custom-table td {
-            padding: .75rem;
-            vertical-align: top;
-            border-top: 1px solid #dee2e6;
-        }
-        th {
-            text-align: inherit;
-        }
-
-        .custom-table tbody tr:nth-of-type(odd) {
-            background-color: rgba(0,0,0,.2);
-        }
-        .custom-table tbody tr {
-            -webkit-transition: .3s all ease;
-            -o-transition: .3s all ease;
-            transition: .3s all ease;
-        }
-        .custom-table tbody th, .custom-table tbody td {
-            color: #DCDCDC;
-            font-weight: 400;
-            padding-bottom: 15px;
-            padding-top: 15px;
-            font-weight: 300;
-            border: none;
-            -webkit-transition: .3s all ease;
-            -o-transition: .3s all ease;
-            transition: .3s all ease;
-        }
-        .custom-table th, .custom-table td {
-            padding: .75rem;
-            vertical-align: top;
-            border-top: 1px solid #dee2e6;
-        }
+        footer {position: relative;}
+        th {text-align: inherit;}
     </style>
 </head>
 <body onload="showOrders('active')">

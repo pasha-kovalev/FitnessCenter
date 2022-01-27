@@ -11,10 +11,10 @@
 <head>
     <meta charset="UTF-8">
     <title>${title}</title>
-    <link href="../../style/style.css" type="text/css" rel="stylesheet">
+    <link href="../../../style/style.css" type="text/css" rel="stylesheet">
 </head>
 <body class="form1">
-<jsp:include page="component/header.jsp" flush="true"/>
+<jsp:include page="../component/header.jsp" flush="true"/>
 <div class="center-text" style="margin-top: 20%;">
             <p>${sent}</p>
             <p>
@@ -22,7 +22,7 @@
                 <a href="${pageContext.request.contextPath}/controller?command=resend_email"> ${resendEmail} </a>
             </p>
 </div>
-    <jsp:include page="component/footer.jsp" flush="true"/>
+    <jsp:include page="../component/footer.jsp" flush="true"/>
 </div>
 
 </body>
