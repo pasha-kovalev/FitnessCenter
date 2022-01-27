@@ -30,7 +30,6 @@ public class ConnectionPoolManagerTest {
         mcd.setAccessible(true);
         ci.setInt(cp, 3);
         mcd.setInt(cp, 2);
-
         cp.init();
     }
 

@@ -7,6 +7,8 @@ public final class RequestParameter {
     public static final String LOGIN = "login";
     public static final String LOCALE = "locale";
     public static final String ORDER_ID = "orderId";
+    public static final String USER_ID = "userId";
+    public static final String ID = "id";
     public static final String PASSWORD = "password";
     public static final String PASSWORD_REPEAT = "password_repeat";
     public static final String FIRSTNAME = "firstname";
@@ -23,6 +25,14 @@ public final class RequestParameter {
     public static final String EXERCISES = "exercises";
     public static final String DIET = "diet";
     public static final String EQUIPMENT = "equipment";
+    public static final String PROGRAM_CHANGE_MARKER = "changeMarker";
+    public static final String IS_CURRENT = "current";
+    public static final String ORDER_STATUSES = "orderStatuses";
+    public static final String REVIEW = "review";
+    public static final String NAME = "name";
+    public static final String VALUE = "value";
+    public static final String PRICE = "price";
+    public static final String IS_NEW = "new";
 
     private RequestParameter() {
     }

@@ -77,7 +77,7 @@
         }
     </style>
 </head>
-<body>
+<body onload="showOrders('active')">
 <jsp:include page="../component/header.jsp" flush="true"/>
 <nav class="w3-sidebar w3-collapse w3-white w3-animate-left" style="z-index:3;width:300px;margin-top: 46px" id="mySidebar"><br>
     <div class="w3-container w3-row">
@@ -90,14 +90,21 @@
     </div>
     <hr>
     <div class="w3-bar-block">
-        <button class="w3-bar-item w3-button w3-padding" onclick="showOrders('show_trainer_active_orders')">
+        <button class="w3-bar-item w3-button w3-padding" onclick="showOrders('active')">
             <i class="fa fa-bullseye fa-fw"></i>Мои заказы</button>
-        <button class="w3-bar-item w3-button w3-padding" onclick="showOrders('show_untaken_orders')">
+        <button class="w3-bar-item w3-button w3-padding" onclick="showOrders('untaken')">
             <i class="fa fa-bullseye fa-fw"></i>Необработанные заказы</button>
+        <button class="w3-bar-item w3-button w3-padding" onclick="showOrders('history')">
+            <i class="fa fa-history fa-fw"></i>История заказов</button>
+        <button class="w3-bar-item w3-button w3-padding" onclick="showSetting()">
+            <i class="fa fa-gear fa-fw"></i>Настройки</button>
     </div>
 </nav>
-<div class="w3-main" style="margin-left:300px;padding-top:90px; height: 95%">
+<div class="w3-main" style="margin-left:300px;padding-top:90px; height: auto; padding-bottom: 50px; min-height: 95%">
     <div id="mainData"></div>
+    <div id="review" style="visibility: hidden; position: absolute; background-color: white;
+                            min-width: 140px;min-height: 30px;color: black; padding: 10px">
+    </div>
 </div>
 <jsp:include page="../component/footer.jsp" flush="true"/>
 <script>
@@ -105,6 +112,8 @@
     var overlayBg = document.getElementById("myOverlay");
     var mainDataLoaded = false;
     var isFiltered = false;
+    var reviewLoaded = false;
+    var isFormEditing = false;
 
     function w3_open() {
         if (mySidebar.style.display === 'block') {
@@ -121,10 +130,41 @@
         overlayBg.style.display = "none";
     }
 
-    function showOrders(command) {
+    function showSetting() {
+        document.getElementById("mainData").innerHTML = "";
+        $("#mainData").append($("<h1>").text("Настройки"));
+        var $div = $("<div style='padding-left: 100px'>").appendTo($("#mainData"));
+        $div.append($("<h3>").text("ИМЯ"))
+            .append($(`<textarea id="firstname" name="firstname" rows="1" cols="33" maxlength="45" required readonly
+            oninvalid="setCustomValidity('${notValidTitle}')" oninput="setCustomValidity('')">`)
+                     .text("${sessionScope.user.firstName}"))
+            .append($(`<button class="edit-btn w3-bar-item w3-button" onclick="editSettings(this)">`)
+                .append($(`<i class="fa fa-edit fa-fw">`)))
+            .append($("<h3>").text("ФАМИЛИЯ"))
+            .append($(`<textarea id="lastname" name="lastname" rows="1" cols="33" maxlength="45" required readonly
+                     oninvalid="setCustomValidity('${notValidTitle}')" oninput="setCustomValidity('')">`)
+                     .text("${sessionScope.user.secondName}"))
+            .append($(`<button class="edit-btn w3-bar-item w3-button" onclick="editSettings(this)">`)
+                .append($(`<i class="fa fa-edit fa-fw">`)))
+            .append($("<h3>").text("ОПИСАНИЕ"))
+            .append($(`<textarea id="description" name="description" rows="6" cols="66" maxlength="1000" required readonly
+                     oninvalid="setCustomValidity('${notValidTitle}')" oninput="setCustomValidity('')">`)
+                .text("${sessionScope.user.description}"))
+            .append($(`<button class="edit-btn w3-bar-item w3-button" onclick="editSettings(this)">`)
+                .append($(`<i class="fa fa-edit fa-fw">`)))
+            .append($("<h3>").text("ФОТО"))
+            .append($(`<img src="${sessionScope.user.photoPath}" class="w3-round w3-image" width="600" height="750">`))
+            .append(`<form action="${pageContext.request.contextPath}/controller?command=upload_image"
+                               enctype="multipart/form-data" method="post" style="padding-top: 10px">
+                            <input type="file" name="file" />
+                            <input type="submit" />
+                         </form>`);
+    }
+
+    function showOrders(status) {
         jQuery.ajax({
             type : 'GET',
-            url : '${pageContext.request.contextPath}/controller?command=' + command,
+            url : '${pageContext.request.contextPath}/controller?command=show_trainer_orders&orderStatuses=' + status,
             success : function(responseJson) {
                 document.getElementById("mainData").innerHTML = "";
                 var $table = $(`<table class="custom-table" id="mainTable">`).appendTo($("#mainData"));
@@ -137,17 +177,31 @@
                     $.each(responseJson, function(index, order) {
                         var lastTd;
                         switch (order.orderStatus) {
-                            case ${OrderStatus.UNTAKEN.name()}:
+                            case "${OrderStatus.UNTAKEN.name()}":
                                 lastTd = "<a " +
                                     "href=\"${pageContext.request.contextPath}/controller"+
                                     "?command=show_make_program&orderId=" + order.id +
                                     '" class="btn btn-danger">Взять</a>';
                                 break;
-                            case ${OrderStatus.TAKEN.name()}:
+                            case "${OrderStatus.TAKEN.name()}":
                                 lastTd = "<a " +
                                     "href=\"${pageContext.request.contextPath}/controller"+
                                     "?command=show_make_program&orderId=" + order.id +
                                     '" class="btn btn-danger">Обработать</a>';
+                                break;
+                            case "${OrderStatus.PENDING_TRAINER.name()}":
+                                lastTd = "<a " +
+                                    "href=\"${pageContext.request.contextPath}/controller?command=show_program&orderId="
+                                    + order.id +"\" class=\"btn btn-warning\">View</a>";
+                                break;
+                            case "${OrderStatus.COMPLETED.name()}":
+                                if(order.review != null) {
+                                    lastTd = "<button class=\"btn btn-success\" " +
+                                        "onclick='showReview(this)'>Смотреть отзыв</button>";
+                                } else {
+                                    lastTd = "";
+                                }
+
                                 break;
                             default:
                                 lastTd = "";
@@ -160,6 +214,7 @@
                             .append($("<td>").text(order.item['name']))
                             .append($(`<td class="trainer-name">`).text(order.trainerName))
                             .append($("<td>").text(order.orderStatus))
+                            .append($(`<td class="reviewTd" hidden>`).text(order.review == null ? "" : order.review))
                             .append($("<td>").append(lastTd));
                     });
             }
@@ -231,6 +286,57 @@
                 }
             }
             isFiltered = true;
+        }
+    }
+
+    function showReview(el) {
+        var review = document.getElementById("review");
+        if(reviewLoaded) {
+            review.style.visibility = 'hidden';
+            review.innerHTML = "";
+            reviewLoaded = false;
+        } else {
+            var buttonTd = $(el).closest("td");
+            var reviewText =  $(el).closest("tr")
+                .find(".reviewTd")
+                .text();
+            var top = $(buttonTd).position().top + $(buttonTd).outerHeight();
+            var left = $(el).position().left;
+            review.innerHTML = reviewText;
+            $("#review").css({top: top, left: left});
+            review.style.visibility = 'visible';
+            reviewLoaded = true;
+        }
+    }
+    function sendUserData(name, value, textArea) {
+        jQuery.ajax({
+            type : 'POST',
+            url : '${pageContext.request.contextPath}/controller?command=edit_user_data&name=' + name +
+                '&value=' + value,
+            success : function(responseJson) {
+                console.log(responseJson);
+                if(responseJson == null) {
+                    textArea.style.borderColor = 'red';
+                } else {
+                    textArea.style.borderColor = 'green';
+                }
+            }
+        })
+    }
+
+    function editSettings(el) {
+        var i = el.firstChild;
+        var textArea = el.previousSibling;
+        textArea.style.borderWidth = '2px';
+        if(isFormEditing) {
+            sendUserData(textArea.getAttribute("name"), textArea.value, textArea)
+            textArea.readOnly = true;
+            $(i).attr('class', 'fa fa-edit fa-fw');
+            isFormEditing = false;
+        } else {
+            $(i).attr('class', 'fa fa-check fa-fw');
+            textArea.readOnly = false;
+            isFormEditing = true;
         }
     }
 </script>

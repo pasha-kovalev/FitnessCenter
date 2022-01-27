@@ -34,6 +34,7 @@ public class ProgramServiceImpl implements ProgramService {
         }
     }
 
+    @Override
     public Optional<Program> find(long id) throws ServiceException {
         try {
             return programDao.read(id);
@@ -68,7 +69,7 @@ public class ProgramServiceImpl implements ProgramService {
     public Program insert(Long orderId, ProgramStatus status, String intensity, String schedule, String exercises,
                           String diet, String equipment) throws ServiceException {
 
-        final int DAY_TO_START = 1;
+        final int DAY_TO_START = 3;
         OrderService orderService = ServiceProvider.getInstance().getOrderService();
         Order order = orderService.findOrderById(orderId)
                                   .orElseThrow(() -> new ServiceException("Unable to find order by id"));
@@ -86,6 +87,19 @@ public class ProgramServiceImpl implements ProgramService {
                 .setRoleUpdatedBy(UserRole.TRAINER)
                 .build();
         return insert(program);
+    }
+
+    @Override
+    public boolean update(Program program, String intensity, String schedule,
+                          String exercises, String diet, String equipment, UserRole role) throws ServiceException {
+        program.setProgramStatus(ProgramStatus.DISPUTED);
+        program.setEquipment(TextEscapeUtil.escapeHtml(equipment));
+        program.setDiet(TextEscapeUtil.escapeHtml(diet));
+        program.setSchedule(TextEscapeUtil.escapeHtml(schedule));
+        program.setExercises(TextEscapeUtil.escapeHtml(exercises));
+        program.setIntensity(TextEscapeUtil.escapeHtml(intensity));
+        program.setRoleUpdatedBy(role);
+        return update(program);
     }
 
     @Override

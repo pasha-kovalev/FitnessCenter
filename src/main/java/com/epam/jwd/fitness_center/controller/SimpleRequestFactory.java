@@ -41,7 +41,6 @@ public class SimpleRequestFactory implements RequestFactory {
     }
 
     public CommandResponse createRedirectResponse(String path) {
-
         return redirectResponseCache.computeIfAbsent(path, p ->
                 new PlainCommandResponse(true, path));
     }

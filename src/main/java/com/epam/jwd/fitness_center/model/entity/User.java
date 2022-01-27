@@ -1,7 +1,7 @@
 package com.epam.jwd.fitness_center.model.entity;
 
 public class User implements Entity {
-    private static final long serialVersionUID = 6836283217175179238L;
+    private static final long serialVersionUID = -1557459159707295638L;
 
     private Long id;
     private String email;
@@ -10,8 +10,8 @@ public class User implements Entity {
     private String secondName;
     private UserRole role;
     private UserStatus status;
-    private final String description;
-    private final String photoPath;
+    private String description;
+    private String photoPath;
 
     public User(Builder builder) {
         this.id = builder.id;
@@ -79,6 +79,24 @@ public class User implements Entity {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public User setDescription(String description) {
+        this.description = description;
+        return this;
+    }
+
+    public String getPhotoPath() {
+        return photoPath;
+    }
+
+    public User setPhotoPath(String photoPath) {
+        this.photoPath = photoPath;
+        return this;
     }
 
     @Override

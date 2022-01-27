@@ -1,4 +1,5 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
 <fmt:setLocale value="${sessionScope.locale}" />
 <fmt:setBundle basename="locale" />
@@ -31,82 +32,42 @@
 <jsp:include page="component/header.jsp" flush="true"/>
 <div class="w3-content" style="max-width:1100px">
     <h1 class="w3-center" style="margin-top: 72px">${meeting}</h1>
-    <div class="w3-row w3-padding-64">
-        <div class="w3-col m6 w3-padding-large w3-hide-small">
-            <img src="../../images/gigachad.png" class="w3-round w3-image" width="600" height="750">
-        </div>
+    <c:forEach var="trainer" items="${requestScope.trainerList}" varStatus="loopStatus" >
+        <c:choose>
+            <c:when test="${loopStatus.index % 2 == 0}">
+                <div class="w3-row w3-padding-64">
+                    <div class="w3-col l6 w3-padding-large">
+                        <h1 class="w3-left">${trainer.firstName} ${trainer.secondName}</h1><br>
+                        <br><br><br>
+                        <p class="w3-large">
+                                ${trainer.description}
+                        </p>
+                    </div>
 
-        <div class="w3-col m6 w3-padding-large">
-            <h1 class="w3-left">${name1}</h1>
-            <br><br><br>
-            <p class="w3-large">
-                ${description1}
-            </p>
-        </div>
+                    <div class="w3-col l6 w3-padding-large">
+                        <img src="<c:out value='${trainer.photoPath}'/>" class="w3-round w3-image" width="600" height="750">
+                    </div>
+                </div>
+            </c:when>
+            <c:otherwise>
+                <div class="w3-row w3-padding-64">
+                    <div class="w3-col m6 w3-padding-large w3-hide-small">
+                        <img src="${trainer.photoPath}" class="w3-round w3-image" width="600" height="750">
+                    </div>
+
+                    <div class="w3-col m6 w3-padding-large">
+                        <h1 class="w3-left">${trainer.firstName} ${trainer.secondName}</h1>
+                        <br><br><br>
+                        <p class="w3-large">
+                                ${trainer.description}
+                        </p>
+                    </div>
+                </div>
+            </c:otherwise>
+        </c:choose>
+        <c:if test="${not loopStatus.last}"><hr></c:if>
+    </c:forEach>
     </div>
-
-    <hr>
-
-    <div class="w3-row w3-padding-64">
-        <div class="w3-col l6 w3-padding-large">
-            <h1 class="w3-left">${name2}</h1><br>
-            <br><br><br>
-            <p class="w3-large">
-                ${description2}
-            </p>
-        </div>
-
-        <div class="w3-col l6 w3-padding-large">
-            <img src="../../images/gosling.jpg" class="w3-round w3-image" width="600" height="750">
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="w3-row w3-padding-64">
-        <div class="w3-col m6 w3-padding-large w3-hide-small">
-            <img src="../../images/floppa.jpg" class="w3-round w3-image" width="600" height="750">
-        </div>
-
-        <div class="w3-col m6 w3-padding-large">
-            <h1 class="w3-left">${name3}</h1>
-            <br><br><br>
-            <p class="w3-large">
-                ${description3}
-            </p>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="w3-row w3-padding-64" id="menu">
-        <div class="w3-col l6 w3-padding-large">
-            <h1 class="w3-left">${name4}</h1><br>
-            <br><br>
-            <p class="w3-large">${description4}</p>
-        </div>
-
-        <div class="w3-col l6 w3-padding-large">
-            <img src="../../images/geralt.png" class="w3-round w3-image" width="600" height="750">
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="w3-row w3-padding-64" id="about">
-        <div class="w3-col m6 w3-padding-large w3-hide-small">
-            <img src="../../images/karamba.jpg" class="w3-round w3-image" width="600" height="750">
-        </div>
-
-        <div class="w3-col m6 w3-padding-large">
-            <h1 class="w3-left">${name5}</h1>
-            <br><br><br>
-            <p class="w3-large">
-                ${description5}
-            </p>
-        </div>
-    </div>
-</div>
 <div>
     <jsp:include page="component/footer.jsp" flush="true"/>
 </div>

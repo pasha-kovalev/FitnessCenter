@@ -1,12 +1,19 @@
 package com.epam.jwd.fitness_center.controller;
 
 import com.epam.jwd.fitness_center.controller.command.CommandRequest;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.Part;
+import java.io.IOException;
 import java.util.Optional;
 
 public class WrappingCommandRequest implements CommandRequest {
+    private static final Logger LOG = LogManager.getLogger(WrappingCommandRequest.class);
     private final HttpServletRequest request;
 
     public WrappingCommandRequest(HttpServletRequest request) {
@@ -21,6 +28,11 @@ public class WrappingCommandRequest implements CommandRequest {
     @Override
     public String getParameter(String name) {
         return request.getParameter(name);
+    }
+
+    @Override
+    public String[] getParameterValues(String name) {
+        return request.getParameterValues(name);
     }
 
     @Override
@@ -63,5 +75,21 @@ public class WrappingCommandRequest implements CommandRequest {
     @Override
     public void createSession() {
         request.getSession(true);
+    }
+
+    @Override
+    public Optional<Part> getPart(String var) {
+        Part part = null;
+        try {
+            part = request.getPart(var);
+        } catch (IOException | ServletException e) {
+            LOG.error("Unable to read image. {}", e.getMessage());
+        }
+        return Optional.ofNullable(part);
+    }
+
+    @Override
+    public ServletContext getServletContext() {
+        return request.getServletContext();
     }
 }

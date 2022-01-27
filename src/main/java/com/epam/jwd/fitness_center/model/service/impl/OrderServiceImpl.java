@@ -6,13 +6,16 @@ import com.epam.jwd.fitness_center.model.dao.OrderDao;
 import com.epam.jwd.fitness_center.model.dao.impl.DaoProvider;
 import com.epam.jwd.fitness_center.model.entity.Order;
 import com.epam.jwd.fitness_center.model.entity.OrderStatus;
+import com.epam.jwd.fitness_center.model.entity.Program;
 import com.epam.jwd.fitness_center.model.service.OrderService;
+import com.epam.jwd.fitness_center.model.service.ProgramService;
 import com.epam.jwd.fitness_center.model.util.TextEscapeUtil;
 import com.epam.jwd.fitness_center.model.validator.OrderValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -70,6 +73,7 @@ public class OrderServiceImpl implements OrderService {
                 .setTrainerId(trainerId)
                 .setPrice(price)
                 .setComment(commentEscaped)
+                .setPeriod(period)
                 .build();
         try {
             return orderDao.create(order);
@@ -79,6 +83,15 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
+    @Override
+    public List<Order> findOrderByAssignmentTrainerIdAndStatus(Long trainerId, OrderStatus status,
+                                                               OrderStatus... statuses) throws ServiceException {
+        return findOrderByAssignmentTrainerId(trainerId).stream()
+                .filter(o -> o.getOrderStatus() == status
+                        || Arrays.stream(statuses)
+                        .anyMatch(s -> s == o.getOrderStatus()))
+                .collect(Collectors.toList());
+    }
     private BigDecimal calcPrice(long userDetailsId, long itemId, long itemAmount) throws ServiceException {
         ItemServiceImpl itemService = ServiceProvider.getInstance().getItemService();
         return itemService.calculateItemPriceForUser(userDetailsId, itemId).multiply(new BigDecimal(itemAmount));
@@ -136,13 +149,31 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> findOrderByAssignmentTrainerIdAndStatus(Long trainerId, OrderStatus status,
-                                                               OrderStatus... statuses) throws ServiceException {
-        return findOrderByAssignmentTrainerId(trainerId).stream()
+    public List<Order> findOrderByUserIdAndStatus(Long userId, OrderStatus status, OrderStatus... statuses)
+            throws ServiceException {
+        findOrderByUserId(userId).forEach(this::checkOrderExpiration);
+        return findOrderByUserId(userId).stream()
                 .filter(o -> o.getOrderStatus() == status
                         || Arrays.stream(statuses)
-                                 .anyMatch(s -> s == o.getOrderStatus()))
+                        .anyMatch(s -> s == o.getOrderStatus()))
+                .peek(this::checkOrderExpiration)
                 .collect(Collectors.toList());
+    }
+
+    private void checkOrderExpiration(Order order) {
+        ProgramService programService = ServiceProvider.getInstance().getProgramService();
+        Optional<Program> programOptional;
+        try {
+            programOptional = programService.find(order.getId());
+            if(programOptional.isPresent()) {
+                Program program = programOptional.get();
+                if(program.getEndsAt() != null && program.getEndsAt().isBefore(LocalDateTime.now())) {
+                        orderDao.updateStatus(OrderStatus.COMPLETED, order.getId());
+                }
+            }
+        } catch (ServiceException | DaoException e) {
+            LOG.warn(e);
+        }
     }
 
     @Override
@@ -154,4 +185,16 @@ public class OrderServiceImpl implements OrderService {
             throw new ServiceException("Error during updating order status by id", e);
         }
     }
+
+    @Override
+    public boolean addOrderReview(String review, long id) throws ServiceException {
+        Optional<Order> optionalOrder = findOrderById(id);
+        if(!optionalOrder.isPresent()) {
+            return false;
+        }
+        Order order = optionalOrder.get();
+        order.setReview(TextEscapeUtil.escapeHtml(review));
+        return update(order);
+    }
+
 }

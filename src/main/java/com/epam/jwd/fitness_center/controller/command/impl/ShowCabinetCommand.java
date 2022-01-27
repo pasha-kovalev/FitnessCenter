@@ -31,6 +31,7 @@ public class ShowCabinetCommand implements Command {
             case TRAINER:
                 return requestFactory.createForwardResponse(PagePath.TRAINER_CABINET);
             case ADMIN:
+                return requestFactory.createForwardResponse(PagePath.ADMIN_CABINET);
             default:
                 return requestFactory.createForwardResponse(PagePath.ERROR);
         }

@@ -5,39 +5,41 @@ import com.epam.jwd.fitness_center.controller.RequestFactory;
 import com.epam.jwd.fitness_center.controller.command.Command;
 import com.epam.jwd.fitness_center.controller.command.CommandRequest;
 import com.epam.jwd.fitness_center.controller.command.CommandResponse;
+import com.epam.jwd.fitness_center.controller.command.RequestParameter;
 import com.epam.jwd.fitness_center.exception.ServiceException;
-import com.epam.jwd.fitness_center.model.entity.Order;
-import com.epam.jwd.fitness_center.model.entity.OrderStatus;
-import com.epam.jwd.fitness_center.model.entity.User;
-import com.epam.jwd.fitness_center.model.service.OrderService;
+import com.epam.jwd.fitness_center.model.service.impl.ItemServiceImpl;
 import com.epam.jwd.fitness_center.model.service.impl.ServiceProvider;
 import com.google.gson.Gson;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.List;
 import java.util.Optional;
 
-public class ShowUntakenOrdersPageCommand implements Command {
-    private static final Logger LOG = LogManager.getLogger(ShowUntakenOrdersPageCommand.class);
-    private final RequestFactory requestFactory;
-    private final OrderService orderService;
+public class DeleteItemCommand implements Command {
+    private static final Logger LOG = LogManager.getLogger(DeleteItemCommand.class);
 
-    ShowUntakenOrdersPageCommand(RequestFactory requestFactory) {
+    private final RequestFactory requestFactory;
+    private final ItemServiceImpl itemService;
+
+    DeleteItemCommand(RequestFactory requestFactory) {
         this.requestFactory = requestFactory;
-        orderService = ServiceProvider.getInstance().getOrderService();
+        itemService = ServiceProvider.getInstance().getItemService();
     }
 
     @Override
     public CommandResponse execute(CommandRequest request) {
-        List<Order> orders;
+        Optional<Long> itemIdOptional = retrievePositiveLongParameter(request, RequestParameter.ID);
+        if (!itemIdOptional.isPresent()) {
+            return requestFactory.createForwardResponse(PagePath.ERROR);
+        }
+        long itemId = itemIdOptional.get();
         try {
-            orders = orderService.findOrderByStatus(OrderStatus.UNTAKEN);
+            itemService.delete(itemId);
         } catch (ServiceException e) {
             LOG.error(e);
-            return requestFactory.createForwardResponse(PagePath.ERROR500);
+            return requestFactory.createForwardResponse(PagePath.ERROR);
         }
-        String json = new Gson().toJson(orders);
+        String json = new Gson().toJson(itemId);
         return requestFactory.createAjaxResponse(json);
     }
 }

@@ -21,18 +21,6 @@ public class ServletRequestListenerImpl implements ServletRequestListener {
     public void requestInitialized(ServletRequestEvent sre) {
         HttpServletRequest servletRequest = (HttpServletRequest) sre.getServletRequest();
         setEncoding(servletRequest);
-        savePreviousQuery(servletRequest);
-    }
-
-    private void savePreviousQuery(HttpServletRequest servletRequest) {
-        HttpSession session = servletRequest.getSession(true);
-        String command = servletRequest.getParameter(RequestParameter.COMMAND);
-        if (command != null) {
-            if (command.compareToIgnoreCase(CommandType.SWITCH_LOCALE.name()) != 0) {
-                String query = servletRequest.getQueryString();
-                session.setAttribute(Attribute.PREVIOUS_QUERY, query);
-            }
-        }
     }
 
     private void setEncoding(HttpServletRequest servletRequest) {

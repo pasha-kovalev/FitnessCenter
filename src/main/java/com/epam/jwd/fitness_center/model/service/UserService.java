@@ -20,6 +20,8 @@ public interface UserService extends EntityService<User> {
 
     void updateUserStatus(UserStatus status, long id) throws ServiceException;
 
+    void updateUserRole(UserRole role, long id) throws ServiceException;
+
     boolean isEmailRegistered(String email) throws ServiceException;
 
     Optional<User> findUserByTokenId(long tokenId) throws ServiceException;
@@ -35,6 +37,8 @@ public interface UserService extends EntityService<User> {
     UserDetails addUserDetails(User user) throws ServiceException;
 
     void updateUserDetails(UserDetails userDetails) throws ServiceException;
+
+    void updateUserData(long id, String fieldName, String value) throws ServiceException;
 
     void updateUserDetailsDiscount(UserDetails userDetails, BigDecimal discount) throws ServiceException;
 

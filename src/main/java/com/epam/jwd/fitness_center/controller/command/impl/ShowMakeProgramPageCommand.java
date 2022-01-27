@@ -37,7 +37,7 @@ public class ShowMakeProgramPageCommand implements Command {
                 order = optionalOrder.get();
                 request.addAttributeToJsp(Attribute.ORDER, order);
                 if(order.getOrderStatus() == OrderStatus.TAKEN) {
-                    return requestFactory.createForwardResponse(PagePath.SHOW_PROGRAM);
+                    return requestFactory.createForwardResponse(PagePath.SHOW_NEW_PROGRAM);
                 }
                 if(order.getOrderStatus() != OrderStatus.UNTAKEN) {
                     return requestFactory.createForwardResponse(PagePath.ERROR);
@@ -53,6 +53,6 @@ public class ShowMakeProgramPageCommand implements Command {
                 return requestFactory.createForwardResponse(PagePath.ERROR);
         }
 
-        return requestFactory.createForwardResponse(PagePath.SHOW_PROGRAM);
+        return requestFactory.createForwardResponse(PagePath.SHOW_NEW_PROGRAM);
     }
 }

@@ -216,4 +216,6 @@ public class OrderDaoImpl extends BaseDao<Order> implements OrderDao {
         return executePrepared(SELECT_ORDER_BY_ASSIGNMENT_TRAINER_ID, this::extractResult,
                 st -> st.setLong(1, trainerId));
     }
+
+
 }

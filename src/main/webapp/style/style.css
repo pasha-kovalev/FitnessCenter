@@ -165,7 +165,16 @@ body {
 button:hover {
   opacity: 0.8;
 }
+.edit-btn:hover,
+.edit-btn:focus,
+.edit-btn:active {
+  background-color: inherit!important;
+  opacity: 1!important;
+}
 
+.edit-btn {
+  padding-bottom: 22px!important;
+}
 a.btn.btn-success {
   color: #fff;
   background-color: #28a745;
@@ -279,6 +288,27 @@ a.btn.btn-danger {
   top: 50%;
 }
 
+button.btn.btn-success {
+  cursor: pointer;
+  color: #fff;
+  background-color: #28a745;
+  border-color: #28a745;
+  text-decoration: none;
+}
+
+button.btn.btn-warning {
+  color: #212529;
+  background-color: #ffc107;
+  border-color: #ffc107;
+  text-decoration: none;
+}
+
+button.btn.btn-danger {
+  color: #fff;
+  background-color: #dc3545;
+  border-color: #dc3545;
+  text-decoration: none;
+}
 .form2 form {
   width: 400px;
   background-color:#06030d;
@@ -315,7 +345,7 @@ a.btn.btn-danger {
   font-size: 16px;
   font-weight: 500;
 }
-.form2 input:not([name="acceptCredit"]){
+.form2 input:not([name="acceptCredit"]):not([type="button"]):not([type="submit"]){
   display: block;
   border: 1px solid gray;
   height: 50px;
@@ -503,6 +533,9 @@ textarea,
 optgroup {
   font: inherit;
   margin: 0;
+}
+button{
+  cursor: pointer;
 }
 textarea {
   width: 320px;
@@ -1827,11 +1860,6 @@ w3-half img {
 
 .w3-right {
   float: right!important
-}
-
-.w3-button:hover {
-  color: #000!important;
-  background-color: #ccc!important
 }
 
 .w3-transparent,

@@ -26,12 +26,18 @@ public class SwitchLocaleCommand implements Command {
         if (locale != null && locales.contains(locale)) {
             request.addToSession(RequestParameter.LOCALE, locale);
         }
-        Optional<Object> optionalQuery = request.retrieveFromSession(Attribute.PREVIOUS_QUERY);
-        if (optionalQuery.isPresent()) {
-            String previousQuery = (String) optionalQuery.get();
-            String path = previousQuery.isEmpty() ? PagePath.MAIN_REDIRECT.getPath() : PagePath.CONTROLLER.getPath()
-                    + QUESTION_MARK + previousQuery;
-            return requestFactory.createRedirectResponse(path);
+        Optional<Object> optionalPage = request.retrieveFromSession(Attribute.CURRENT_PAGE);
+        if (optionalPage.isPresent()) {
+            String page = (String) optionalPage.get();
+            if(page.contains(PagePath.CONTROLLER.getPath())) {
+                return requestFactory.createRedirectResponse(page);
+            } else {
+                String pagePathRedirectStr = PagePath.of(page).name() + "_REDIRECT";
+                if(PagePath.contains(pagePathRedirectStr)) {
+                    return requestFactory.createRedirectResponse(PagePath.of(pagePathRedirectStr));
+                }
+                return requestFactory.createForwardResponse(PagePath.of(page));
+            }
         }
         return requestFactory.createRedirectResponse(PagePath.INDEX);
     }

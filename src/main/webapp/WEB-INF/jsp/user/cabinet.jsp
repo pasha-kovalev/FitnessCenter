@@ -18,6 +18,17 @@
     <link href="../../style/style.css" type="text/css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
     <style>
+        #mainData h3 {
+            margin-top: 16px;
+            margin-bottom: 2px;
+        }
+        #mainData p {
+            margin-block-start: 0;
+            margin-block-end: 0;
+            margin-inline-start: 0;
+            margin-inline-end: 0;
+        }
+
         footer {
             position: relative;
         }
@@ -75,9 +86,15 @@
             vertical-align: top;
             border-top: 1px solid #dee2e6;
         }
+        #send-button {
+            background-color: #ffffffff;
+            padding: 4px;
+            border: 2px solid #000000;
+            cursor: pointer;
+        }
     </style>
 </head>
-<body>
+<body onload="showOrders(true)">
 <jsp:include page="../component/header.jsp" flush="true"/>
 <nav class="w3-sidebar w3-collapse w3-white w3-animate-left" style="z-index:3;width:300px;margin-top: 46px" id="mySidebar"><br>
     <div class="w3-container w3-row">
@@ -90,21 +107,35 @@
     </div>
     <hr>
     <div class="w3-bar-block">
-        <button class="w3-bar-item w3-button w3-padding" onclick="showActiveOrders()">
+        <button class="w3-bar-item w3-button w3-padding" onclick="showOrders(true)">
             <i class="fa fa-bullseye fa-fw"></i> ${currentOrders}</button>
-        <a href="#" class="w3-bar-item w3-button w3-padding"><i class="fa fa-diamond fa-fw"></i>${personalTrainer}</a>
-        <a href="#" class="w3-bar-item w3-button w3-padding"><i class="fa fa-history fa-fw"></i>${orders}</a>
-        <a href="#" class="w3-bar-item w3-button w3-padding"><i class="fa fa-cog fa-fw"></i>${settings}</a><br><br>
+        <button class="w3-bar-item w3-button w3-padding" onclick="showOrders(false)">
+            <i class="fa fa-history fa-fw"></i>${orders}</button>
     </div>
 </nav>
-<div class="w3-main" style="margin-left:300px;padding-top:90px; height: 95%">
+<div class="w3-main" style="margin-left:300px;padding-top:90px; height: auto; padding-bottom: 50px; min-height: 95%">
     <div id="mainData"></div>
+    <form id="reviewForm" name="review-form" method="post" style="visibility: hidden; position: absolute">
+        <div>
+
+            <textarea id="review" name="review" rows="2" cols="33" maxlength="1000" required
+                      oninvalid="setCustomValidity('${notValidTitle}')" oninput="setCustomValidity('')"></textarea>
+        </div>
+        <div style="overflow:auto;">
+            <div style="float:right;">
+            <input id="send-button" type="submit" value="Отправить" />
+            </div>
+        </div>
+    </form>
 </div>
+<div>
 <jsp:include page="../component/footer.jsp" flush="true"/>
+</div>
 <script>
     var mySidebar = document.getElementById("mySidebar");
     var overlayBg = document.getElementById("myOverlay");
     var mainDataLoaded = false;
+    var reviewLoaded = false;
 
     function w3_open() {
         if (mySidebar.style.display === 'block') {
@@ -121,11 +152,12 @@
         overlayBg.style.display = "none";
     }
 
-    function showActiveOrders() {
+    function showOrders(isActive) {
         document.getElementById("mainData").innerHTML = "";
+        var isCurrentOrdersStr = isActive ? "true" : "false";
         jQuery.ajax({
             type : 'GET',
-            url : '${pageContext.request.contextPath}/controller?command=show_user_active_orders',
+            url : '${pageContext.request.contextPath}/controller?command=show_user_orders&current=' + isCurrentOrdersStr,
             success : function(responseJson) {
                 var $table = $("<table class=\"custom-table\">").appendTo($("#mainData"));
                 $("<thead>").appendTo($table)
@@ -134,16 +166,28 @@
                     $.each(responseJson, function(index, order) {
                         var lastTd = "";
                         switch (order.orderStatus) {
-                            case ${OrderStatus.PAYMENT_AWAITING.name()}:
+                            case "${OrderStatus.PAYMENT_AWAITING.name()}":
                                 lastTd = "<a " +
                                     "href=\"${pageContext.request.contextPath}/controller?command=show_payment&orderId="
-                                    + order.id +"\" class=\"btn btn-danger\">Pay</a>";
+                                    + order.id +"\" class=\"btn btn-success\">Pay</a>" + `<a style="margin-left: 16px"` +
+                                    "href=\"${pageContext.request.contextPath}/controller?command=cancel_order&orderId="
+                                    + order.id +"\" class=\"btn btn-danger\">Отказаться</a>";
                                 break;
-                            case ${OrderStatus.PENDING_CLIENT.name()}:
-                                lastTd = "<a href=\"#\" class=\"btn btn-warning\">Approve</a>";
+                            case "${OrderStatus.PENDING_CLIENT.name()}":
+                                lastTd = "<a " +
+                                    "href=\"${pageContext.request.contextPath}/controller?command=show_program&orderId="
+                                    + order.id +"\" class=\"btn btn-warning\">View</a>";
                                 break;
-                            case ${OrderStatus.ACTIVE.name()}:
-                                lastTd = "<a href=\"#\" class=\"btn btn-success\">Open</a>";
+                            case "${OrderStatus.ACTIVE.name()}":
+                                lastTd = "<button class=\"btn btn-success\" onclick='showProgram(this)'>Open</button>";
+                                break;
+                            case "${OrderStatus.COMPLETED.name()}":
+                                if(order.review == null) {
+                                    lastTd = "<button class=\"btn btn-warning\" " +
+                                        "onclick='showReview(this)'>Оставить отзыв</button>";
+                                } else {
+                                    lastTd = "";
+                                }
                                 break;
                             default:
                                 lastTd = "";
@@ -157,10 +201,64 @@
                             .append($("<td>").text(order.trainerName))
                             .append($("<td>").text(order.price))
                             .append($("<td>").text(order.orderStatus))
+                            .append($(`<td class="orderIdTd" hidden>`).text(order.id))
                             .append($("<td>").append(lastTd));
                     });
             }
         })
+    }
+
+    function showProgram(el) {
+        var orderId = $(el).closest("tr")
+            .find(".orderIdTd")
+            .text();
+        document.getElementById("mainData").innerHTML = "";
+        jQuery.ajax({
+            type : 'GET',
+            url : '${pageContext.request.contextPath}/controller?command=show_program_details&orderId=' + orderId,
+            success : function(program) {
+                $("#mainData").append($("<h1>").text("Программа"));
+                var $div = $("<div style='padding-left: 100px'>").appendTo($("#mainData"));
+                $div.append($("<p>").append("<span style='font-weight: bold'>Начало: </span>"
+                                            + program.startsAt.date['day'] + '-' +
+                                            program.startsAt.date['month'] + '-' +
+                                            program.startsAt.date['year']))
+                    .append($("<p>").append("<span style='font-weight: bold'>Окончание: </span>"
+                        + program.endsAt.date['day'] + '-' +
+                        program.endsAt.date['month'] + '-' +
+                        program.endsAt.date['year']))
+                    .append($("<h3>").text("ГРАФИК"))
+                    .append($(`<p style="white-space: pre-line">`).text(program.schedule))
+                    .append($("<h3>").text("ИНТЕНСИВНОСТЬ"))
+                    .append($(`<p style="white-space: pre-line">`).text(program.intensity))
+                    .append($("<h3>").text("СНАРЯЖЕНИЕ"))
+                    .append($(`<p style="white-space: pre-line">`).text(program.equipment))
+                    .append($("<h3>").text("УПРАЖНЕНИЯ"))
+                    .append($(`<p style="white-space: pre-line">`).text(program.exercises))
+                    .append($("<h3>").text("ДИЕТА"))
+                    .append($(`<p style="white-space: pre-line">`).text(program.diet));
+
+            }
+        })
+    }
+
+    function showReview(el) {
+        var form = document.getElementById("reviewForm");
+        if(reviewLoaded) {
+            form.style.visibility = 'hidden';
+            reviewLoaded = false;
+        } else {
+            var buttonTd = $(el).closest("td");
+            var orderId = $(el).closest("tr")
+                .find(".orderIdTd")
+                .text();
+            form.action = '${pageContext.request.contextPath}/controller?command=send_review&orderId=' + orderId;
+            var top = $(buttonTd).position().top + $(buttonTd).outerHeight();
+            var left = $(el).position().left;
+            $("#reviewForm").css({top: top, left: left});
+            form.style.visibility = 'visible';
+            reviewLoaded = true;
+        }
     }
 </script>
 </body>

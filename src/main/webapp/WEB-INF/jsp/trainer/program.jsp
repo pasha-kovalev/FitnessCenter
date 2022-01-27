@@ -109,24 +109,17 @@
     }
 
     function validateForm() {
-        var x, y, i, valid = true;
+        var x, i, valid = true;
         x = document.getElementsByClassName("tab");
-        y = x[currentTab].getElementsByTagName("input");
         z = x[currentTab].getElementsByTagName("textarea");
-        for (i = 0; i < y.length; i++) {
-            if(!y[i].checkValidity()) {
-                y[i].className += " invalid"
-                valid = false;
-                y[i].reportValidity();
-            } else if(typeof z.exercises !== "undefined"
-                && !z.exercises.checkValidity()) {
-                y[i].className += " invalid"
+        for (i = 0; i < z.length; i++) {
+            if(typeof z[i] !== "undefined" && !z[i].checkValidity()) {
+                z[i].className += " invalid"
                 valid = false;
                 z[i].reportValidity();
             }
-
-            if (y[i].value == "") {
-                y[i].className += " invalid";
+            if (z[i].value == "") {
+                z[i].className += " invalid";
                 valid = false;
             }
         }

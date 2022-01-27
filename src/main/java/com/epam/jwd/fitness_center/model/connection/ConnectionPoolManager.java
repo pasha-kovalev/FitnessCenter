@@ -21,22 +21,24 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public final class ConnectionPoolManager implements ConnectionPool {
     private static final Logger LOG = LogManager.getLogger(ConnectionPoolManager.class);
+
     private static final String POOL_SIZE_PROPERTY = "size";
     private static final String POOL_MIN_SIZE_PROPERTY = "minSize";
     private static final String POOL_MAX_SIZE_PROPERTY = "maxSize";
     private static final String POOL_INCREASE_COEFFICIENT_PROPERTY = "increaseCoefficient";
     private static final String POOL_CLEAN_INTERVAL_PROPERTY = "cleanInterval";
-    private static final AtomicBoolean hasInstance = new AtomicBoolean(false);
     private static final String POOL_CONFIG_PATH = "properties/database/pool.properties";
+
     private static final int DEFAULT_POOL_SIZE = 8;
     private static final int DEFAULT_MIN_POOL_SIZE = 4;
     private static final int DEFAULT_MAX_POOL_SIZE = 15;
     private static final double DEFAULT_INCREASE_COEFF = 0.75;
-    //In seconds
     private static final int DEFAULT_CLEANING_INTERVAL = 60;
     private static final int DEFAULT_MAX_CONNECTION_DOWNTIME = 60;
+
+    private static final AtomicBoolean hasInstance = new AtomicBoolean(false);
     private static ConnectionPoolManager instance;
-    //todo: ? atomic reference or blocking
+
     private final Queue<ProxyConnection> availableConnections = new ArrayDeque<>();
     private final List<ProxyConnection> usedConnections = new ArrayList<>();
 
@@ -44,7 +46,6 @@ public final class ConnectionPoolManager implements ConnectionPool {
     private final ReentrantReadWriteLock rwl = new ReentrantReadWriteLock(true);
     private final Lock readLock = rwl.readLock();
     private final Lock writeLock = rwl.writeLock();
-
     private final Condition hasAvailableConnections = writeLock.newCondition();
 
     private final AtomicBoolean isInitialized = new AtomicBoolean(false);
@@ -60,7 +61,6 @@ public final class ConnectionPoolManager implements ConnectionPool {
     private Timer cleanTimer;
     private IncreasePoolThread increasePoolThread;
 
-    //fixme magic to constants
     private ConnectionPoolManager() {
         try (InputStream is = ConnectionPool.class.getClassLoader().getResourceAsStream(POOL_CONFIG_PATH)) {
             if (is == null) {

@@ -10,6 +10,7 @@ import com.epam.jwd.fitness_center.model.dao.impl.UserDetailsDaoImpl;
 import com.epam.jwd.fitness_center.model.entity.*;
 import com.epam.jwd.fitness_center.model.service.MailService;
 import com.epam.jwd.fitness_center.model.service.UserService;
+import com.epam.jwd.fitness_center.model.util.TextEscapeUtil;
 import com.epam.jwd.fitness_center.model.validator.UserValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,6 +26,11 @@ import static at.favre.lib.crypto.bcrypt.BCrypt.MIN_COST;
 public class UserServiceImpl implements UserService {
     public static final int TOKEN_EXPIRATION_DAYS = 1;
     private static final Logger LOG = LogManager.getLogger(UserServiceImpl.class);
+
+    private static final String FIRSTNAME_FIELD_NAME = "firstname";
+    private static final String LASTNAME_FIELD_NAME = "lastname";
+    private static final String DESCRIPTION_FIELD_NAME = "description";
+
     private final UserDaoImpl userDao;
     private final BCrypt.Hasher hasher = BCrypt.withDefaults();
     private final BCrypt.Verifyer verifier = BCrypt.verifyer();
@@ -96,7 +102,8 @@ public class UserServiceImpl implements UserService {
         }
         final byte[] enteredPassword = password.getBytes(StandardCharsets.UTF_8);
         final Optional<User> readUser = findUserByEmail(email);
-        if (readUser.isPresent() && !(readUser.get().getStatus() == UserStatus.UNCONFIRMED)) {
+        if (readUser.isPresent() && !(readUser.get().getStatus() == UserStatus.UNCONFIRMED) &&
+                !(readUser.get().getStatus() == UserStatus.BANNED)) {
             final byte[] hashedPassword = readUser.get()
                     .getPassword()
                     .getBytes(StandardCharsets.UTF_8);
@@ -135,6 +142,16 @@ public class UserServiceImpl implements UserService {
         } catch (DaoException e) {
             LOG.error("Error during updating status of user with id : {}. {}", id, e.getMessage());
             throw new ServiceException("Error during updating user status by id", e);
+        }
+    }
+
+    @Override
+    public void updateUserRole(UserRole role, long id) throws ServiceException {
+        try {
+            userDao.updateRole(role, id);
+        } catch (DaoException e) {
+            LOG.error("Error during updating role of user with id : {}. {}", id, e.getMessage());
+            throw new ServiceException("Error during updating user role by id", e);
         }
     }
 
@@ -254,6 +271,38 @@ public class UserServiceImpl implements UserService {
             userDetailsDao.update(userDetails);
         } catch (DaoException e) {
             throw new ServiceException("Unable to update user details", e);
+        }
+    }
+
+    @Override
+    public void updateUserData(long id, String fieldName, String value) throws ServiceException {
+        Optional<User> optionalUser = findUserById(id);
+        if(!optionalUser.isPresent()) {
+            LOG.warn("User not found by id {}", id);
+            throw new ServiceException("Unable to update user. User not found by id");
+        }
+        User user = optionalUser.get();
+        value = TextEscapeUtil.escapeHtml(value);
+        fieldName = TextEscapeUtil.escapeHtml(fieldName);
+        switch (fieldName.toLowerCase()) {
+            case FIRSTNAME_FIELD_NAME:
+                user.setFirstName(value);
+                break;
+            case LASTNAME_FIELD_NAME:
+                user.setSecondName(value);
+                break;
+            case DESCRIPTION_FIELD_NAME:
+                user.setDescription(value);
+                break;
+            default:
+                LOG.warn("Field name not correct {}", fieldName);
+                throw new ServiceException("Unable to update user. Field name not correct");
+        }
+        try {
+            userDao.update(user);
+        } catch (DaoException e) {
+            LOG.error("Unable to update user with id: {}. {}", user.getId(), e.getMessage());
+            throw new ServiceException("Unable to update user", e);
         }
     }
 

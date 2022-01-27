@@ -1,5 +1,6 @@
 package com.epam.jwd.fitness_center.model.service.impl;
 
+import com.epam.jwd.fitness_center.controller.PagePath;
 import com.epam.jwd.fitness_center.exception.DaoException;
 import com.epam.jwd.fitness_center.exception.ServiceException;
 import com.epam.jwd.fitness_center.model.dao.impl.DaoProvider;
@@ -8,6 +9,8 @@ import com.epam.jwd.fitness_center.model.entity.Item;
 import com.epam.jwd.fitness_center.model.entity.UserDetails;
 import com.epam.jwd.fitness_center.model.service.EntityService;
 import com.epam.jwd.fitness_center.model.service.UserService;
+import com.epam.jwd.fitness_center.model.util.TextEscapeUtil;
+import com.epam.jwd.fitness_center.model.validator.ItemValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -37,6 +40,14 @@ public class ItemServiceImpl implements EntityService<Item> {
         }
     }
 
+    public void delete(long id) throws ServiceException {
+        try {
+            itemDao.delete(id);
+        } catch (DaoException e) {
+            throw new ServiceException("Unable to delete item", e);
+        }
+    }
+
     public Optional<Item> find(long id) throws ServiceException {
         try {
             return itemDao.read(id);
@@ -55,6 +66,44 @@ public class ItemServiceImpl implements EntityService<Item> {
         }
     }
 
+    public boolean update(Long id, String name, String price) throws ServiceException {
+        Optional<Item> optionalItem = find(id);
+        if(!optionalItem.isPresent()) {
+            return false;
+        }
+        Item item = optionalItem.get();
+        name = TextEscapeUtil.escapeHtml(name);
+        BigDecimal priceNumber = new BigDecimal(TextEscapeUtil.escapeHtml(price));
+        item.setName(name);
+        item.setPrice(priceNumber);
+        if(!ItemValidator.isValidItem(item)) {
+            LOG.error("Item is not valid: {}", item);
+            throw new ServiceException("Item is not valid");
+        }
+        try {
+            return itemDao.update(item);
+        } catch (DaoException e) {
+            LOG.error("Unable to update item with id: {}. {}", item.getId(), e.getMessage());
+            throw new ServiceException("Unable to update item", e);
+        }
+    }
+
+    public Item insert(String name, String price) throws ServiceException {
+        name = TextEscapeUtil.escapeHtml(name);
+        BigDecimal priceNumber = new BigDecimal(TextEscapeUtil.escapeHtml(price));
+        Item item = new Item(name, priceNumber);
+        if(!ItemValidator.isValidItem(item)) {
+            LOG.error("Item is not valid: {}", item);
+            throw new ServiceException("Item is not valid");
+        }
+        try {
+            return itemDao.create(item);
+        } catch (DaoException e) {
+            LOG.error("Unable to insert item with name: {}. {}", item.getName(), e.getMessage());
+            throw new ServiceException("Unable to insert item", e);
+        }
+    }
+
     @Override
     public Item insert(Item entity) throws ServiceException {
         try {
@@ -64,6 +113,7 @@ public class ItemServiceImpl implements EntityService<Item> {
             throw new ServiceException("Unable to insert item", e);
         }
     }
+
 
     public BigDecimal calculateItemPriceForUser(long userId, long itemId) throws ServiceException {
         UserService userService = ServiceProvider.getInstance().getUserService();

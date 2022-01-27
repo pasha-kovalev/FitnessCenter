@@ -29,7 +29,7 @@ public class CommandProvider {
         commands.put(SHOW_CONFIRM_EMAIL, new ShowEmailConfirmationPageCommand(requestFactory));
         commands.put(SWITCH_LOCALE, new SwitchLocaleCommand((SimpleRequestFactory) requestFactory));
         commands.put(SHOW_INFO, new ShowInfoCommand(requestFactory));
-        commands.put(SHOW_ABOUT, new ShowAboutCommand(requestFactory));
+        commands.put(SHOW_ABOUT, new ShowAboutPageCommand(requestFactory));
         commands.put(SHOW_PROGRAMS, new ShowProgramsCommand(requestFactory));
         commands.put(SHOW_TRANSFORM_PROGRAM, new ShowTransformProgramCommand(requestFactory));
         commands.put(SHOW_CABINET, new ShowCabinetCommand(requestFactory));
@@ -37,11 +37,24 @@ public class CommandProvider {
         commands.put(ORDER, new MakeOrderCommand(requestFactory));
         commands.put(SHOW_PAYMENT, new ShowPaymentPageCommand(requestFactory));
         commands.put(PAYMENT, new PaymentCommand(requestFactory));
-        commands.put(SHOW_USER_ACTIVE_ORDERS, new ShowUserActiveOrdersPageCommand(requestFactory));
-        commands.put(SHOW_TRAINER_ACTIVE_ORDERS, new ShowTrainerActiveOrdersPageCommand(requestFactory));
-        commands.put(SHOW_UNTAKEN_ORDERS, new ShowUntakenOrdersPageCommand(requestFactory));
+        commands.put(SHOW_USER_ORDERS, new ShowUserOrdersPageCommand(requestFactory));
+        commands.put(SHOW_TRAINER_ORDERS, new ShowTrainerOrdersPageCommand(requestFactory));
         commands.put(SHOW_MAKE_PROGRAM, new ShowMakeProgramPageCommand(requestFactory));
         commands.put(MAKE_PROGRAM, new MakeProgramCommand(requestFactory));
+        commands.put(SHOW_PROGRAM, new ShowProgramPageCommand(requestFactory));
+        commands.put(UPDATE_PROGRAM, new UpdateProgramCommand(requestFactory));
+        commands.put(SHOW_PROGRAM_DETAILS, new ShowProgramDetails(requestFactory));
+        commands.put(SEND_REVIEW, new SendOrderReviewCommand(requestFactory));
+        commands.put(UPLOAD_IMAGE, new UploadImageCommand(requestFactory));
+        commands.put(EDIT_USER_DATA, new EditUserDataCommand(requestFactory));
+        commands.put(CANCEL_ORDER, new CancelOrderCommand(requestFactory));
+        commands.put(SHOW_MANAGE_USERS, new ShowManageUsersPageCommand(requestFactory));
+        commands.put(MANAGE_USER_DATA, new ManageUserDataCommand(requestFactory));
+        commands.put(SHOW_MANAGE_ITEMS, new ShowManageItemsPageCommand(requestFactory));
+        commands.put(MANAGE_ITEM_DATA, new ManageItemDataCommand(requestFactory));
+        commands.put(MANAGE_NEW_ITEM_DATA, new ManageNewItemDataCommand(requestFactory));
+        commands.put(DELETE_ITEM, new DeleteItemCommand(requestFactory));
+
     }
 
     public static CommandProvider getInstance() {

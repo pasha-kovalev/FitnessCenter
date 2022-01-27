@@ -35,7 +35,7 @@
     <h1>${title}</h1>
     <div class="tab">
         <label style="margin-top: 20px;" for="program">${chooseProgram}</label>
-        <select id="program" name="program" form="order">
+        <select id="program" name="program" form="order" style="padding: 0;">
             <c:forEach var="item" items="${requestScope.productList}" varStatus="loop">
                 <option value="${item.id}"
                         price="${item.price}"

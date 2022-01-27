@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -66,7 +67,7 @@ public class ProgramDaoImpl extends BaseDao<Program> {
             "?, default)";
 
     private static final String UPDATE_PROGRAM_BY_ID = "update program\n" +
-            "set status_id = (SELECT id FROM program_status WHERE status=?), " +
+            "set order_id = ?, status_id = (SELECT id FROM program_status WHERE status=?), " +
             "intensity = ?, schedule = ?, exercises = ?, diet = ?, equipment = ?, starts_at = ?,\n" +
             "    updated_by_user_role_id = (SELECT id FROM user_role WHERE account_role=?), " +
             "ends_at = ?, updated_at = CURRENT_TIMESTAMP\n" +
