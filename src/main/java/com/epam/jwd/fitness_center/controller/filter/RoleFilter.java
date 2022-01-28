@@ -14,7 +14,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
 
-@WebFilter(urlPatterns = "/*")
+/**The class represents role access filter
+ *
+ * @author Pavel Kovalev
+ * @version 1.0
+ */
+@WebFilter(urlPatterns = "/controller/*")
 public class RoleFilter implements Filter {
     private static final String COMMAND_PARAM_NAME = "command";
     private static final String USER_SESSION_ATTRIBUTE_NAME = "user";
@@ -46,6 +51,11 @@ public class RoleFilter implements Filter {
         }
     }
 
+    /** Checks is user have permission to execute command
+     * @param commandName name of command
+     * @param request http request
+     * @return true if user has permission
+     */
     private boolean hasPermissionForCommand(String commandName, HttpServletRequest request) {
         UserRole currentUserRole = retrieveCurrentUserRole(request);
         final Command command = Command.of(commandName);
@@ -53,6 +63,10 @@ public class RoleFilter implements Filter {
         return allowedCommands.contains(command);
     }
 
+    /**Retrieves user role from session
+     * @param request http request
+     * @return user role
+     */
     private UserRole retrieveCurrentUserRole(HttpServletRequest request) {
         return Optional.ofNullable(request.getSession(false))
                 .map(s -> (User) s.getAttribute(USER_SESSION_ATTRIBUTE_NAME))

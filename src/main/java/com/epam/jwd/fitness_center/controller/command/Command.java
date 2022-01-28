@@ -19,6 +19,10 @@ import java.util.Optional;
 public interface Command {
     Logger LOG = LogManager.getLogger(Command.class);
 
+    /** Retrieves command from CommandProvider by name
+     * @param name string representation of command
+     * @return command
+     */
     static Command of(String name) {
         return CommandProvider.getInstance().of(name);
     }

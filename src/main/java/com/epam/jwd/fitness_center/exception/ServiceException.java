@@ -1,5 +1,10 @@
 package com.epam.jwd.fitness_center.exception;
 
+/**The class represents service exception
+ *
+ * @author Pavel Kovalev
+ * @version 1.0
+ */
 public class ServiceException extends Exception {
     public ServiceException(String message) {
         super(message);

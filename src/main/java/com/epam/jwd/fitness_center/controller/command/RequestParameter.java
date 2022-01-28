@@ -1,5 +1,10 @@
 package com.epam.jwd.fitness_center.controller.command;
 
+/**The class represents request parameter
+ *
+ * @author Pavel Kovalev
+ * @version 1.0
+ */
 public final class RequestParameter {
     public static final String COMMAND = "command";
     public static final String TOKEN_ID = "token_id";
@@ -37,5 +42,4 @@ public final class RequestParameter {
 
     private RequestParameter() {
     }
-
 }

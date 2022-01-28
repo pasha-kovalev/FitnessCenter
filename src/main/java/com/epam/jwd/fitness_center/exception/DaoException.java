@@ -1,5 +1,10 @@
 package com.epam.jwd.fitness_center.exception;
 
+/**The class represents dao exception
+ *
+ * @author Pavel Kovalev
+ * @version 1.0
+ */
 public class DaoException extends Exception {
     public DaoException(String message) {
         super(message);

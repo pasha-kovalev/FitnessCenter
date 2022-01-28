@@ -6,6 +6,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 
+/**
+ * Proxy connection for {@link ConnectionPool}
+ */
 public class ProxyConnection implements Connection {
     private final Connection connection;
     private LocalDateTime lastTakeDate;
@@ -15,13 +18,20 @@ public class ProxyConnection implements Connection {
         lastTakeDate = LocalDateTime.now();
     }
 
+    /**Sets the time when connection was released
+     * @param lastTakeDate local date time
+     */
+    public void setLastTakeDate(LocalDateTime lastTakeDate) {
+        this.lastTakeDate = lastTakeDate;
+    }
+
+    /**Gets the time when connection was released
+     * @return local date time
+     */
     public LocalDateTime getLastTakeDate() {
         return lastTakeDate;
     }
 
-    public void setLastTakeDate(LocalDateTime lastTakeDate) {
-        this.lastTakeDate = lastTakeDate;
-    }
 
     @Override
     public Statement createStatement() throws SQLException {

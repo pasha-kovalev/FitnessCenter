@@ -11,6 +11,9 @@ import java.util.Locale;
 @WebListener
 public class HttpSessionListenerImpl implements HttpSessionListener {
 
+    /**Sets default locale to session
+     * @param se http session event
+     */
     @Override
     public void sessionCreated(HttpSessionEvent se) {
         HttpSession session = se.getSession();

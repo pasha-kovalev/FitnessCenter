@@ -1,5 +1,10 @@
 package com.epam.jwd.fitness_center.controller;
 
+/**The enum represents paths for redirect and forward routing types
+ *
+ * @author Pavel Kovalev
+ * @version 1.0
+ */
 public enum PagePath {
     INDEX("/controller?command=main_page"),
     CONTROLLER("/controller"),
@@ -43,6 +48,10 @@ public enum PagePath {
         this.path = path;
     }
 
+    /**Gets PagePath by its string representation
+     * @param name name of enum or path value
+     * @return page path
+     */
     public static PagePath of(String name) {
         for (PagePath page : values()) {
             if (page.name().equalsIgnoreCase(name)) {
@@ -57,6 +66,10 @@ public enum PagePath {
         return MAIN_REDIRECT;
     }
 
+    /**Checks if enum with given name exists
+     * @param test name of enum
+     * @return true if enum with given name exists
+     */
     public static boolean contains(String test) {
         for (PagePath path : PagePath.values()) {
             if (path.name().equals(test)) {
@@ -66,6 +79,9 @@ public enum PagePath {
         return false;
     }
 
+    /**Gets the path
+     * @return path
+     */
     public String getPath() {
         return path;
     }

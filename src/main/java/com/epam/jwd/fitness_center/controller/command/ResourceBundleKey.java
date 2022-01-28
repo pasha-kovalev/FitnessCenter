@@ -1,5 +1,10 @@
 package com.epam.jwd.fitness_center.controller.command;
 
+/**The class provides string constant represents keys in resource bundle
+ *
+ * @author Pavel Kovalev
+ * @version 1.0
+ */
 public class ResourceBundleKey {
     public static final String INFO_EMAIL_RESEND = "info.email.resend";
     public static final String INFO_ERROR_USER_CONFIRMED = "info.email.error.userConfirmed";

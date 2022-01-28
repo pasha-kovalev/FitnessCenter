@@ -19,6 +19,8 @@ public class SwitchLocaleCommand implements Command {
 
     @Override
     public CommandResponse execute(CommandRequest request) {
+        //todo cookie not session https://stackoverflow.com/questions/8889679/how-to-create-a-cookie-and-add-to-http-response-from-inside-my-service-layer/19380360
+        //todo https://stackoverflow.com/questions/6253633/cookies-vs-sessions
         final String locale = request.getParameter(RequestParameter.LOCALE);
         if (locale != null && locales.contains(locale)) {
             request.addToSession(RequestParameter.LOCALE, locale);

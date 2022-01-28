@@ -19,6 +19,11 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+/** Represents connection pool
+ *
+ * @author Pavel Kovalev
+ * @version 1.0
+ */
 public final class ConnectionPoolManager implements ConnectionPool {
     private static final Logger LOG = LogManager.getLogger(ConnectionPoolManager.class);
 
@@ -91,6 +96,9 @@ public final class ConnectionPoolManager implements ConnectionPool {
         }
     }
 
+    /**Gets the instance of connection pool manager
+     * @return connection pool manager
+     */
     public static ConnectionPoolManager getInstance() {
         while (instance == null) {
             if (hasInstance.compareAndSet(false, true)) {
@@ -100,6 +108,9 @@ public final class ConnectionPoolManager implements ConnectionPool {
         return instance;
     }
 
+    /**
+     * Deregister drivers
+     */
     private static void deregisterDrivers() {
         final Enumeration<Driver> drivers = DriverManager.getDrivers();
         while (drivers.hasMoreElements()) {
@@ -111,6 +122,9 @@ public final class ConnectionPoolManager implements ConnectionPool {
         }
     }
 
+    /**Gets current size of pool
+     * @return number of all connections in pool
+     */
     public int getCurrentSize() {
         readLock.lock();
         try {
@@ -120,6 +134,9 @@ public final class ConnectionPoolManager implements ConnectionPool {
         }
     }
 
+    /**Gets number of used connections
+     * @return number of used connections
+     */
     public int getUsedConnectionsSize() {
         readLock.lock();
         try {
@@ -157,6 +174,9 @@ public final class ConnectionPoolManager implements ConnectionPool {
         return false;
     }
 
+    /**
+     * Initializes daemon threads
+     */
     private void initDaemonThreads() {
         cleanTimer = new Timer();
         cleanTimer.schedule(new CleanPoolThread(), 0, cleaningInterval * 1000L);
@@ -179,6 +199,9 @@ public final class ConnectionPoolManager implements ConnectionPool {
         }
     }
 
+    /**Checks is has available connection to take from pool or is need to increase pool size
+     * @throws DatabaseConnectionException is thrown if thread is interrupted
+     */
     private void checkCondition() throws DatabaseConnectionException {
         increasePoolThread.checkIncreaseCondition();
         while (getUsedConnectionsSize() == maxPoolSize || availableConnections.isEmpty()) {
@@ -229,6 +252,9 @@ public final class ConnectionPoolManager implements ConnectionPool {
         return false;
     }
 
+    /**
+     * Assigns default values
+     */
     private void assignDefault() {
         poolSize = DEFAULT_POOL_SIZE;
         minPoolSize = DEFAULT_MIN_POOL_SIZE;
@@ -238,6 +264,9 @@ public final class ConnectionPoolManager implements ConnectionPool {
         maxConnectionDowntime = DEFAULT_MAX_CONNECTION_DOWNTIME;
     }
 
+    /**Adds new connection to pool
+     * @throws DatabaseConnectionException if error while creating connection occurred
+     */
     private void addConnection() throws DatabaseConnectionException {
         writeLock.lock();
         try {
@@ -252,6 +281,9 @@ public final class ConnectionPoolManager implements ConnectionPool {
         }
     }
 
+    /**Adds existed proxy connection to pool
+     * @param proxyConnection proxy connection
+     */
     private void addConnection(ProxyConnection proxyConnection) {
         writeLock.lock();
         try {
@@ -266,11 +298,17 @@ public final class ConnectionPoolManager implements ConnectionPool {
         }
     }
 
+    /**
+     * Closes all connections
+     */
     private void closeConnections() {
         closeConnections(availableConnections);
         closeConnections(usedConnections);
     }
 
+    /**Close all connections in given collection
+     * @param collection collection of connections
+     */
     private void closeConnections(Collection<ProxyConnection> collection) {
         writeLock.lock();
         try {
@@ -286,6 +324,9 @@ public final class ConnectionPoolManager implements ConnectionPool {
         }
     }
 
+    /**
+     * Class for pool increase
+     */
     private class IncreasePoolThread extends Thread {
         private final Condition needToCreateConnections = lock.newCondition();
         private boolean isToIncrease = false;
@@ -313,6 +354,9 @@ public final class ConnectionPoolManager implements ConnectionPool {
             }
         }
 
+        /**
+         * Increases amount of pool available connections by two connections
+         */
         private void increase() {
             List<ProxyConnection> proxyConnections = new ArrayList<>();
             try {
@@ -328,6 +372,9 @@ public final class ConnectionPoolManager implements ConnectionPool {
             }
         }
 
+        /**
+         * Checks if there are enough connections
+         */
         private void checkIncreaseCondition() {
             if (!isToIncrease) {
                 lock.lock();
@@ -342,10 +389,16 @@ public final class ConnectionPoolManager implements ConnectionPool {
             }
         }
 
+        /**Increases amount of pool available connections by given connections in list
+         * @param proxyConnections list of connections
+         */
         private void addConnections(List<ProxyConnection> proxyConnections) {
             proxyConnections.forEach(ConnectionPoolManager.this::addConnection);
         }
 
+        /**
+         * Interrupts thread
+         */
         public void shutDown() {
             if (!isInterrupted()) {
                 this.interrupt();
@@ -353,6 +406,9 @@ public final class ConnectionPoolManager implements ConnectionPool {
         }
     }
 
+    /**
+     * Class for pool decrease
+     */
     private class CleanPoolThread extends TimerTask {
         @Override
         public void run() {
@@ -360,6 +416,9 @@ public final class ConnectionPoolManager implements ConnectionPool {
             cleanByDownTime();
         }
 
+        /**
+         * Checks downtime of connection and removes it if downtime is greater than the specified
+         */
         private void cleanByDownTime() {
             readLock.lock();
             try {
@@ -385,6 +444,9 @@ public final class ConnectionPoolManager implements ConnectionPool {
             }
         }
 
+        /**Removes given connection from pool
+         * @param conn proxy connection
+         */
         private void deleteConnection(ProxyConnection conn) {
             readLock.unlock();
             writeLock.lock();

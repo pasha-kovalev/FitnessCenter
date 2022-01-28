@@ -16,7 +16,7 @@ public class SimpleRequestFactory implements RequestFactory {
     private SimpleRequestFactory() {
     }
 
-    public static SimpleRequestFactory getInstance() {
+    static SimpleRequestFactory getInstance() {
         return SimpleRequestFactoryHolder.instance;
     }
 

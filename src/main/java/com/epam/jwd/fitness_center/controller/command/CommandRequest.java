@@ -13,7 +13,7 @@ import java.util.Optional;
  * @version 1.0
  */
 public interface CommandRequest {
-    /** Set attribute to request
+    /** Sets attribute to request
      * @param name attribute name
      * @param attribute attribute
      */
@@ -25,37 +25,37 @@ public interface CommandRequest {
      */
     String getParameter(String name);
 
-    /** Retrieve array of values by parameter from request
+    /** Retrieves array of values by parameter from request
      * @param name parameter name
      * @return array of parameter values
      */
     String[] getParameterValues(String name);
 
-    /** Set attribute to session
+    /** Sets attribute to session
      * @param name attribute name
      * @param value attribute value
      */
     void addToSession(String name, Object value);
 
-    /** Retrieve attribute from session
+    /** Retrieves attribute from session
      * @param name attribute name
      * @return optional of attribute value
      */
     Optional<Object> retrieveFromSession(String name);
 
-    /** Retrieve attribute from session and then remove it
+    /** Retrieves attribute from session and then remove it
      * @param name attribute name
      * @return optional of attribute value
      */
     Optional<Object> pullFromSession(String name);
 
-    /** Remove attribute from session
+    /** Removes attribute from session
      * @param name attribute name
      */
     void removeFromSession(String name);
 
     /**
-     *Invalidate session if it not null
+     *Invalidates session if it not null
      */
     void clearSession();
 
@@ -65,7 +65,7 @@ public interface CommandRequest {
     void createSession();
 
     /** Gets optional of the Part with the given name.
-     * @param var
+     * @param var name
      * @return optional of the Part
      */
     Optional<Part> getPart(String var);

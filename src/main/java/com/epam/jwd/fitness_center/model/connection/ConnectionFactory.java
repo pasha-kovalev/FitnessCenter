@@ -11,6 +11,11 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
+/**Class for database connection creation
+ *
+ * @author Pavel Kovalev
+ * @version 1.0
+ */
 class ConnectionFactory {
     public static final String DB_URL_PROPERTY = "url";
     public static final String DB_DRIVER_PROPERTY = "driver";
@@ -42,6 +47,11 @@ class ConnectionFactory {
     private ConnectionFactory() {
     }
 
+    /**Creates database proxy connection
+     *
+     * @return new database proxy connection
+     * @throws DatabaseConnectionException if error while creating connection occurred
+     */
     static ProxyConnection createProxyConnection() throws DatabaseConnectionException {
         Connection connection;
         try {
