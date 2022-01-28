@@ -20,7 +20,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ItemServiceImpl implements EntityService<Item> {
-    private static final Logger LOG = LogManager.getLogger(ItemServiceImpl.class);
     private static final int MONEY_PRECISION = 2;
     private static final int PERCENT_DIVISOR = 100;
 
@@ -60,7 +59,6 @@ public class ItemServiceImpl implements EntityService<Item> {
         try {
             return itemDao.update(entity);
         } catch (DaoException e) {
-            LOG.error("Unable to update item with id: {}. {}", entity.getId(), e.getMessage());
             throw new ServiceException("Unable to update item", e);
         }
     }
@@ -76,13 +74,11 @@ public class ItemServiceImpl implements EntityService<Item> {
         item.setName(name);
         item.setPrice(priceNumber);
         if (!ItemValidator.isValidItem(item)) {
-            LOG.error("Item is not valid: {}", item);
             throw new ServiceException("Item is not valid");
         }
         try {
             return itemDao.update(item);
         } catch (DaoException e) {
-            LOG.error("Unable to update item with id: {}. {}", item.getId(), e.getMessage());
             throw new ServiceException("Unable to update item", e);
         }
     }
@@ -92,13 +88,11 @@ public class ItemServiceImpl implements EntityService<Item> {
         BigDecimal priceNumber = new BigDecimal(TextEscapeUtil.escapeHtml(price));
         Item item = new Item(name, priceNumber);
         if (!ItemValidator.isValidItem(item)) {
-            LOG.error("Item is not valid: {}", item);
             throw new ServiceException("Item is not valid");
         }
         try {
             return itemDao.create(item);
         } catch (DaoException e) {
-            LOG.error("Unable to insert item with name: {}. {}", item.getName(), e.getMessage());
             throw new ServiceException("Unable to insert item", e);
         }
     }
@@ -108,7 +102,6 @@ public class ItemServiceImpl implements EntityService<Item> {
         try {
             return itemDao.create(entity);
         } catch (DaoException e) {
-            LOG.error("Unable to insert item with name: {}. {}", entity.getName(), e.getMessage());
             throw new ServiceException("Unable to insert item", e);
         }
     }

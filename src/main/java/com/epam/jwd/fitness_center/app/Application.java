@@ -11,6 +11,7 @@ public class Application {
     private static final Logger LOG = LogManager.getLogger(Application.class);
 
     public static void main(String[] args) throws ServiceException {
+        //todo delete me
         UserService us = ServiceProvider.getInstance().getUserService();
 
         //works

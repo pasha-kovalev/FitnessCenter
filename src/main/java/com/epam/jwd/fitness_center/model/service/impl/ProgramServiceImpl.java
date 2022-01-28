@@ -16,8 +16,6 @@ import java.util.List;
 import java.util.Optional;
 
 public class ProgramServiceImpl implements ProgramService {
-    private static final Logger LOG = LogManager.getLogger(ProgramServiceImpl.class);
-
     private final ProgramDaoImpl programDao;
 
     ProgramServiceImpl() {
@@ -48,7 +46,6 @@ public class ProgramServiceImpl implements ProgramService {
         try {
             return programDao.update(entity);
         } catch (DaoException e) {
-            LOG.error("Unable to update program with id: {}. {}", entity.getOrder().getId(), e.getMessage());
             throw new ServiceException("Unable to update program", e);
         }
     }
@@ -59,7 +56,6 @@ public class ProgramServiceImpl implements ProgramService {
         try {
             return programDao.create(entity);
         } catch (DaoException e) {
-            LOG.error("Unable to insert program with id: {}. {}", entity.getOrder().getId(), e.getMessage());
             throw new ServiceException("Unable to insert program", e);
         }
     }
@@ -115,7 +111,6 @@ public class ProgramServiceImpl implements ProgramService {
         try {
             return programDao.read(id);
         } catch (DaoException e) {
-            LOG.error("Error during searching for Program by id: {}. {}", id, e.getMessage());
             throw new ServiceException("Error during searching for Program by id", e);
         }
     }

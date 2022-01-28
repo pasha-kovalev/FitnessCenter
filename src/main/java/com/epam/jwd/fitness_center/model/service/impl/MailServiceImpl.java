@@ -73,7 +73,6 @@ public class MailServiceImpl implements MailService {
             message.setRecipient(Message.RecipientType.TO, new InternetAddress(email));
             Transport.send(message);
         } catch (MessagingException e) {
-            LOG.error("Unable to send message", e);
             throw new ServiceException("Unable to send message", e);
         }
     }
@@ -83,7 +82,6 @@ public class MailServiceImpl implements MailService {
         try {
             return tokenDao.create(new Token(userId, token)).getId();
         } catch (DaoException e) {
-            LOG.error("Unable to insert user token. User ID: {}", userId, e);
             throw new ServiceException("Unable to insert user token", e);
         }
     }
@@ -91,14 +89,12 @@ public class MailServiceImpl implements MailService {
     private Properties takeMailProperties(String path) throws ServiceException {
         try (InputStream is = getClass().getClassLoader().getResourceAsStream(path)) {
             if (is == null) {
-                LOG.warn("Unable to find mail service property file:{}", path);
                 throw new ServiceException("Unable to find mail service property file:" + path);
             }
             Properties mailProperties = new Properties();
             mailProperties.load(is);
             return mailProperties;
         } catch (IOException e) {
-            LOG.warn("Unable to open connection mail service property file:{}", path);
             throw new ServiceException("Unable to open connection mail service property file", e);
         }
     }
@@ -116,14 +112,12 @@ public class MailServiceImpl implements MailService {
     private Properties takeSessionProperties(String path) throws ServiceException {
         try (InputStream is = getClass().getClassLoader().getResourceAsStream(path)) {
             if (is == null) {
-                LOG.warn("Unable to find mail session service property file:{}", path);
                 throw new ServiceException("Unable to find mail session service property file:" + path);
             }
             Properties sessionProperties = new Properties();
             sessionProperties.load(is);
             return sessionProperties;
         } catch (IOException e) {
-            LOG.warn("Unable to open connection mail session service property file:{}", path);
             throw new ServiceException("Unable to open connection mail session service property file", e);
         }
     }

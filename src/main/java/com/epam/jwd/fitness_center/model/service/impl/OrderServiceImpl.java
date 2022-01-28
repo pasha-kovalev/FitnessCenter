@@ -43,7 +43,6 @@ public class OrderServiceImpl implements OrderService {
         try {
             return orderDao.update(entity);
         } catch (DaoException e) {
-            LOG.error("Unable to update order with id: {}. {}", entity.getId(), e.getMessage());
             throw new ServiceException("Unable to update order", e);
         }
     }
@@ -53,7 +52,6 @@ public class OrderServiceImpl implements OrderService {
         try {
             return orderDao.create(entity);
         } catch (DaoException e) {
-            LOG.error("Unable to insert order : {}. {}", entity, e.getMessage());
             throw new ServiceException("Unable to insert order", e);
         }
     }
@@ -78,7 +76,6 @@ public class OrderServiceImpl implements OrderService {
         try {
             return orderDao.create(order);
         } catch (DaoException e) {
-            LOG.error("Unable to insert order : {}. {}", order, e.getMessage());
             throw new ServiceException("Unable to insert order", e);
         }
     }
@@ -103,7 +100,6 @@ public class OrderServiceImpl implements OrderService {
         try {
             return orderDao.findByStatus(status);
         } catch (DaoException e) {
-            LOG.error("Error during searching for order by status: {}. {}", status.name(), e.getMessage());
             throw new ServiceException("Error during searching for order by status", e);
         }
     }
@@ -113,7 +109,6 @@ public class OrderServiceImpl implements OrderService {
         try {
             return orderDao.findByTrainerId(trainerId);
         } catch (DaoException e) {
-            LOG.error("Error during searching for order by trainerId: {}. {}", trainerId, e.getMessage());
             throw new ServiceException("Error during searching for order by trainerId", e);
         }
     }
@@ -123,7 +118,6 @@ public class OrderServiceImpl implements OrderService {
         try {
             return orderDao.read(id);
         } catch (DaoException e) {
-            LOG.error("Error during searching for order by id: {}. {}", id, e.getMessage());
             throw new ServiceException("Error during searching for order by id", e);
         }
     }
@@ -133,7 +127,6 @@ public class OrderServiceImpl implements OrderService {
         try {
             return orderDao.findByUserId(userId);
         } catch (DaoException e) {
-            LOG.error("Error during searching for order by userId: {}. {}", userId, e.getMessage());
             throw new ServiceException("Error during searching for order by userId", e);
         }
     }
@@ -143,8 +136,6 @@ public class OrderServiceImpl implements OrderService {
         try {
             return orderDao.findByAssignmentTrainerId(trainerId);
         } catch (DaoException e) {
-            LOG.error("Error during searching for order by assignmentTrainerId: {}. {}",
-                    trainerId, e.getMessage());
             throw new ServiceException("Error during searching for order by assignmentTrainerId", e);
         }
     }
@@ -173,7 +164,7 @@ public class OrderServiceImpl implements OrderService {
                 }
             }
         } catch (ServiceException | DaoException e) {
-            LOG.warn(e);
+            LOG.error("Unable to check order expiration: {}. {}", order, e.getMessage());
         }
     }
 
@@ -182,7 +173,6 @@ public class OrderServiceImpl implements OrderService {
         try {
             orderDao.updateStatus(status, id);
         } catch (DaoException e) {
-            LOG.error("Error during updating status of order with id : {}. {}", id, e.getMessage());
             throw new ServiceException("Error during updating order status by id", e);
         }
     }

@@ -288,7 +288,9 @@ public final class ConnectionPoolManager implements ConnectionPool {
         writeLock.lock();
         try {
             if (getCurrentSize() < maxPoolSize) {
-                if (proxyConnection == null) LOG.error("null");
+                if (proxyConnection == null) {
+                    LOG.error("null");
+                }
                 availableConnections.add(proxyConnection);
                 hasAvailableConnections.signalAll();
                 LOG.trace("added existing connection: {}", proxyConnection);
@@ -306,7 +308,7 @@ public final class ConnectionPoolManager implements ConnectionPool {
         closeConnections(usedConnections);
     }
 
-    /**Close all connections in given collection
+    /**Closes all connections in given collection
      * @param collection collection of connections
      */
     private void closeConnections(Collection<ProxyConnection> collection) {

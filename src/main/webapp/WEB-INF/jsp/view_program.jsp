@@ -126,7 +126,6 @@
     }
 
     function refuseProgram() {
-        var z, i;
         document.getElementById('edit-button').style.visibility = 'hidden';
         document.getElementById('refuse-button').style.visibility = 'hidden';
         document.getElementById('comment').style.visibility = 'visible'

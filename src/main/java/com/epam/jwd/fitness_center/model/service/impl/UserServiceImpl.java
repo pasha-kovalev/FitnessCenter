@@ -53,8 +53,6 @@ public class UserServiceImpl implements UserService {
         try {
             return UserValidator.isValidUser(user, false) && userDao.update(user);
         } catch (DaoException e) {
-            //todo delete log because this info in e
-            LOG.error("Unable to update user with id: {}. {}", user.getId(), e.getMessage());
             throw new ServiceException("Unable to update user", e);
         }
     }
@@ -67,7 +65,6 @@ public class UserServiceImpl implements UserService {
             user.setPassword(hashedPassword);
             return userDao.create(user);
         } catch (DaoException e) {
-            LOG.error("Unable to insert user with email: {}. {}", user.getEmail(), e.getMessage());
             throw new ServiceException("Unable to insert user", e);
         }
     }
@@ -120,7 +117,6 @@ public class UserServiceImpl implements UserService {
         try {
             return userDao.findByEmail(email);
         } catch (DaoException e) {
-            LOG.error("Error during searching for user by email: {}. {}", email, e.getMessage());
             throw new ServiceException("Error during searching for user by email", e);
         }
     }
@@ -130,7 +126,6 @@ public class UserServiceImpl implements UserService {
         try {
             return userDao.read(id);
         } catch (DaoException e) {
-            LOG.error("Error during searching for user by id: {}. {}", id, e.getMessage());
             throw new ServiceException("Error during searching for user by id", e);
         }
     }
@@ -140,7 +135,6 @@ public class UserServiceImpl implements UserService {
         try {
             userDao.updateStatus(status, id);
         } catch (DaoException e) {
-            LOG.error("Error during updating status of user with id : {}. {}", id, e.getMessage());
             throw new ServiceException("Error during updating user status by id", e);
         }
     }
@@ -150,7 +144,6 @@ public class UserServiceImpl implements UserService {
         try {
             userDao.updateRole(role, id);
         } catch (DaoException e) {
-            LOG.error("Error during updating role of user with id : {}. {}", id, e.getMessage());
             throw new ServiceException("Error during updating user role by id", e);
         }
     }
@@ -301,7 +294,6 @@ public class UserServiceImpl implements UserService {
     public void updateUserData(long id, String fieldName, String value) throws ServiceException {
         Optional<User> optionalUser = findUserById(id);
         if (!optionalUser.isPresent()) {
-            LOG.warn("User not found by id {}", id);
             throw new ServiceException("Unable to update user. User not found by id");
         }
         User user = optionalUser.get();
@@ -318,13 +310,11 @@ public class UserServiceImpl implements UserService {
                 user.setDescription(value);
                 break;
             default:
-                LOG.warn("Field name not correct {}", fieldName);
                 throw new ServiceException("Unable to update user. Field name not correct");
         }
         try {
             userDao.update(user);
         } catch (DaoException e) {
-            LOG.error("Unable to update user with id: {}. {}", user.getId(), e.getMessage());
             throw new ServiceException("Unable to update user", e);
         }
     }
