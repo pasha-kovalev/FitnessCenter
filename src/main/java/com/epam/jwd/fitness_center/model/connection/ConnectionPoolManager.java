@@ -200,7 +200,7 @@ public final class ConnectionPoolManager implements ConnectionPool {
     }
 
     /**Checks is has available connection to take from pool or is need to increase pool size
-     * @throws DatabaseConnectionException is thrown if thread is interrupted
+     * @throws DatabaseConnectionException if thread is interrupted
      */
     private void checkCondition() throws DatabaseConnectionException {
         increasePoolThread.checkIncreaseCondition();

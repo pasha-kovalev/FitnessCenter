@@ -2,7 +2,7 @@ package com.epam.jwd.fitness_center.model.entity;
 
 import java.math.BigDecimal;
 
-public final class Item implements Entity, Cloneable {
+public final class Item implements Entity {
     private static final long serialVersionUID = 8222854259526138611L;
     private Long id;
     private String name;

@@ -6,7 +6,6 @@ import com.epam.jwd.fitness_center.model.entity.Entity;
 import java.util.List;
 
 public interface EntityService<T extends Entity> {
-
     List<T> findAll() throws ServiceException;
 
     boolean update(T entity) throws ServiceException;

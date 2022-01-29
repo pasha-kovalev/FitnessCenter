@@ -8,7 +8,7 @@ import com.epam.jwd.fitness_center.controller.command.WrappingCommandRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
+//todo javadocs for class name
 public class SimpleRequestFactory implements RequestFactory {
     private final Map<String, CommandResponse> forwardResponseCache = new ConcurrentHashMap<>();
     private final Map<String, CommandResponse> redirectResponseCache = new ConcurrentHashMap<>();

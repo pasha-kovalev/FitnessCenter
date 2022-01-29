@@ -6,8 +6,22 @@ import com.epam.jwd.fitness_center.model.entity.UserStatus;
 
 import java.util.Optional;
 
+/**
+ * The interface represents user dao
+ */
 public interface UserDao extends EntityDao<User> {
+    /**Updates user status
+     * @param status status
+     * @param id user id
+     * @return true if updated
+     * @throws DaoException when error while query execution occurs
+     */
     boolean updateStatus(UserStatus status, long id) throws DaoException;
 
+    /**Finds user by email
+     * @param email email
+     * @return optional with user or empty optional
+     * @throws DaoException when error while query execution occurs
+     */
     Optional<User> findByEmail(String email) throws DaoException;
 }

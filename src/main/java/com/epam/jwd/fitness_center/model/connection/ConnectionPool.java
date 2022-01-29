@@ -23,7 +23,7 @@ public interface ConnectionPool {
 
     /**Acquires connection
      * @return database connection
-     * @throws DatabaseConnectionException is thrown if thread is interrupted
+     * @throws DatabaseConnectionException if thread is interrupted
      */
     Connection takeConnection() throws DatabaseConnectionException;
 

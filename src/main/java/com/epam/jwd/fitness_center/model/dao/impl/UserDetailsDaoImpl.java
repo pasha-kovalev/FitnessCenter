@@ -34,11 +34,14 @@ public class UserDetailsDaoImpl extends BaseDao<UserDetails> {
     private final String SELECT_BY_USER_ID_QUERY = selectAllQuery + " WHERE "
             + USER_ID_FIELD_NAME + " = ?";
 
-    UserDetailsDaoImpl(ConnectionPool pool) {
-        super(pool, LOG);
+    {
         selectByIdQuery = SELECT_BY_USER_ID_QUERY;
         updateQuery = UPDATE_QUERY;
         insertQuery = INSERT_NEW_USER_DETAILS_QUERY;
+    }
+
+    UserDetailsDaoImpl(ConnectionPool pool) {
+        super(pool, LOG);
     }
 
     @Override

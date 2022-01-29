@@ -46,11 +46,13 @@ public class MailServiceImpl implements MailService {
             LOG.fatal("Unable to process mail property files", e);
             throw new RuntimeException("Unable to process mail property files");
         }
-
         login = mailProperties.getProperty(MAIL_USER_NAME_PROPERTY);
         password = mailProperties.getProperty(MAIL_USER_PASSWORD_PROPERTY);
         linkTemplate = mailProperties.getProperty(MAIL_LINK_TEMPLATE_PROPERTY);
         mailSession = createMailSession(login, password);
+    }
+
+    MailServiceImpl() {
     }
 
     @Override

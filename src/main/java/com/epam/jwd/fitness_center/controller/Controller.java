@@ -81,8 +81,8 @@ public class Controller extends HttpServlet {
      * @param req http request
      * @param resp http response
      * @param commandResponse executed response
-     * @throws IOException is thrown when send redirect exception occurs
-     * @throws ServletException is thrown when forward exception occurs
+     * @throws IOException when send redirect exception occurs
+     * @throws ServletException when forward exception occurs
      */
     private void forwardOrRedirectToResponseLocation(HttpServletRequest req, HttpServletResponse resp,
                                                      CommandResponse commandResponse) throws IOException, ServletException {

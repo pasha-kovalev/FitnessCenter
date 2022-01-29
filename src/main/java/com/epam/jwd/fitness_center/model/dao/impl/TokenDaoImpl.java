@@ -36,10 +36,13 @@ public class TokenDaoImpl extends BaseDao<Token> {
     private final String SELECT_BY_USER_ID_QUERY = selectAllQuery + " WHERE "
             + USER_ID_FIELD_NAME + " = ?";
 
-    TokenDaoImpl(ConnectionPool pool) {
-        super(pool, LOG);
+    {
         updateQuery = String.format(updateQuery, UPDATE_QUERY_ADDITION);
         insertQuery = INSERT_NEW_USER_TOKEN_QUERY;
+    }
+
+    TokenDaoImpl(ConnectionPool pool) {
+        super(pool, LOG);
     }
 
     @Override
