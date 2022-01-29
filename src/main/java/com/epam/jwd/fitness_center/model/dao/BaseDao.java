@@ -26,6 +26,7 @@ public abstract class BaseDao<T extends Entity> implements EntityDao<T> {
     protected final ConnectionPool pool;
     private final Logger logger;
     private final String deleteById;
+    //todo them private and setters/getters
     protected String insertQuery;
     protected String updateQuery;
     protected String selectAllQuery;

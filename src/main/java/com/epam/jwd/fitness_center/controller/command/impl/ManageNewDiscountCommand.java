@@ -25,6 +25,7 @@ public class ManageNewDiscountCommand implements Command {
 
     @Override
     public CommandResponse execute(CommandRequest request) {
+        //todo admin can add discount to all corporate users at once
         Optional<Long> userIdOptional = CommandHelper.retrievePositiveLongParameter(request, RequestParameter.ID);
         String discountStr = request.getParameter(RequestParameter.DISCOUNT);
         if (!userIdOptional.isPresent() || discountStr == null) {

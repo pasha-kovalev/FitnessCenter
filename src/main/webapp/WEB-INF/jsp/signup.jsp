@@ -44,10 +44,10 @@
         <label for="password2">${repeatPassword}</label>
         <input type="password" name="password_repeat" id="password2" required pattern="[0-9a-zA-Z]{6,20}">
         <label for="firstname">${firstname}:</label>
-        <input id="firstname" type="text" name="firstname" required pattern="([А-Яа-я]{1,20})|([A-Z][a-z]{1,20})"
+        <input id="firstname" type="text" name="firstname" required pattern="([А-Я][а-я]{1,20})|([A-Z][a-z]{1,20})"
                oninvalid="setCustomValidity('${notValidTitle}')" oninput="setCustomValidity('')">
         <label for="lastname">${lastname}:</label>
-        <input id="lastname" type="text" name="lastname" required pattern="([А-Яа-я]{1,20})|([A-Z][a-z]{1,20})"
+        <input id="lastname" type="text" name="lastname" required pattern="([А-Я][а-я]{1,20})|([A-Z][a-z]{1,20})"
                oninvalid="setCustomValidity('${notValidTitle}')" oninput="setCustomValidity('')">
         <input id="signup-button" type="submit" value="${button}"/>
     </form>

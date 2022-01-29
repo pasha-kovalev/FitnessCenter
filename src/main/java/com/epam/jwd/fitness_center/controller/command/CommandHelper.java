@@ -10,11 +10,18 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Optional;
 
+/**Class with common command methods
+ *
+ * @author Pavel Kovalev
+ * @version 1.0
+ */
 public final class CommandHelper {
     private static final Logger LOG = LogManager.getLogger(CommandHelper.class);
+
     private CommandHelper() {
         
     }
+
     /** Creates redirect response to info page with error message
      * @param requestFactory request factory
      * @param request request wrapped with CommandRequest
@@ -58,17 +65,19 @@ public final class CommandHelper {
     /** Retrieves and checks positive long from session
      * @param request request wrapped with CommandRequest
      * @param parameter parameter of value
-     * @return optional of Long or Optional.empty() if not present in session
+     * @return optional of Long or Optional.empty() if not present in session or not valid
      */
     public static Optional<Long> retrievePositiveLongParameter(CommandRequest request, String parameter) {
         String paramStr = request.getParameter(parameter);
         if (paramStr != null) {
             if (!NumberValidator.isPositiveInteger(paramStr)) {
+                LOG.error("Parameter {} is not valid", parameter);
                 return Optional.empty();
             }
             long number = Long.parseLong(paramStr);
             return Optional.of(number);
         }
+        LOG.error("Parameter {} is null", parameter);
         return Optional.empty();
     }
 }

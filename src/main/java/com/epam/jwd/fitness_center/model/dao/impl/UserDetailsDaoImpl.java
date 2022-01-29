@@ -28,7 +28,7 @@ public class UserDetailsDaoImpl extends BaseDao<UserDetails> {
 
     private static final String INSERT_NEW_USER_DETAILS_QUERY = "INSERT INTO " + TABLE_NAME +
             " (user_id, discount, personal_trainer_id)\n" +
-            "    VALUE (?, default, ?)";
+            "    VALUE (?, ?, ?)";
     private static final String UPDATE_QUERY = "update " + TABLE_NAME + " set discount = ?, " +
             "personal_trainer_id = ? where user_id = ?";
     private final String SELECT_BY_USER_ID_QUERY = selectAllQuery + " WHERE "

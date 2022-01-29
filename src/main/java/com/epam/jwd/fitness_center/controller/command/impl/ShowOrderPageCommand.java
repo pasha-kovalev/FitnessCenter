@@ -35,6 +35,8 @@ public class ShowOrderPageCommand implements Command {
 
     @Override
     public CommandResponse execute(CommandRequest request) {
+        //todo price to number format
+        //todo date format to us and to ru
         List<Item> products;
         List<User> trainers;
         try {

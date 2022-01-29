@@ -27,6 +27,7 @@ public class CancelOrderCommand implements Command {
     public CommandResponse execute(CommandRequest request) {
         Optional<Long> orderIdOptional = CommandHelper.retrievePositiveLongParameter(request, RequestParameter.ORDER_ID);
         if (!orderIdOptional.isPresent()) {
+            LOG.error("Parameter {} is not present", RequestParameter.ORDER_ID);
             return requestFactory.createRedirectResponse(PagePath.ERROR);
         }
         Optional<Object> optionalUser = request.retrieveFromSession(Attribute.USER);

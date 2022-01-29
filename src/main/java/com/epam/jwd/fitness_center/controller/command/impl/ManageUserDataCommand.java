@@ -16,6 +16,8 @@ import java.util.Optional;
 
 public class ManageUserDataCommand implements Command {
     private static final Logger LOG = LogManager.getLogger(ManageUserDataCommand.class);
+    public static final String STATUS_FIELD_NAME = "status";
+    public static final String ROLE_FIELD_NAME = "role";
 
     private final RequestFactory requestFactory;
     private final UserService userService;
@@ -27,6 +29,7 @@ public class ManageUserDataCommand implements Command {
 
     @Override
     public CommandResponse execute(CommandRequest request) {
+        //todo в постраничном режиме выводить
         String[] fieldNames = request.getParameterValues(RequestParameter.NAME);
         String[] values = request.getParameterValues(RequestParameter.VALUE);
         Optional<Long> userIdOptional = CommandHelper.retrievePositiveLongParameter(request, RequestParameter.USER_ID);
@@ -37,14 +40,15 @@ public class ManageUserDataCommand implements Command {
         try {
             for (int i = 0; i < fieldNames.length; i++) {
                 switch (fieldNames[i]) {
-                    case "status":
+                    case STATUS_FIELD_NAME:
                         userService.updateUserStatus(UserStatus.valueOf(values[i].toUpperCase()), userId);
                         break;
-                    case "role":
+                    case ROLE_FIELD_NAME:
                         userService.updateUserRole(UserRole.valueOf(values[i].toUpperCase()), userId);
                         break;
-                    case "default":
+                    default:
                         LOG.warn("Not found field name: {}", fieldNames[i]);
+                        return requestFactory.createRedirectResponse(PagePath.ERROR);
                 }
             }
         } catch (ServiceException e) {

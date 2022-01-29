@@ -31,7 +31,7 @@ public class EditUserDataCommand implements Command {
         Optional<User> userOptional = CommandHelper.retrieveUserFromSession(request);
         if (!userOptional.isPresent() || fieldName == null || value == null) {
             //todo add logs like this
-            LOG.debug("Cannot execute command. Parameters:{},{}", fieldName, value);
+            LOG.error("Cannot execute command. Parameters:{},{}", fieldName, value);
             return requestFactory.createRedirectResponse(PagePath.ERROR);
         }
         User user = userOptional.get();
