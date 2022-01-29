@@ -10,10 +10,13 @@ import com.epam.jwd.fitness_center.exception.ServiceException;
 import com.epam.jwd.fitness_center.model.entity.User;
 import com.epam.jwd.fitness_center.model.service.UserService;
 import com.epam.jwd.fitness_center.model.service.impl.ServiceProvider;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
 public class ShowAboutPageCommand implements Command {
+    private static final Logger LOG = LogManager.getLogger(ShowAboutPageCommand.class);
     private final RequestFactory requestFactory;
     private final UserService userService;
 

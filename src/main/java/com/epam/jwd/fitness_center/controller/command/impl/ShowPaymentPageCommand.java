@@ -9,10 +9,13 @@ import com.epam.jwd.fitness_center.model.entity.OrderStatus;
 import com.epam.jwd.fitness_center.model.entity.User;
 import com.epam.jwd.fitness_center.model.service.OrderService;
 import com.epam.jwd.fitness_center.model.service.impl.ServiceProvider;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Optional;
 
 public class ShowPaymentPageCommand implements Command {
+    private static final Logger LOG = LogManager.getLogger(ShowPaymentPageCommand.class);
     private final RequestFactory requestFactory;
     private final OrderService orderService;
 
@@ -24,7 +27,7 @@ public class ShowPaymentPageCommand implements Command {
     @Override
     public CommandResponse execute(CommandRequest request) {
         Order order;
-        Optional<Long> orderIdOptional = retrievePositiveLongParameter(request, RequestParameter.ORDER_ID);
+        Optional<Long> orderIdOptional = CommandHelper.retrievePositiveLongParameter(request, RequestParameter.ORDER_ID);
         if (orderIdOptional.isPresent()) {
             long orderId = orderIdOptional.get();
             try {

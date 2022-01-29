@@ -25,7 +25,7 @@ public class ConfirmEmailCommand implements Command {
     public CommandResponse execute(CommandRequest request) {
         String tokenValue = request.getParameter(RequestParameter.TOKEN);
         request.removeFromSession(Attribute.ADDITIONAL_INFO);
-        Optional<Long> optionalTokenId = retrievePositiveLongParameter(request, RequestParameter.TOKEN_ID);
+        Optional<Long> optionalTokenId = CommandHelper.retrievePositiveLongParameter(request, RequestParameter.TOKEN_ID);
         if (!optionalTokenId.isPresent()) {
             request.addToSession(Attribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_ERROR_LINK);
             return requestFactory.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);

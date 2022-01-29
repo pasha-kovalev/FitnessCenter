@@ -2,10 +2,7 @@ package com.epam.jwd.fitness_center.controller.command.impl;
 
 import com.epam.jwd.fitness_center.controller.PagePath;
 import com.epam.jwd.fitness_center.controller.RequestFactory;
-import com.epam.jwd.fitness_center.controller.command.Command;
-import com.epam.jwd.fitness_center.controller.command.CommandRequest;
-import com.epam.jwd.fitness_center.controller.command.CommandResponse;
-import com.epam.jwd.fitness_center.controller.command.RequestParameter;
+import com.epam.jwd.fitness_center.controller.command.*;
 import com.epam.jwd.fitness_center.exception.ServiceException;
 import com.epam.jwd.fitness_center.model.entity.Order;
 import com.epam.jwd.fitness_center.model.entity.OrderStatus;
@@ -34,7 +31,7 @@ public class ShowUserOrdersPageCommand implements Command {
     public CommandResponse execute(CommandRequest request) {
         List<Order> orders;
         String isCurrentOrdersParam = request.getParameter(RequestParameter.IS_CURRENT);
-        Optional<UserDetails> userDetailsOptional = retrieveUserDetailsFromSession(request);
+        Optional<UserDetails> userDetailsOptional = CommandHelper.retrieveUserDetailsFromSession(request);
         if (!userDetailsOptional.isPresent() || isCurrentOrdersParam == null) {
             return requestFactory.createRedirectResponse(PagePath.ERROR);
         }

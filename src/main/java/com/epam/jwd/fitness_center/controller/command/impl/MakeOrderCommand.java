@@ -35,7 +35,7 @@ public class MakeOrderCommand implements Command {
     @Override
     public CommandResponse execute(CommandRequest request) {
         Optional<Long> itemIdOptional, trainerIdOptional, periodOptional;
-        Optional<UserDetails> userDetailsOptional = retrieveUserDetailsFromSession(request);
+        Optional<UserDetails> userDetailsOptional = CommandHelper.retrieveUserDetailsFromSession(request);
         if (!userDetailsOptional.isPresent()) return requestFactory.createRedirectResponse(PagePath.ERROR);
         UserDetails userDetails = userDetailsOptional.get();
         itemIdOptional = parseLongRequestParameter(request, RequestParameter.PROGRAM);

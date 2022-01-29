@@ -11,10 +11,13 @@ import com.epam.jwd.fitness_center.model.entity.UserRole;
 import com.epam.jwd.fitness_center.model.service.OrderService;
 import com.epam.jwd.fitness_center.model.service.ProgramService;
 import com.epam.jwd.fitness_center.model.service.impl.ServiceProvider;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Optional;
 
 public class ShowProgramPageCommand implements Command {
+    private static final Logger LOG = LogManager.getLogger(ShowProgramPageCommand.class);
     private final RequestFactory requestFactory;
     private final OrderService orderService;
     private final ProgramService programService;
@@ -27,7 +30,7 @@ public class ShowProgramPageCommand implements Command {
 
     @Override
     public CommandResponse execute(CommandRequest request) {
-        Optional<Long> orderIdOptional = retrievePositiveLongParameter(request, RequestParameter.ORDER_ID);
+        Optional<Long> orderIdOptional = CommandHelper.retrievePositiveLongParameter(request, RequestParameter.ORDER_ID);
         if (!orderIdOptional.isPresent()) {
             return requestFactory.createRedirectResponse(PagePath.ERROR);
         }
@@ -36,21 +39,21 @@ public class ShowProgramPageCommand implements Command {
         try {
             Optional<Order> optionalOrder = orderService.findOrderById(orderId);
             if (!optionalOrder.isPresent() || !optionalUser.isPresent()) {
-                return createInfoErrorResponse(requestFactory, request);
+                return CommandHelper.createInfoErrorResponse(requestFactory, request);
             }
             User user = (User) optionalUser.get();
             Order order = optionalOrder.get();
             Optional<Program> optionalProgram;
             if (user.getRole() == UserRole.TRAINER) {
                 if (!order.getAssignmentTrainerId().equals(user.getId()) && !order.getTrainerId().equals(user.getId())) {
-                    return createInfoErrorResponse(requestFactory, request);
+                    return CommandHelper.createInfoErrorResponse(requestFactory, request);
                 }
                 optionalProgram = programService.find(orderId);
             } else {
                 optionalProgram = programService.findByOrderAndClientId(orderId, user.getId());
             }
             if (!optionalProgram.isPresent()) {
-                return createInfoErrorResponse(requestFactory, request);
+                return CommandHelper.createInfoErrorResponse(requestFactory, request);
             }
             request.addAttributeToJsp(Attribute.PROGRAM, optionalProgram.get());
             request.addAttributeToJsp(Attribute.ORDER, order);

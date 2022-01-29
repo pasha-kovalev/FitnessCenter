@@ -8,10 +8,13 @@ import com.epam.jwd.fitness_center.model.entity.Order;
 import com.epam.jwd.fitness_center.model.entity.OrderStatus;
 import com.epam.jwd.fitness_center.model.service.OrderService;
 import com.epam.jwd.fitness_center.model.service.impl.ServiceProvider;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Optional;
 
 public class CancelOrderCommand implements Command {
+    private static final Logger LOG = LogManager.getLogger(CancelOrderCommand.class);
     private final RequestFactory requestFactory;
     private final OrderService orderService;
 
@@ -22,7 +25,7 @@ public class CancelOrderCommand implements Command {
 
     @Override
     public CommandResponse execute(CommandRequest request) {
-        Optional<Long> orderIdOptional = retrievePositiveLongParameter(request, RequestParameter.ORDER_ID);
+        Optional<Long> orderIdOptional = CommandHelper.retrievePositiveLongParameter(request, RequestParameter.ORDER_ID);
         if (!orderIdOptional.isPresent()) {
             return requestFactory.createRedirectResponse(PagePath.ERROR);
         }
@@ -31,11 +34,11 @@ public class CancelOrderCommand implements Command {
         try {
             Optional<Order> optionalOrder = orderService.findOrderById(orderId);
             if (!optionalUser.isPresent() || !optionalOrder.isPresent()) {
-                return createInfoErrorResponse(requestFactory, request);
+                return CommandHelper.createInfoErrorResponse(requestFactory, request);
             }
             Order order = optionalOrder.get();
             if (order.getOrderStatus() != OrderStatus.PAYMENT_AWAITING) {
-                return createInfoErrorResponse(requestFactory, request);
+                return CommandHelper.createInfoErrorResponse(requestFactory, request);
             }
             orderService.updateOrderStatus(OrderStatus.CANCELLED, orderId);
         } catch (ServiceException e) {

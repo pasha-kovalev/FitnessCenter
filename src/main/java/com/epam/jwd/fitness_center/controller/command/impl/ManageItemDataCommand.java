@@ -27,7 +27,7 @@ public class ManageItemDataCommand implements Command {
     public CommandResponse execute(CommandRequest request) {
         String itemName = request.getParameter(RequestParameter.NAME);
         String itemPrice = request.getParameter(RequestParameter.PRICE);
-        Optional<Long> itemIdOptional = retrievePositiveLongParameter(request, RequestParameter.ID);
+        Optional<Long> itemIdOptional = CommandHelper.retrievePositiveLongParameter(request, RequestParameter.ID);
         if (!itemIdOptional.isPresent() || itemName == null || itemPrice == null) {
             return requestFactory.createRedirectResponse(PagePath.ERROR);
         }

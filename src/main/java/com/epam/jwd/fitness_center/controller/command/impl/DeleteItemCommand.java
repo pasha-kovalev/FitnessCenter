@@ -25,7 +25,7 @@ public class DeleteItemCommand implements Command {
 
     @Override
     public CommandResponse execute(CommandRequest request) {
-        Optional<Long> itemIdOptional = retrievePositiveLongParameter(request, RequestParameter.ID);
+        Optional<Long> itemIdOptional = CommandHelper.retrievePositiveLongParameter(request, RequestParameter.ID);
         if (!itemIdOptional.isPresent()) {
             return requestFactory.createRedirectResponse(PagePath.ERROR);
         }

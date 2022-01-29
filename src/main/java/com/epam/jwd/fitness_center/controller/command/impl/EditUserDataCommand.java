@@ -28,7 +28,7 @@ public class EditUserDataCommand implements Command {
     public CommandResponse execute(CommandRequest request) {
         String fieldName = request.getParameter(RequestParameter.NAME);
         String value = request.getParameter(RequestParameter.VALUE);
-        Optional<User> userOptional = retrieveUserFromSession(request);
+        Optional<User> userOptional = CommandHelper.retrieveUserFromSession(request);
         if (!userOptional.isPresent() || fieldName == null || value == null) {
             //todo add logs like this
             LOG.debug("Cannot execute command. Parameters:{},{}", fieldName, value);

@@ -3,6 +3,7 @@ package com.epam.jwd.fitness_center.controller.command.impl;
 import com.epam.jwd.fitness_center.controller.PagePath;
 import com.epam.jwd.fitness_center.controller.RequestFactory;
 import com.epam.jwd.fitness_center.controller.command.Command;
+import com.epam.jwd.fitness_center.controller.command.CommandHelper;
 import com.epam.jwd.fitness_center.controller.command.CommandRequest;
 import com.epam.jwd.fitness_center.controller.command.CommandResponse;
 import com.epam.jwd.fitness_center.exception.ServiceException;
@@ -32,7 +33,7 @@ public class UploadImageCommand implements Command {
 
     @Override
     public CommandResponse execute(CommandRequest request) {
-        Optional<User> userOptional = retrieveUserFromSession(request);
+        Optional<User> userOptional = CommandHelper.retrieveUserFromSession(request);
         Optional<Part> filePartOptional = request.getPart("file");
         if (!userOptional.isPresent() || !filePartOptional.isPresent()) {
             return requestFactory.createRedirectResponse(PagePath.ERROR);

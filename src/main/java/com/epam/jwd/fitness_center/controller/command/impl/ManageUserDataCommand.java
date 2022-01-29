@@ -29,7 +29,7 @@ public class ManageUserDataCommand implements Command {
     public CommandResponse execute(CommandRequest request) {
         String[] fieldNames = request.getParameterValues(RequestParameter.NAME);
         String[] values = request.getParameterValues(RequestParameter.VALUE);
-        Optional<Long> userIdOptional = retrievePositiveLongParameter(request, RequestParameter.USER_ID);
+        Optional<Long> userIdOptional = CommandHelper.retrievePositiveLongParameter(request, RequestParameter.USER_ID);
         if (!userIdOptional.isPresent() || fieldNames == null || values == null || fieldNames.length != values.length) {
             return requestFactory.createRedirectResponse(PagePath.ERROR);
         }

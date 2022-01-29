@@ -3,6 +3,7 @@ package com.epam.jwd.fitness_center.controller.command.impl;
 import com.epam.jwd.fitness_center.controller.PagePath;
 import com.epam.jwd.fitness_center.controller.RequestFactory;
 import com.epam.jwd.fitness_center.controller.command.Command;
+import com.epam.jwd.fitness_center.controller.command.CommandHelper;
 import com.epam.jwd.fitness_center.controller.command.CommandRequest;
 import com.epam.jwd.fitness_center.controller.command.CommandResponse;
 import com.epam.jwd.fitness_center.model.entity.User;
@@ -19,7 +20,7 @@ public class ShowCabinetCommand implements Command {
 
     @Override
     public CommandResponse execute(CommandRequest request) {
-        Optional<User> userOptional = retrieveUserFromSession(request);
+        Optional<User> userOptional = CommandHelper.retrieveUserFromSession(request);
         if (!userOptional.isPresent()) return requestFactory.createRedirectResponse(PagePath.ERROR);
         User user = userOptional.get();
         UserRole userRole = user.getRole();

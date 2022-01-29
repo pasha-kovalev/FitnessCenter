@@ -25,7 +25,7 @@ public class ManageNewDiscountCommand implements Command {
 
     @Override
     public CommandResponse execute(CommandRequest request) {
-        Optional<Long> userIdOptional = retrievePositiveLongParameter(request, RequestParameter.ID);
+        Optional<Long> userIdOptional = CommandHelper.retrievePositiveLongParameter(request, RequestParameter.ID);
         String discountStr = request.getParameter(RequestParameter.DISCOUNT);
         if (!userIdOptional.isPresent() || discountStr == null) {
             return requestFactory.createRedirectResponse(PagePath.ERROR);

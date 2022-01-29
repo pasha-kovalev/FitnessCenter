@@ -27,22 +27,22 @@ public class SendOrderReviewCommand implements Command {
     @Override
     public CommandResponse execute(CommandRequest request) {
         String review = request.getParameter(RequestParameter.REVIEW);
-        Optional<Long> orderIdOptional = retrievePositiveLongParameter(request, RequestParameter.ORDER_ID);
+        Optional<Long> orderIdOptional = CommandHelper.retrievePositiveLongParameter(request, RequestParameter.ORDER_ID);
         if (!orderIdOptional.isPresent() || review == null) {
             return requestFactory.createRedirectResponse(PagePath.ERROR);
         }
-        Optional<UserDetails> userDetailsOptional = retrieveUserDetailsFromSession(request);
+        Optional<UserDetails> userDetailsOptional = CommandHelper.retrieveUserDetailsFromSession(request);
         long orderId = orderIdOptional.get();
         try {
             Optional<Order> optionalOrder = orderService.findOrderById(orderId);
             if (!userDetailsOptional.isPresent() || !optionalOrder.isPresent()) {
-                return createInfoErrorResponse(requestFactory, request);
+                return CommandHelper.createInfoErrorResponse(requestFactory, request);
             }
             long userId = userDetailsOptional.get().getUserId();
             Order order = optionalOrder.get();
             if (order.getOrderStatus() != OrderStatus.COMPLETED || order.getUserDetailsId() != userId ||
                     !orderService.addOrderReview(review, orderId)) {
-                return createInfoErrorResponse(requestFactory, request);
+                return CommandHelper.createInfoErrorResponse(requestFactory, request);
             }
         } catch (ServiceException e) {
             LOG.error(e);

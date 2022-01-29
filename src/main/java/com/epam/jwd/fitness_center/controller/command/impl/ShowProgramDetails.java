@@ -29,7 +29,7 @@ public class ShowProgramDetails implements Command {
     @Override
     public CommandResponse execute(CommandRequest request) {
         Optional<Program> optionalProgram;
-        Optional<Long> orderIdOptional = retrievePositiveLongParameter(request, RequestParameter.ORDER_ID);
+        Optional<Long> orderIdOptional = CommandHelper.retrievePositiveLongParameter(request, RequestParameter.ORDER_ID);
         if (!orderIdOptional.isPresent()) {
             return requestFactory.createRedirectResponse(PagePath.ERROR404);
         }
@@ -38,7 +38,7 @@ public class ShowProgramDetails implements Command {
         try {
             Optional<Order> optionalOrder = orderService.findOrderById(orderId);
             if (!optionalOrder.isPresent() || !optionalUser.isPresent()) {
-                return createInfoErrorResponse(requestFactory, request);
+                return CommandHelper.createInfoErrorResponse(requestFactory, request);
             }
             User user = (User) optionalUser.get();
             Order order = optionalOrder.get();
@@ -46,12 +46,12 @@ public class ShowProgramDetails implements Command {
                 optionalProgram = programService.findByOrderAndClientId(orderId, user.getId());
             } else {
                 if (!order.getAssignmentTrainerId().equals(user.getId()) && !order.getTrainerId().equals(user.getId())) {
-                    return createInfoErrorResponse(requestFactory, request);
+                    return CommandHelper.createInfoErrorResponse(requestFactory, request);
                 }
                 optionalProgram = programService.find(orderId);
             }
             if (!optionalProgram.isPresent() || !order.getOrderStatus().equals(OrderStatus.ACTIVE)) {
-                return createInfoErrorResponse(requestFactory, request);
+                return CommandHelper.createInfoErrorResponse(requestFactory, request);
             }
         } catch (ServiceException e) {
             LOG.error("Error during order confirmation", e);
