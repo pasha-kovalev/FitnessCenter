@@ -69,7 +69,7 @@ public final class ConnectionPoolManager implements ConnectionPool {
     private ConnectionPoolManager() {
         try (InputStream is = ConnectionPool.class.getClassLoader().getResourceAsStream(POOL_CONFIG_PATH)) {
             if (is == null) {
-                LOG.warn("Unable to find connection pool property file");
+                LOG.error("Unable to find connection pool property file");
                 assignDefault();
             }
             Properties poolProperties = new Properties();
@@ -82,16 +82,16 @@ public final class ConnectionPoolManager implements ConnectionPool {
             maxConnectionDowntime = Integer.parseInt(poolProperties.getProperty("maxConnectionDowntime"));
             LOG.info("Connection pool property file loaded");
         } catch (IOException e) {
-            LOG.warn("Unable to open connection pool property file", e);
+            LOG.error("Unable to open connection pool property file", e);
             assignDefault();
         } catch (NumberFormatException e) {
-            LOG.warn("Incorrect connection pool property file. Unable to parse value", e);
+            LOG.error("Incorrect connection pool property file. Unable to parse value", e);
             assignDefault();
         }
 
         if (minPoolSize < 0 || minPoolSize > maxPoolSize || poolSize > maxPoolSize || poolSize < minPoolSize
                 || cleaningInterval < 0 || maxConnectionDowntime < 0 || increaseCoeff < 0 || increaseCoeff > 1) {
-            LOG.warn("Incorrect values of properties in connection pool property file");
+            LOG.error("Incorrect values of properties in connection pool property file");
             assignDefault();
         }
     }
@@ -227,7 +227,8 @@ public final class ConnectionPoolManager implements ConnectionPool {
                     return true;
                 }
             } else {
-                LOG.error("Unable to release connection: {}, pool initialized: {}", connection, isInitialized.get());
+                LOG.error("Unable to release connection: {}, pool initialized: {}", connection,
+                        isInitialized.get());
             }
         } finally {
             writeLock.unlock();
@@ -289,11 +290,14 @@ public final class ConnectionPoolManager implements ConnectionPool {
         try {
             if (getCurrentSize() < maxPoolSize) {
                 if (proxyConnection == null) {
-                    LOG.error("null");
+                    LOG.error("proxyConnection is null");
+                    return;
                 }
                 availableConnections.add(proxyConnection);
                 hasAvailableConnections.signalAll();
                 LOG.trace("added existing connection: {}", proxyConnection);
+            } else {
+                LOG.warn("Unable to add connection because pool is full");
             }
         } finally {
             writeLock.unlock();

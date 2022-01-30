@@ -10,8 +10,6 @@ import com.epam.jwd.fitness_center.model.service.EntityService;
 import com.epam.jwd.fitness_center.model.service.UserService;
 import com.epam.jwd.fitness_center.model.util.TextEscapeUtil;
 import com.epam.jwd.fitness_center.model.validator.ItemValidator;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -19,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+//todo add interface also for dao
 public class ItemServiceImpl implements EntityService<Item> {
     private static final int MONEY_PRECISION = 2;
     private static final int PERCENT_DIVISOR = 100;

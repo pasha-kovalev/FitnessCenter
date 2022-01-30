@@ -26,7 +26,7 @@ public interface CardDao {
     /**Check is given card has enough money
      * @param cardNumber card number
      * @param amount amount of money
-     * @return true if enough
+     * @return true if enough money
      * @throws DaoException when error while query execution occurs
      */
     boolean isEnoughMoney(String cardNumber, BigDecimal amount) throws DaoException;
