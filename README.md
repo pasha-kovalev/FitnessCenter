@@ -18,7 +18,7 @@ The web application provides an opportunity to purchase a program for a training
     + Write a review
 * Trainer
     + Process a new program for the order
-    + Edit programm
+    + Edit program
     + View history of orders with reviews
     + Edit settings(upload new photo, edit description, name)
 * Admin
