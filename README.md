@@ -25,4 +25,5 @@ The web application provides an opportunity to purchase a program for a training
     + Edit user role/status
     + Add/update/remove goods
     + Manage user discounts
+## Database diagram
 ![database](sql/diagram.png)
