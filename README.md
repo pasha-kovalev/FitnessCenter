@@ -20,7 +20,7 @@ The web application provides an opportunity to purchase a program for a training
     + Process a new program for the order
     + Edit program
     + View history of orders with reviews
-    + Edit settings(upload new photo, edit description, name)
+    + Edit personal data(upload new photo, edit description, name)
 * Admin
     + Edit user role/status
     + Add/update/remove goods
