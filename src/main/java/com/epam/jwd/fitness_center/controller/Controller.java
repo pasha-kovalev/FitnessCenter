@@ -1,6 +1,7 @@
 package com.epam.jwd.fitness_center.controller;
 
 import com.epam.jwd.fitness_center.controller.command.*;
+import com.epam.jwd.fitness_center.model.connection.ConnectionPoolManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,20 +23,20 @@ import java.io.IOException;
         maxFileSize = 1024 * 1024 * 5,
         maxRequestSize = 1024 * 1024 * 5 * 5)
 public class Controller extends HttpServlet {
-    public static final String COMMAND_NAME_PARAM = "command";
     private static final long serialVersionUID = -5223997271791449828L;
     private static final Logger LOG = LogManager.getLogger(Controller.class);
+
+    public static final String COMMAND_NAME_PARAM = "command";
+
     private final RequestFactory requestFactory = RequestFactory.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
-        LOG.trace("req and resp in doGet");
         processRequest(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
-        LOG.trace("req and resp in doPost");
         processRequest(req, resp);
     }
 
@@ -64,9 +65,7 @@ public class Controller extends HttpServlet {
                                      CommandResponse commandResponse) {
         try {
             if (commandResponse.isAjax()) {
-                resp.setContentType("application/json");
-                resp.setCharacterEncoding("UTF-8");
-                resp.getWriter().write(commandResponse.getAjaxData());
+                processAjax(resp, commandResponse);
             } else {
                 forwardOrRedirectToResponseLocation(req, resp, commandResponse);
             }
@@ -77,10 +76,21 @@ public class Controller extends HttpServlet {
         }
     }
 
+    /**Handles ajax response
+     * @param resp http response
+     * @param commandResponse command response with json data
+     * @throws IOException when writing to http response exception occurs
+     */
+    private void processAjax(HttpServletResponse resp, CommandResponse commandResponse) throws IOException {
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+        resp.getWriter().write(commandResponse.getAjaxData());
+    }
+
     /** Forwards request or sends redirect
      * @param req http request
      * @param resp http response
-     * @param commandResponse executed response
+     * @param commandResponse command response
      * @throws IOException when send redirect exception occurs
      * @throws ServletException when forward exception occurs
      */
@@ -93,5 +103,11 @@ public class Controller extends HttpServlet {
             final RequestDispatcher dispatcher = req.getRequestDispatcher(desiredPath);
             dispatcher.forward(req, resp);
         }
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        ConnectionPoolManager.getInstance().shutDown();
     }
 }

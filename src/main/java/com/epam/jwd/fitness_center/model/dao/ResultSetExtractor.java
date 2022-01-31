@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**Functional interface of methods for extracting entities from result set
+/**Functional interface of metho
  * @param <T>
  */
 @FunctionalInterface

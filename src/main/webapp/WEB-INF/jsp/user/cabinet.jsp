@@ -67,7 +67,7 @@
 </nav>
 <div class="w3-main" style="margin-left:300px;padding-top:90px; height: auto; padding-bottom: 50px; min-height: 95%">
     <div id="mainData" class="userData"></div>
-    <form id="reviewForm" name="review-form" method="post" style="visibility: hidden; position: absolute">
+    <form id="reviewForm" name="review-form" method="get" style="visibility: hidden; position: absolute">
         <div>
 
             <textarea id="review" name="review" rows="2" cols="33" maxlength="1000" required
@@ -151,7 +151,7 @@
             .text();
         document.getElementById("mainData").innerHTML = "";
         jQuery.ajax({
-            type: 'GET',
+            type: 'POST',
             url: '${pageContext.request.contextPath}/controller?command=show_program_details&orderId=' + orderId,
             success: function (program) {
                 $("#mainData").append($("<h1>").text("${program}"));

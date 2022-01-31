@@ -103,7 +103,7 @@
 
     function showUsers() {
         jQuery.ajax({
-            type: 'GET',
+            type: 'POST',
             url: '${pageContext.request.contextPath}/controller?command=show_manage_users',
             success: function (responseJson) {
                 document.getElementById("mainData").innerHTML = "";
@@ -141,7 +141,7 @@
 
     function showUsersDiscount() {
         jQuery.ajax({
-            type: 'GET',
+            type: 'POST',
             url: '${pageContext.request.contextPath}/controller?command=show_manage_discount',
             success: function (responseJson) {
                 document.getElementById("mainData").innerHTML = "";

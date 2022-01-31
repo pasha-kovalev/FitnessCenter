@@ -205,6 +205,4 @@ public abstract class BaseDao<T extends Entity> implements EntityDao<T> {
      * if a database access error occurs or this method is called on a closed PreparedStatement
      */
     protected abstract void fillEntity(PreparedStatement statement, T entity) throws SQLException;
-
-
 }

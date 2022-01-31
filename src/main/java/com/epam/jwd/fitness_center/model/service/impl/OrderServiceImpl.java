@@ -105,15 +105,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> findOrderByTrainerId(Long trainerId) throws ServiceException {
-        try {
-            return orderDao.findByTrainerId(trainerId);
-        } catch (DaoException e) {
-            throw new ServiceException("Error during searching for order by trainerId", e);
-        }
-    }
-
-    @Override
     public Optional<Order> findOrderById(Long id) throws ServiceException {
         try {
             return orderDao.read(id);

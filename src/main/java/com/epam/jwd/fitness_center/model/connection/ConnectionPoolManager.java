@@ -88,7 +88,6 @@ public final class ConnectionPoolManager implements ConnectionPool {
             LOG.error("Incorrect connection pool property file. Unable to parse value", e);
             assignDefault();
         }
-
         if (minPoolSize < 0 || minPoolSize > maxPoolSize || poolSize > maxPoolSize || poolSize < minPoolSize
                 || cleaningInterval < 0 || maxConnectionDowntime < 0 || increaseCoeff < 0 || increaseCoeff > 1) {
             LOG.error("Incorrect values of properties in connection pool property file");

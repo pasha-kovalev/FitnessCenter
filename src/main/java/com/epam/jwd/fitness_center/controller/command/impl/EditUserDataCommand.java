@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Optional;
 
+//todo add settings for user
 public class EditUserDataCommand implements Command {
     private static final Logger LOG = LogManager.getLogger(EditUserDataCommand.class);
 

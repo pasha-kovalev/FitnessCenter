@@ -51,8 +51,8 @@ public class ItemDaoImpl extends BaseDao<Item> {
 
     @Override
     protected void fillEntity(PreparedStatement statement, Item item) throws SQLException {
-        statement.setString(1, item.getName());
-        statement.setBigDecimal(2, item.getPrice());
+            statement.setString(1, item.getName());
+            statement.setBigDecimal(2, item.getPrice());
     }
 
     @Override
