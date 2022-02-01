@@ -17,7 +17,7 @@
 <jsp:include page="../component/header.jsp" flush="true"/>
 <div class="center-text">
     <c:choose>
-        <c:when test="${requestScope.errorConfirmEmail != null}">
+        <c:when test="${not empty requestScope.errorConfirmEmail}">
             <p>${requestScope.errorConfirmEmail}</p>
         </c:when>
         <c:otherwise>

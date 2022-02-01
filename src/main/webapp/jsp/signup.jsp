@@ -30,7 +30,7 @@
         <h3>${title}</h3>
         <p id="incorrect">
             <ct:pullSessionAttribute attribute="errorSignupMsg" name="msg"/>
-            <c:if test="${pageScope.msg != null}">
+            <c:if test="${not empty pageScope.msg}">
                 <fmt:message key="${msg}"/>
             </c:if>
         </p>

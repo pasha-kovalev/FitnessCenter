@@ -49,7 +49,7 @@
             <option value="2">2 ${month2}</option>
             <option value="3">3 ${month2}</option>
         </select>
-        <c:if test="${sessionScope.userDetails == null || sessionScope.userDetails.personalTrainerId == 0}">
+        <c:if test="${empty sessionScope.userDetails or sessionScope.userDetails.personalTrainerId == 0}">
             <label style="margin-top: 20px;" for="trainer">${choosePersonal}</label>
             <select id="trainer" name="trainer" form="order" required>
                 <c:forEach var="trainer" items="${requestScope.trainerList}">
@@ -59,7 +59,7 @@
         </c:if>
         <p style="padding-top: 24px;font-weight: bold;">${finalPrice}
             <c:choose>
-                <c:when test="${requestScope.productListDiscount == null}">
+                <c:when test="${empty requestScope.productListDiscount}">
                     <span id="price"></span>
                     <span>${money}</span>
                 </c:when>

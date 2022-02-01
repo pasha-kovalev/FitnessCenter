@@ -40,7 +40,7 @@
     <h1>${title}</h1>
     <p id="incorrect">
         <ct:pullSessionAttribute attribute="errorPaymentMsg" name="msg"/>
-        <c:if test="${pageScope.msg != null}">
+        <c:if test="${not empty pageScope.msg}">
             <fmt:message key="${msg}"/>
         </c:if>
     </p>

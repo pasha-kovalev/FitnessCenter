@@ -123,7 +123,7 @@
 
                 <li class="w3-light-grey w3-padding-24">
                     <c:choose>
-                        <c:when test="${sessionScope.user == null}">
+                        <c:when test="${empty sessionScope.user}">
                             <a href="${pageContext.request.contextPath}/controller?command=show_signup"
                                class="w3-button w3-white w3-padding-large">${sign}</a>
                         </c:when>
@@ -154,7 +154,7 @@
                 </li>
                 <li class="w3-light-grey w3-padding-24">
                     <c:choose>
-                        <c:when test="${sessionScope.user == null}">
+                        <c:when test="${empty sessionScope.user}">
                             <a href="${pageContext.request.contextPath}/controller?command=show_signup"
                                class="w3-button w3-white w3-padding-large">${sign}</a>
                         </c:when>
@@ -185,7 +185,7 @@
                 </li>
                 <li class="w3-light-grey w3-padding-24">
                     <c:choose>
-                        <c:when test="${sessionScope.user == null}">
+                        <c:when test="${empty sessionScope.user}">
                             <a href="${pageContext.request.contextPath}/controller?command=show_signup"
                                class="w3-button w3-white w3-padding-large">${sign}</a>
                         </c:when>

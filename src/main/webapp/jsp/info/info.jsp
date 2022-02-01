@@ -13,9 +13,9 @@
 <body class="form1">
 <jsp:include page="../component/header.jsp" flush="true"/>
 <div class="center-text" style="margin-top: 160px; color: green;">
-    <c:if test="${sessionScope.info != null}">
+    <c:if test="${not empty sessionScope.info}">
         <p><fmt:message key="${sessionScope.info}"/></p>
-        <c:if test="${sessionScope.additionalInfo != null}">
+        <c:if test="${not empty sessionScope.additionalInfo}">
             ${sessionScope.additionalInfo}
         </c:if>
     </c:if>
