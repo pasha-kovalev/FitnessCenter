@@ -19,12 +19,12 @@
 <title>${title}</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link href="../../style/style.css" type="text/css" rel="stylesheet">
+<link href="${pageContext.request.contextPath}/style/style.css" type="text/css" rel="stylesheet">
 <body>
 <jsp:include page="component/header.jsp" flush="true"/>
 <div class="w3-content" style="max-width:2000px;margin-top:46px">
     <div class="w3-display-container w3-center">
-        <img src="../../images/gym2.png" style="width:100%">
+        <img src="${pageContext.request.contextPath}/images/gym2.png" style="width:100%">
     </div>
 
     <!-- Photo grid (modal) -->
@@ -34,13 +34,13 @@
             <div class="w3-half" style="font-size: 24px; font-weight: 600;font-family: 'Open Sans'; ">
                 <p style="margin-bottom: 0;">${subtitle11}</p>
                 <p style="margin: 0">${subtitle12}</p>
-                <img src="../../images/crossfit.jpg" style="width:70%; padding-top: 8px">
+                <img src="${pageContext.request.contextPath}/images/crossfit.jpg" style="width:70%; padding-top: 8px">
             </div>
             <div class="w3-half"
                  style="text-align: center; font-size: 24px; font-weight: 600; font-family: 'Open Sans';">
                 <p style="margin-bottom: 0;">${subtitle21}</p>
                 <p style="margin: 0">${subtitle22}</p>
-                <img src="../../images/beach.jpg" style="width:70%; padding-top: 8px ">
+                <img src="${pageContext.request.contextPath}/images/beach.jpg" style="width:70%; padding-top: 8px ">
             </div>
             <div class="w3-half" style="padding-top: 32px">
                 <a class="w3-button w3-black w3-padding-large w3-hover-black"

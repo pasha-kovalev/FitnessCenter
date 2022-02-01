@@ -41,7 +41,7 @@ public class UploadImageCommand implements Command {
         User user = userOptional.get();
         Optional<String> fileNameOptional = uploadImage(request, filePartOptional.get(), user);
         if (!fileNameOptional.isPresent()) {
-            return requestFactory.createRedirectResponse(PagePath.ERROR500);
+            return requestFactory.createRedirectResponse(PagePath.ERROR);
         }
         String photoPath = "./images/" + fileNameOptional.get();
         user.setPhotoPath(photoPath);

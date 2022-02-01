@@ -50,6 +50,6 @@ public class LoginCommand implements Command {
             userDetails = null;
         }
         if (userDetails != null) request.addToSession(Attribute.USER_DETAILS, userDetails);
-        return requestFactory.createRedirectResponse(PagePath.INDEX);
+        return requestFactory.createRedirectResponse(PagePath.MAIN_REDIRECT);
     }
 }

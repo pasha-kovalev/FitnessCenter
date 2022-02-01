@@ -11,7 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Optional;
-
+//todo jstl formatting for num internalization
 public class ManageNewDiscountCommand implements Command {
     private static final Logger LOG = LogManager.getLogger(ManageNewDiscountCommand.class);
 

@@ -38,6 +38,6 @@ public class SwitchLocaleCommand implements Command {
                 return requestFactory.createForwardResponse(PagePath.of(page));
             }
         }
-        return requestFactory.createRedirectResponse(PagePath.INDEX);
+        return requestFactory.createRedirectResponse(PagePath.MAIN_REDIRECT);
     }
 }

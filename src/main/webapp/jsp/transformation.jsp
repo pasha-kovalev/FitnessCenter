@@ -28,7 +28,7 @@
     <title>${title}</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="../../style/style.css" type="text/css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/style/style.css" type="text/css" rel="stylesheet">
 </head>
 <style>
     body {
@@ -48,7 +48,7 @@
     <p class="w3-center" style="font-size: 22px;padding: 0;margin-top: 0;">${MeetingDesc}</p>
 
     <div class="w3-display-container w3-center">
-        <img src="../../images/balance.jpg" style="width:100%">
+        <img src="${pageContext.request.contextPath}/images/balance.jpg" style="width:100%">
     </div>
 
 

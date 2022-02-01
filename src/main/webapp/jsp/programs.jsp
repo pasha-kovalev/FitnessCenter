@@ -43,7 +43,7 @@
     <title>${title}</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="../../style/style.css" type="text/css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/style/style.css" type="text/css" rel="stylesheet">
 </head>
 <style>
     body {
@@ -61,7 +61,7 @@
     <p class="w3-center"
        style="font-size: 48px;  margin-bottom: 0; margin-top: 10px; font-weight: bold; font-family: 'PT serif';">${meetingTitle}</p>
     <div class="w3-display-container w3-center">
-        <img src="../../images/gym4.jpg" style="width:100%">
+        <img src="${pageContext.request.contextPath}/images/gym4.jpg" style="width:100%">
     </div>
 
     <div class="w3-row w3-container" style="font-size: 20px">
@@ -91,13 +91,13 @@
             <span class="w3-bottombar w3-border-dark-grey w3-padding-16" style="font-size: 32px">${resultsTitle}</span>
         </div>
         <div class="w3-display-container w3-center">
-            <img src="../../images/beforeafter2.png" style="width:100%">
+            <img src="${pageContext.request.contextPath}/images/beforeafter2.png" style="width:100%">
         </div>
         <div class="w3-display-container w3-center" style="padding-top: 20px">
-            <img src="../../images/beforeafter.png" style="width:100%">
+            <img src="${pageContext.request.contextPath}/images/beforeafter.png" style="width:100%">
         </div>
         <div class="w3-display-container w3-center" style="padding-top: 20px">
-            <img src="../../images/beforeafter3.png" style="width:100%">
+            <img src="${pageContext.request.contextPath}/images/beforeafter3.png" style="width:100%">
         </div>
     </div>
 

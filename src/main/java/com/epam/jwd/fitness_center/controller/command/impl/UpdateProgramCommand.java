@@ -72,7 +72,7 @@ public class UpdateProgramCommand implements Command {
                 order.setComment(comment);
             } else {
                 if (!updateProgram(request, program, user.getRole())) {
-                    return requestFactory.createRedirectResponse(PagePath.ERROR500);
+                    return requestFactory.createRedirectResponse(PagePath.ERROR);
                 }
             }
             if (user.getRole() == UserRole.TRAINER) {

@@ -16,7 +16,7 @@ public class LogOutCommand implements Command {
     @Override
     public CommandResponse execute(CommandRequest request) {
         request.clearSession();
-        return requestFactory.createRedirectResponse(PagePath.INDEX);
+        return requestFactory.createRedirectResponse(PagePath.MAIN_REDIRECT);
     }
 
 }

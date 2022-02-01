@@ -31,7 +31,7 @@
 <head>
     <title>${title}</title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <link href="../../../style/style.css" type="text/css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/style/style.css" type="text/css" rel="stylesheet">
 </head>
 <body class="form2" onload="outPayment()">
 <jsp:include page="../component/header.jsp" flush="true"/>

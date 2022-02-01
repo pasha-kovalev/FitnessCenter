@@ -21,7 +21,6 @@ public class MakeOrderCommand implements Command {
     private static final Logger LOG = LogManager.getLogger(MakeOrderCommand.class);
     private static final long DEFAULT_PERIOD = 1L;
 
-
     private final OrderService orderService;
     private final UserService userService;
     private final RequestFactory requestFactory;
@@ -29,7 +28,7 @@ public class MakeOrderCommand implements Command {
     MakeOrderCommand(RequestFactory requestFactory) {
         this.requestFactory = requestFactory;
         this.orderService = ServiceProvider.getInstance().getOrderService();
-        userService = ServiceProvider.getInstance().getUserService();
+        this.userService = ServiceProvider.getInstance().getUserService();
     }
 
     @Override

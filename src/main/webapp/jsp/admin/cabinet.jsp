@@ -33,7 +33,7 @@
 <head>
     <meta charset="UTF-8">
     <title>${title}</title>
-    <link href="../../style/style.css" type="text/css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/style/style.css" type="text/css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
     <style>
         footer {

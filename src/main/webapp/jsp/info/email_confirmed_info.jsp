@@ -10,7 +10,7 @@
 <head>
     <meta charset="UTF-8">
     <title>${title}</title>
-    <link href="../../../style/style.css" type="text/css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/style/style.css" type="text/css" rel="stylesheet">
 </head>
 <meta charset="UTF-8">
 <body class="form1">
