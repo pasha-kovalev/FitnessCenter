@@ -32,7 +32,6 @@ public class SimpleRequestFactory implements RequestFactory {
 
     @Override
     public CommandResponse createRedirectResponse(PagePath page) {
-
         return redirectResponseCache.computeIfAbsent(page.getPath(), p ->
                 new PlainCommandResponse(true, page.getPath()));
     }

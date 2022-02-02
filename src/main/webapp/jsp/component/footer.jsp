@@ -1,4 +1,3 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <fmt:setLocale value="${sessionScope.locale}"/>
@@ -11,6 +10,6 @@
         <a href="${pageContext.request.contextPath}/controller?command=switch_locale&locale=en">EN</a>
         <a href="${pageContext.request.contextPath}/controller?command=switch_locale&locale=ru">Русский</a>
     </p>
-    <p class="w3-medium">&#169; ${author} 2021</p>
+    <p class="w3-medium">&#169; ${author} 2021-2022</p>
 </footer>
 
