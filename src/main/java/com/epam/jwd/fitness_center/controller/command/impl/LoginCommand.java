@@ -1,7 +1,7 @@
 package com.epam.jwd.fitness_center.controller.command.impl;
 
 import com.epam.jwd.fitness_center.controller.PagePath;
-import com.epam.jwd.fitness_center.controller.RequestFactory;
+import com.epam.jwd.fitness_center.controller.ResponseCreator;
 import com.epam.jwd.fitness_center.controller.command.*;
 import com.epam.jwd.fitness_center.exception.ServiceException;
 import com.epam.jwd.fitness_center.model.entity.User;
@@ -17,10 +17,10 @@ public class LoginCommand implements Command {
     private static final Logger LOG = LogManager.getLogger(LoginCommand.class);
 
     private final UserService userService;
-    private final RequestFactory requestFactory;
+    private final ResponseCreator responseCreator;
 
-    LoginCommand(RequestFactory requestFactory) {
-        this.requestFactory = requestFactory;
+    LoginCommand(ResponseCreator responseCreator) {
+        this.responseCreator = responseCreator;
         this.userService = ServiceProvider.getInstance().getUserService();
     }
 
@@ -34,11 +34,11 @@ public class LoginCommand implements Command {
             optionalUser = userService.authenticate(login, password);
         } catch (ServiceException e) {
             LOG.error("Error during login", e);
-            return requestFactory.createRedirectResponse(PagePath.ERROR500);
+            return responseCreator.createRedirectResponse(PagePath.ERROR500);
         }
         if (!optionalUser.isPresent()) {
             request.addToSession(Attribute.ERROR_LOGIN_BUNDLE_KEY, ResourceBundleKey.LOGIN_ERROR);
-            return requestFactory.createRedirectResponse(PagePath.LOGIN_REDIRECT);
+            return responseCreator.createRedirectResponse(PagePath.LOGIN_REDIRECT);
         }
         User user = optionalUser.get();
         request.clearSession();
@@ -50,6 +50,6 @@ public class LoginCommand implements Command {
             userDetails = null;
         }
         if (userDetails != null) request.addToSession(Attribute.USER_DETAILS, userDetails);
-        return requestFactory.createRedirectResponse(PagePath.MAIN_REDIRECT);
+        return responseCreator.createRedirectResponse(PagePath.MAIN_REDIRECT);
     }
 }

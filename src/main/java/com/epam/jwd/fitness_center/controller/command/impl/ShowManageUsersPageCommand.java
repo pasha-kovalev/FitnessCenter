@@ -1,7 +1,7 @@
 package com.epam.jwd.fitness_center.controller.command.impl;
 
 import com.epam.jwd.fitness_center.controller.PagePath;
-import com.epam.jwd.fitness_center.controller.RequestFactory;
+import com.epam.jwd.fitness_center.controller.ResponseCreator;
 import com.epam.jwd.fitness_center.controller.command.Command;
 import com.epam.jwd.fitness_center.controller.command.CommandHelper;
 import com.epam.jwd.fitness_center.controller.command.CommandRequest;
@@ -19,11 +19,11 @@ import java.util.Optional;
 
 public class ShowManageUsersPageCommand implements Command {
     private static final Logger LOG = LogManager.getLogger(ShowManageUsersPageCommand.class);
-    private final RequestFactory requestFactory;
+    private final ResponseCreator responseCreator;
     private final UserService userService;
 
-    ShowManageUsersPageCommand(RequestFactory requestFactory) {
-        this.requestFactory = requestFactory;
+    ShowManageUsersPageCommand(ResponseCreator responseCreator) {
+        this.responseCreator = responseCreator;
         userService = ServiceProvider.getInstance().getUserService();
     }
 
@@ -31,14 +31,14 @@ public class ShowManageUsersPageCommand implements Command {
     public CommandResponse execute(CommandRequest request) {
         List<User> users;
         Optional<User> userOptional = CommandHelper.retrieveUserFromSession(request);
-        if (!userOptional.isPresent()) return requestFactory.createRedirectResponse(PagePath.ERROR);
+        if (!userOptional.isPresent()) return responseCreator.createRedirectResponse(PagePath.ERROR);
         try {
             users = userService.findAll();
         } catch (ServiceException e) {
             LOG.error(e);
-            return requestFactory.createRedirectResponse(PagePath.ERROR500);
+            return responseCreator.createRedirectResponse(PagePath.ERROR500);
         }
         String json = new Gson().toJson(users);
-        return requestFactory.createAjaxResponse(json);
+        return responseCreator.createAjaxResponse(json);
     }
 }

@@ -1,28 +1,20 @@
 package com.epam.jwd.fitness_center.controller;
 
-import com.epam.jwd.fitness_center.controller.command.CommandRequest;
 import com.epam.jwd.fitness_center.controller.command.CommandResponse;
 import com.epam.jwd.fitness_center.controller.command.PlainCommandResponse;
-import com.epam.jwd.fitness_center.controller.command.WrappingCommandRequest;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 //todo javadocs for class name
-public class SimpleRequestFactory implements RequestFactory {
+public class SimpleResponseCreator implements ResponseCreator {
     private final Map<String, CommandResponse> forwardResponseCache = new ConcurrentHashMap<>();
     private final Map<String, CommandResponse> redirectResponseCache = new ConcurrentHashMap<>();
 
-    private SimpleRequestFactory() {
+    private SimpleResponseCreator() {
     }
 
-    static SimpleRequestFactory getInstance() {
+    static SimpleResponseCreator getInstance() {
         return SimpleRequestFactoryHolder.instance;
-    }
-
-    @Override
-    public CommandRequest createRequest(HttpServletRequest request) {
-        return new WrappingCommandRequest(request);
     }
 
     @Override
@@ -41,6 +33,7 @@ public class SimpleRequestFactory implements RequestFactory {
         return PlainCommandResponse.createAjaxResponse(data);
     }
 
+    //todo why public
     public CommandResponse createRedirectResponse(String path) {
         return redirectResponseCache.computeIfAbsent(path, p ->
                 new PlainCommandResponse(true, path));
@@ -54,6 +47,6 @@ public class SimpleRequestFactory implements RequestFactory {
     }*/
 
     private static class SimpleRequestFactoryHolder {
-        private static final SimpleRequestFactory instance = new SimpleRequestFactory();
+        private static final SimpleResponseCreator instance = new SimpleResponseCreator();
     }
 }

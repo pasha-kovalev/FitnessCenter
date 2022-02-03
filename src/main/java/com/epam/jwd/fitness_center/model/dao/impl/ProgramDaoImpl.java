@@ -75,15 +75,13 @@ public class ProgramDaoImpl extends BaseDao<Program> {
             "ends_at = ?, updated_at = CURRENT_TIMESTAMP\n" +
             "where order_id = ?";
 
-    {
+
+    ProgramDaoImpl(ConnectionPool pool) {
+        super(pool, LOG);
         selectAllQuery = SELECT_ALL_PROGRAMS;
         insertQuery = INSERT_NEW_PROGRAM_QUERY;
         selectByIdQuery = SELECT_PROGRAM_BY_ID;
         updateQuery = UPDATE_PROGRAM_BY_ID;
-    }
-
-    ProgramDaoImpl(ConnectionPool pool) {
-        super(pool, LOG);
     }
 
     @Override

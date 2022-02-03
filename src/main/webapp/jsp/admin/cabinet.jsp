@@ -84,6 +84,7 @@
     var isFiltered = false;
     var reviewLoaded = false;
     var isFormEditing = false;
+    var editingElem = "";
     var statusArrCurrentPos = 0;
 
     function w3_open() {
@@ -340,6 +341,9 @@
         console.log(isToDelete);
         var trClosest = $(el).closest('tr');
         var id = trClosest.find('.item-id')[0].innerHTML;
+        if(isFormEditing === true && ("item" + id) !== editingElem) {
+            isFormEditing = false;
+        }
         var textArea = trClosest.find('textarea')[0];
         var input = trClosest.find('.price')[0];
         var name = textArea.value;
@@ -352,18 +356,22 @@
             textArea.readOnly = true;
             input.readOnly = true;
             isFormEditing = false;
-
+            editingElem = "";
         } else {
             textArea.readOnly = false;
             input.readOnly = false;
             $(el).closest('button')[0].innerText = "${save}"
             isFormEditing = true;
+            editingElem = "item" + id;
         }
     }
 
     function editDiscount(el) {
         var trClosest = $(el).closest('tr');
         var id = trClosest.find('.user-id')[0].innerHTML;
+        if(isFormEditing === true && ("disc" + id) !== editingElem) {
+            isFormEditing = false;
+        }
         var input = trClosest.find('.discount')[0];
         var discount = input.value;
         if (isFormEditing) {
@@ -371,23 +379,26 @@
             $(el).closest('button')[0].innerText = "${change}"
             input.readOnly = true;
             isFormEditing = false;
+            editingElem = "";
         } else {
             input.readOnly = false;
             $(el).closest('button')[0].innerText = "${save}"
             isFormEditing = true;
+            editingElem = "disc" + id;
         }
     }
 
     function editUser(el) {
         var trClosest = $(el).closest('tr');
         var id = trClosest.find('.user-id')[0].innerHTML;
+        if(isFormEditing === true && ("user" + id) !== editingElem) {
+            isFormEditing = false;
+        }
         var roleTd = trClosest.find('.role-td')[0];
         var statusTd = trClosest.find('.status-td')[0];
         var roleSelectTd = trClosest.find('.role-select-td')[0];
         var statusSelectTd = trClosest.find('.status-select-td')[0];
         if (isFormEditing) {
-            console.log(roleSelectTd.firstChild);
-            console.log();
             sendUserData(id, 'role', 'status', $(roleSelectTd.firstChild).val(), $(statusSelectTd.firstChild).val(),
                 trClosest[0]);
             displayByElem(roleSelectTd, true);
@@ -397,6 +408,7 @@
             $(el).closest('button')[0].innerText = "${change}"
             $(el).attr('class', 'btn btn-warning');
             isFormEditing = false;
+            editingElem = "";
         } else {
             $(roleSelectTd.firstChild).val(roleTd.innerText);
             $(statusSelectTd.firstChild).val(statusTd.innerText);
@@ -407,6 +419,7 @@
             $(el).closest('button')[0].innerText = "${save}"
             $(el).attr('class', 'btn btn-danger');
             isFormEditing = true;
+            editingElem = "user" + id;
         }
     }
 

@@ -1,7 +1,7 @@
 package com.epam.jwd.fitness_center.controller.command;
 
 import com.epam.jwd.fitness_center.controller.PagePath;
-import com.epam.jwd.fitness_center.controller.RequestFactory;
+import com.epam.jwd.fitness_center.controller.ResponseCreator;
 import com.epam.jwd.fitness_center.model.entity.User;
 import com.epam.jwd.fitness_center.model.entity.UserDetails;
 import com.epam.jwd.fitness_center.model.validator.NumberValidator;
@@ -23,13 +23,13 @@ public final class CommandHelper {
     }
 
     /** Creates redirect response to info page with error message
-     * @param requestFactory request factory
+     * @param responseCreator request factory
      * @param request request wrapped with CommandRequest
      * @return CommandResponse containing the path and type of response
      */
-    public static CommandResponse createInfoErrorResponse(RequestFactory requestFactory, CommandRequest request) {
+    public static CommandResponse createInfoErrorResponse(ResponseCreator responseCreator, CommandRequest request) {
         request.addToSession(Attribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_ERROR_LINK);
-        return requestFactory.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
+        return responseCreator.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
     }
 
     /** Retrieves UserDetails from session

@@ -1,7 +1,7 @@
 package com.epam.jwd.fitness_center.controller.command.impl;
 
 import com.epam.jwd.fitness_center.controller.PagePath;
-import com.epam.jwd.fitness_center.controller.RequestFactory;
+import com.epam.jwd.fitness_center.controller.ResponseCreator;
 import com.epam.jwd.fitness_center.controller.command.*;
 import com.epam.jwd.fitness_center.exception.ServiceException;
 import com.epam.jwd.fitness_center.model.service.UserService;
@@ -15,11 +15,11 @@ import java.util.Optional;
 public class ManageNewDiscountCommand implements Command {
     private static final Logger LOG = LogManager.getLogger(ManageNewDiscountCommand.class);
 
-    private final RequestFactory requestFactory;
+    private final ResponseCreator responseCreator;
     private final UserService userService;
 
-    ManageNewDiscountCommand(RequestFactory requestFactory) {
-        this.requestFactory = requestFactory;
+    ManageNewDiscountCommand(ResponseCreator responseCreator) {
+        this.responseCreator = responseCreator;
         userService = ServiceProvider.getInstance().getUserService();
     }
 
@@ -29,15 +29,15 @@ public class ManageNewDiscountCommand implements Command {
         Optional<Long> userIdOptional = CommandHelper.retrievePositiveLongParameter(request, RequestParameter.ID);
         String discountStr = request.getParameter(RequestParameter.DISCOUNT);
         if (!userIdOptional.isPresent() || discountStr == null) {
-            return requestFactory.createRedirectResponse(PagePath.ERROR);
+            return responseCreator.createRedirectResponse(PagePath.ERROR);
         }
         try {
             userService.updateUserDetailsDiscount(userIdOptional.get(), discountStr);
         } catch (ServiceException e) {
             LOG.error(e);
-            return requestFactory.createRedirectResponse(PagePath.ERROR);
+            return responseCreator.createRedirectResponse(PagePath.ERROR);
         }
         String json = new Gson().toJson(ResourceBundleKey.INFO_SUCCESS);
-        return requestFactory.createAjaxResponse(json);
+        return responseCreator.createAjaxResponse(json);
     }
 }

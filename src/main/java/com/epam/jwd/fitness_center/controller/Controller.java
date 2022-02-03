@@ -28,8 +28,6 @@ public class Controller extends HttpServlet {
 
     public static final String COMMAND_NAME_PARAM = "command";
 
-    private final RequestFactory requestFactory = RequestFactory.getInstance();
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
         processRequest(req, resp);
@@ -47,7 +45,7 @@ public class Controller extends HttpServlet {
     private void processRequest(HttpServletRequest req, HttpServletResponse resp) {
         final String commandName = req.getParameter(COMMAND_NAME_PARAM);
         final Command command = Command.of(commandName);
-        final CommandRequest commandRequest = requestFactory.createRequest(req);
+        final CommandRequest commandRequest = new WrappingCommandRequest(req);
         final CommandResponse commandResponse = command.execute(commandRequest);
         if (commandResponse.getPath() != null &&
                 !commandResponse.getPath().contains(CommandType.SWITCH_LOCALE.name().toLowerCase())) {

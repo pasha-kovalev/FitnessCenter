@@ -1,7 +1,7 @@
 package com.epam.jwd.fitness_center.controller.command.impl;
 
 import com.epam.jwd.fitness_center.controller.PagePath;
-import com.epam.jwd.fitness_center.controller.RequestFactory;
+import com.epam.jwd.fitness_center.controller.ResponseCreator;
 import com.epam.jwd.fitness_center.controller.command.Command;
 import com.epam.jwd.fitness_center.controller.command.CommandRequest;
 import com.epam.jwd.fitness_center.controller.command.CommandResponse;
@@ -23,11 +23,11 @@ public class ShowManageDiscountPageCommand implements Command {
     public static final String USERS_KEY = "users";
     public static final String USER_DETAILS_KEY = "userDetails";
     private static final Logger LOG = LogManager.getLogger(ShowManageDiscountPageCommand.class);
-    private final RequestFactory requestFactory;
+    private final ResponseCreator responseCreator;
     private final UserService userService;
 
-    ShowManageDiscountPageCommand(RequestFactory requestFactory) {
-        this.requestFactory = requestFactory;
+    ShowManageDiscountPageCommand(ResponseCreator responseCreator) {
+        this.responseCreator = responseCreator;
         userService = ServiceProvider.getInstance().getUserService();
     }
 
@@ -40,12 +40,12 @@ public class ShowManageDiscountPageCommand implements Command {
             userDetailsList = userService.findAllUserDetails();
         } catch (ServiceException e) {
             LOG.error(e);
-            return requestFactory.createRedirectResponse(PagePath.ERROR500);
+            return responseCreator.createRedirectResponse(PagePath.ERROR500);
         }
         Map<String, List<? extends Entity>> response = new HashMap<>();
         response.put(USERS_KEY, users);
         response.put(USER_DETAILS_KEY, userDetailsList);
         String json = new Gson().toJson(response);
-        return requestFactory.createAjaxResponse(json);
+        return responseCreator.createAjaxResponse(json);
     }
 }

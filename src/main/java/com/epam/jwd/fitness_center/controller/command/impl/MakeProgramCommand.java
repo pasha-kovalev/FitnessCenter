@@ -1,7 +1,7 @@
 package com.epam.jwd.fitness_center.controller.command.impl;
 
 import com.epam.jwd.fitness_center.controller.PagePath;
-import com.epam.jwd.fitness_center.controller.RequestFactory;
+import com.epam.jwd.fitness_center.controller.ResponseCreator;
 import com.epam.jwd.fitness_center.controller.command.*;
 import com.epam.jwd.fitness_center.exception.ServiceException;
 import com.epam.jwd.fitness_center.model.entity.ProgramStatus;
@@ -14,11 +14,11 @@ import java.util.Optional;
 
 public class MakeProgramCommand implements Command {
     private static final Logger LOG = LogManager.getLogger(MakeProgramCommand.class);
-    private final RequestFactory requestFactory;
+    private final ResponseCreator responseCreator;
     private final ProgramService programService;
 
-    MakeProgramCommand(RequestFactory requestFactory) {
-        this.requestFactory = requestFactory;
+    MakeProgramCommand(ResponseCreator responseCreator) {
+        this.responseCreator = responseCreator;
         programService = ServiceProvider.getInstance().getProgramService();
     }
 
@@ -35,15 +35,15 @@ public class MakeProgramCommand implements Command {
         if (orderIdOptional.isPresent()) {
             orderId = orderIdOptional.get();
         } else {
-            return requestFactory.createRedirectResponse(PagePath.ERROR);
+            return responseCreator.createRedirectResponse(PagePath.ERROR);
         }
         try {
             programService.insert(orderId, ProgramStatus.PENDING, intensity, schedule, exercises, diet, equipment);
         } catch (ServiceException e) {
             LOG.error(e);
-            return requestFactory.createRedirectResponse(PagePath.ERROR500);
+            return responseCreator.createRedirectResponse(PagePath.ERROR500);
         }
         request.addToSession(Attribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_SUCCESS);
-        return requestFactory.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
+        return responseCreator.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
     }
 }

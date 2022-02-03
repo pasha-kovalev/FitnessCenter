@@ -12,7 +12,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class CardDaoImpl implements CardDao {
-
     public static final String EVENT_QUERY_NAME_PART_CREDIT_ORDER = "credit_order_";
     public static final String EVENT_QUERY_NAME_PART_DURATION = "duration_";
     private static final String FIND_CARD_BY_NUMBER = "SELECT id FROM card\n" +

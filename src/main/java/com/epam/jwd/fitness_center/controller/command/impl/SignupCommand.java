@@ -1,7 +1,7 @@
 package com.epam.jwd.fitness_center.controller.command.impl;
 
 import com.epam.jwd.fitness_center.controller.PagePath;
-import com.epam.jwd.fitness_center.controller.RequestFactory;
+import com.epam.jwd.fitness_center.controller.ResponseCreator;
 import com.epam.jwd.fitness_center.controller.command.*;
 import com.epam.jwd.fitness_center.exception.ServiceException;
 import com.epam.jwd.fitness_center.model.entity.User;
@@ -19,10 +19,10 @@ public class SignupCommand implements Command {
     private static final Logger LOG = LogManager.getLogger(SignupCommand.class);
 
     private final UserService userService;
-    private final RequestFactory requestFactory;
+    private final ResponseCreator responseCreator;
 
-    SignupCommand(RequestFactory requestFactory) {
-        this.requestFactory = requestFactory;
+    SignupCommand(ResponseCreator responseCreator) {
+        this.responseCreator = responseCreator;
         this.userService = ServiceProvider.getInstance().getUserService();
     }
 
@@ -38,7 +38,7 @@ public class SignupCommand implements Command {
         request.clearSession();
         request.createSession();
         request.addToSession(RequestParameter.LOGIN, login);
-        return requestFactory.createRedirectResponse(PagePath.MAIL_INFO_REDIRECT);
+        return responseCreator.createRedirectResponse(PagePath.MAIL_INFO_REDIRECT);
     }
 
     private Optional<CommandResponse> registerUser(CommandRequest request, String login, String password,
@@ -51,11 +51,11 @@ public class SignupCommand implements Command {
                             .orElse(Locale.getDefault().toString()));
         } catch (ServiceException e) {
             LOG.error("Error during registering new user", e);
-            return Optional.of(requestFactory.createRedirectResponse(PagePath.ERROR500));
+            return Optional.of(responseCreator.createRedirectResponse(PagePath.ERROR500));
         }
         if (!user.isPresent()) {
             request.addToSession(Attribute.ERROR_SIGNUP_BUNDLE_KEY, ResourceBundleKey.SIGNUP_ERROR);
-            return Optional.of(requestFactory.createRedirectResponse(PagePath.SIGNUP_REDIRECT));
+            return Optional.of(responseCreator.createRedirectResponse(PagePath.SIGNUP_REDIRECT));
         }
         return Optional.empty();
     }

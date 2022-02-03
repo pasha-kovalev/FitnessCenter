@@ -1,7 +1,7 @@
 package com.epam.jwd.fitness_center.controller.command.impl;
 
 import com.epam.jwd.fitness_center.controller.PagePath;
-import com.epam.jwd.fitness_center.controller.RequestFactory;
+import com.epam.jwd.fitness_center.controller.ResponseCreator;
 import com.epam.jwd.fitness_center.controller.command.Command;
 import com.epam.jwd.fitness_center.controller.command.CommandRequest;
 import com.epam.jwd.fitness_center.controller.command.CommandResponse;
@@ -17,11 +17,11 @@ import java.util.List;
 
 public class ShowManageItemsPageCommand implements Command {
     private static final Logger LOG = LogManager.getLogger(ShowManageItemsPageCommand.class);
-    private final RequestFactory requestFactory;
+    private final ResponseCreator responseCreator;
     private final ItemServiceImpl itemService;
 
-    ShowManageItemsPageCommand(RequestFactory requestFactory) {
-        this.requestFactory = requestFactory;
+    ShowManageItemsPageCommand(ResponseCreator responseCreator) {
+        this.responseCreator = responseCreator;
         itemService = ServiceProvider.getInstance().getItemService();
     }
 
@@ -32,9 +32,9 @@ public class ShowManageItemsPageCommand implements Command {
             items = itemService.findAll();
         } catch (ServiceException e) {
             LOG.error(e);
-            return requestFactory.createRedirectResponse(PagePath.ERROR500);
+            return responseCreator.createRedirectResponse(PagePath.ERROR500);
         }
         String json = new Gson().toJson(items);
-        return requestFactory.createAjaxResponse(json);
+        return responseCreator.createAjaxResponse(json);
     }
 }

@@ -105,15 +105,13 @@ public class UserDaoImpl extends BaseDao<User> implements UserDao {
             "SET role_id = (SELECT id FROM user_role WHERE account_role = ?)\n" +
             "WHERE user.id = ?";
 
-    {
+
+    UserDaoImpl(ConnectionPool pool) {
+        super(pool, LOG);
         selectAllQuery = SELECT_ALL_USERS;
         insertQuery = INSERT_NEW_USER;
         selectByIdQuery = SELECT_USER_BY_ID;
         updateQuery = UPDATE_USER_BY_ID;
-    }
-
-    UserDaoImpl(ConnectionPool pool) {
-        super(pool, LOG);
     }
 
     @Override

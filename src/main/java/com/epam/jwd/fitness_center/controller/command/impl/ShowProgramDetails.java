@@ -1,7 +1,7 @@
 package com.epam.jwd.fitness_center.controller.command.impl;
 
 import com.epam.jwd.fitness_center.controller.PagePath;
-import com.epam.jwd.fitness_center.controller.RequestFactory;
+import com.epam.jwd.fitness_center.controller.ResponseCreator;
 import com.epam.jwd.fitness_center.controller.command.*;
 import com.epam.jwd.fitness_center.exception.ServiceException;
 import com.epam.jwd.fitness_center.model.entity.*;
@@ -16,12 +16,12 @@ import java.util.Optional;
 
 public class ShowProgramDetails implements Command {
     private static final Logger LOG = LogManager.getLogger(ShowProgramDetails.class);
-    private final RequestFactory requestFactory;
+    private final ResponseCreator responseCreator;
     private final OrderService orderService;
     private final ProgramService programService;
 
-    ShowProgramDetails(RequestFactory requestFactory) {
-        this.requestFactory = requestFactory;
+    ShowProgramDetails(ResponseCreator responseCreator) {
+        this.responseCreator = responseCreator;
         orderService = ServiceProvider.getInstance().getOrderService();
         programService = ServiceProvider.getInstance().getProgramService();
     }
@@ -31,14 +31,14 @@ public class ShowProgramDetails implements Command {
         Optional<Program> optionalProgram;
         Optional<Long> orderIdOptional = CommandHelper.retrievePositiveLongParameter(request, RequestParameter.ORDER_ID);
         if (!orderIdOptional.isPresent()) {
-            return requestFactory.createRedirectResponse(PagePath.ERROR404);
+            return responseCreator.createRedirectResponse(PagePath.ERROR404);
         }
         long orderId = orderIdOptional.get();
         Optional<Object> optionalUser = request.retrieveFromSession(Attribute.USER);
         try {
             Optional<Order> optionalOrder = orderService.findOrderById(orderId);
             if (!optionalOrder.isPresent() || !optionalUser.isPresent()) {
-                return CommandHelper.createInfoErrorResponse(requestFactory, request);
+                return CommandHelper.createInfoErrorResponse(responseCreator, request);
             }
             User user = (User) optionalUser.get();
             Order order = optionalOrder.get();
@@ -46,18 +46,18 @@ public class ShowProgramDetails implements Command {
                 optionalProgram = programService.findByOrderAndClientId(orderId, user.getId());
             } else {
                 if (!order.getAssignmentTrainerId().equals(user.getId()) && !order.getTrainerId().equals(user.getId())) {
-                    return CommandHelper.createInfoErrorResponse(requestFactory, request);
+                    return CommandHelper.createInfoErrorResponse(responseCreator, request);
                 }
                 optionalProgram = programService.find(orderId);
             }
             if (!optionalProgram.isPresent() || !order.getOrderStatus().equals(OrderStatus.ACTIVE)) {
-                return CommandHelper.createInfoErrorResponse(requestFactory, request);
+                return CommandHelper.createInfoErrorResponse(responseCreator, request);
             }
         } catch (ServiceException e) {
             LOG.error("Error during order confirmation", e);
-            return requestFactory.createRedirectResponse(PagePath.ERROR500);
+            return responseCreator.createRedirectResponse(PagePath.ERROR500);
         }
         String json = new Gson().toJson(optionalProgram.get());
-        return requestFactory.createAjaxResponse(json);
+        return responseCreator.createAjaxResponse(json);
     }
 }

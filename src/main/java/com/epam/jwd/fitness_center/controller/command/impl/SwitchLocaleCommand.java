@@ -1,7 +1,7 @@
 package com.epam.jwd.fitness_center.controller.command.impl;
 
 import com.epam.jwd.fitness_center.controller.PagePath;
-import com.epam.jwd.fitness_center.controller.SimpleRequestFactory;
+import com.epam.jwd.fitness_center.controller.SimpleResponseCreator;
 import com.epam.jwd.fitness_center.controller.command.*;
 
 import java.util.ArrayList;
@@ -10,10 +10,10 @@ import java.util.List;
 import java.util.Optional;
 
 public class SwitchLocaleCommand implements Command {
-    private final SimpleRequestFactory requestFactory;
+    private final SimpleResponseCreator requestFactory;
     private final List<String> locales = new ArrayList<>(Arrays.asList("en", "ru"));
 
-    SwitchLocaleCommand(SimpleRequestFactory requestFactory) {
+    SwitchLocaleCommand(SimpleResponseCreator requestFactory) {
         this.requestFactory = requestFactory;
     }
 

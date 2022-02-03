@@ -1,7 +1,7 @@
 package com.epam.jwd.fitness_center.controller.command.impl;
 
 import com.epam.jwd.fitness_center.controller.PagePath;
-import com.epam.jwd.fitness_center.controller.RequestFactory;
+import com.epam.jwd.fitness_center.controller.ResponseCreator;
 import com.epam.jwd.fitness_center.controller.command.*;
 import com.epam.jwd.fitness_center.exception.ServiceException;
 import com.epam.jwd.fitness_center.model.entity.Order;
@@ -19,11 +19,11 @@ import java.util.Optional;
 public class ShowUserOrdersPageCommand implements Command {
     public static final String TRUE_STR = "true";
     private static final Logger LOG = LogManager.getLogger(ShowUserOrdersPageCommand.class);
-    private final RequestFactory requestFactory;
+    private final ResponseCreator responseCreator;
     private final OrderService orderService;
 
-    ShowUserOrdersPageCommand(RequestFactory requestFactory) {
-        this.requestFactory = requestFactory;
+    ShowUserOrdersPageCommand(ResponseCreator responseCreator) {
+        this.responseCreator = responseCreator;
         orderService = ServiceProvider.getInstance().getOrderService();
     }
 
@@ -33,7 +33,7 @@ public class ShowUserOrdersPageCommand implements Command {
         String isCurrentOrdersParam = request.getParameter(RequestParameter.IS_CURRENT);
         Optional<UserDetails> userDetailsOptional = CommandHelper.retrieveUserDetailsFromSession(request);
         if (!userDetailsOptional.isPresent() || isCurrentOrdersParam == null) {
-            return requestFactory.createRedirectResponse(PagePath.ERROR);
+            return responseCreator.createRedirectResponse(PagePath.ERROR);
         }
         UserDetails userDetails = userDetailsOptional.get();
         long userId = userDetails.getUserId();
@@ -47,9 +47,9 @@ public class ShowUserOrdersPageCommand implements Command {
             }
         } catch (ServiceException e) {
             LOG.error(e);
-            return requestFactory.createRedirectResponse(PagePath.ERROR500);
+            return responseCreator.createRedirectResponse(PagePath.ERROR500);
         }
         String json = new Gson().toJson(orders);
-        return requestFactory.createAjaxResponse(json);
+        return responseCreator.createAjaxResponse(json);
     }
 }

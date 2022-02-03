@@ -1,7 +1,7 @@
 package com.epam.jwd.fitness_center.controller.command.impl;
 
 import com.epam.jwd.fitness_center.controller.PagePath;
-import com.epam.jwd.fitness_center.controller.RequestFactory;
+import com.epam.jwd.fitness_center.controller.ResponseCreator;
 import com.epam.jwd.fitness_center.controller.command.*;
 import com.epam.jwd.fitness_center.exception.ServiceException;
 import com.epam.jwd.fitness_center.model.entity.UserRole;
@@ -19,11 +19,11 @@ public class ManageUserDataCommand implements Command {
     public static final String STATUS_FIELD_NAME = "status";
     public static final String ROLE_FIELD_NAME = "role";
 
-    private final RequestFactory requestFactory;
+    private final ResponseCreator responseCreator;
     private final UserService userService;
 
-    ManageUserDataCommand(RequestFactory requestFactory) {
-        this.requestFactory = requestFactory;
+    ManageUserDataCommand(ResponseCreator responseCreator) {
+        this.responseCreator = responseCreator;
         userService = ServiceProvider.getInstance().getUserService();
     }
 
@@ -34,7 +34,7 @@ public class ManageUserDataCommand implements Command {
         String[] values = request.getParameterValues(RequestParameter.VALUE);
         Optional<Long> userIdOptional = CommandHelper.retrievePositiveLongParameter(request, RequestParameter.USER_ID);
         if (!userIdOptional.isPresent() || fieldNames == null || values == null || fieldNames.length != values.length) {
-            return requestFactory.createRedirectResponse(PagePath.ERROR);
+            return responseCreator.createRedirectResponse(PagePath.ERROR);
         }
         long userId = userIdOptional.get();
         try {
@@ -48,14 +48,14 @@ public class ManageUserDataCommand implements Command {
                         break;
                     default:
                         LOG.warn("Not found field name: {}", fieldNames[i]);
-                        return requestFactory.createRedirectResponse(PagePath.ERROR);
+                        return responseCreator.createRedirectResponse(PagePath.ERROR);
                 }
             }
         } catch (ServiceException e) {
             LOG.error(e);
-            return requestFactory.createRedirectResponse(PagePath.ERROR);
+            return responseCreator.createRedirectResponse(PagePath.ERROR);
         }
         String json = new Gson().toJson(ResourceBundleKey.INFO_SUCCESS);
-        return requestFactory.createAjaxResponse(json);
+        return responseCreator.createAjaxResponse(json);
     }
 }
