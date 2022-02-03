@@ -1,7 +1,7 @@
 package com.epam.jwd.fitness_center.controller.command.impl;
 
 import com.epam.jwd.fitness_center.controller.PagePath;
-import com.epam.jwd.fitness_center.controller.RequestFactory;
+import com.epam.jwd.fitness_center.controller.ResponseCreator;
 import com.epam.jwd.fitness_center.controller.command.*;
 import com.epam.jwd.fitness_center.exception.ServiceException;
 import com.epam.jwd.fitness_center.model.entity.User;
@@ -17,11 +17,11 @@ import java.util.Optional;
 public class EditUserDataCommand implements Command {
     private static final Logger LOG = LogManager.getLogger(EditUserDataCommand.class);
 
-    private final RequestFactory requestFactory;
+    private final ResponseCreator responseCreator;
     private final UserService userService;
 
-    EditUserDataCommand(RequestFactory requestFactory) {
-        this.requestFactory = requestFactory;
+    EditUserDataCommand(ResponseCreator responseCreator) {
+        this.responseCreator = responseCreator;
         userService = ServiceProvider.getInstance().getUserService();
     }
 
@@ -33,7 +33,7 @@ public class EditUserDataCommand implements Command {
         if (!userOptional.isPresent() || fieldName == null || value == null) {
             //todo add logs like this
             LOG.error("Cannot execute command. Parameters:{},{}", fieldName, value);
-            return requestFactory.createRedirectResponse(PagePath.ERROR);
+            return responseCreator.createRedirectResponse(PagePath.ERROR);
         }
         User user = userOptional.get();
         try {
@@ -44,9 +44,9 @@ public class EditUserDataCommand implements Command {
         } catch (ServiceException e) {
             //todo add logs like this
             LOG.error(e);
-            return requestFactory.createRedirectResponse(PagePath.ERROR);
+            return responseCreator.createRedirectResponse(PagePath.ERROR);
         }
         String json = new Gson().toJson(ResourceBundleKey.INFO_SUCCESS);
-        return requestFactory.createAjaxResponse(json);
+        return responseCreator.createAjaxResponse(json);
     }
 }

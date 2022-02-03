@@ -1,7 +1,7 @@
 package com.epam.jwd.fitness_center.controller.command.impl;
 
 import com.epam.jwd.fitness_center.controller.PagePath;
-import com.epam.jwd.fitness_center.controller.RequestFactory;
+import com.epam.jwd.fitness_center.controller.ResponseCreator;
 import com.epam.jwd.fitness_center.controller.command.*;
 import com.epam.jwd.fitness_center.exception.ServiceException;
 import com.epam.jwd.fitness_center.model.entity.User;
@@ -20,10 +20,10 @@ public class ResendEmailConfirmationCommand implements Command {
 
     private final UserService userService;
     private final MailService mailService;
-    private final RequestFactory requestFactory;
+    private final ResponseCreator responseCreator;
 
-    ResendEmailConfirmationCommand(RequestFactory requestFactory) {
-        this.requestFactory = requestFactory;
+    ResendEmailConfirmationCommand(ResponseCreator responseCreator) {
+        this.responseCreator = responseCreator;
         this.userService = ServiceProvider.getInstance().getUserService();
         this.mailService = ServiceProvider.getInstance().getMailService();
     }
@@ -34,24 +34,24 @@ public class ResendEmailConfirmationCommand implements Command {
         Optional<User> optionalUser;
         if (!loginObj.isPresent()) {
             LOG.error("Error during pull login from session");
-            return requestFactory.createRedirectResponse(PagePath.ERROR);
+            return responseCreator.createRedirectResponse(PagePath.ERROR);
         }
         final String login = (String) loginObj.get();
         try {
             optionalUser = userService.findUserByEmail(login);
         } catch (ServiceException e) {
             LOG.error("Error during searching user by email", e);
-            return requestFactory.createRedirectResponse(PagePath.ERROR500);
+            return responseCreator.createRedirectResponse(PagePath.ERROR500);
         }
         if (!optionalUser.isPresent()) {
             request.addToSession(Attribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_ERROR_USER_NOT_FOUND);
-            return requestFactory.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
+            return responseCreator.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
         }
 
         User user = optionalUser.get();
         if (user.getStatus() != UserStatus.UNCONFIRMED) {
             request.addToSession(Attribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_ERROR_USER_CONFIRMED);
-            return requestFactory.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
+            return responseCreator.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
         }
 
         try {
@@ -60,10 +60,10 @@ public class ResendEmailConfirmationCommand implements Command {
                             .orElse(Locale.getDefault().toString()));
         } catch (ServiceException e) {
             LOG.error("Error during sendConfirmationEmail", e);
-            return requestFactory.createRedirectResponse(PagePath.ERROR500);
+            return responseCreator.createRedirectResponse(PagePath.ERROR500);
         }
         request.addToSession(Attribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_EMAIL_RESEND);
         request.addToSession(Attribute.ADDITIONAL_INFO, login);
-        return requestFactory.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
+        return responseCreator.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
     }
 }

@@ -1,7 +1,7 @@
 package com.epam.jwd.fitness_center.controller.command.impl;
 
 import com.epam.jwd.fitness_center.controller.PagePath;
-import com.epam.jwd.fitness_center.controller.RequestFactory;
+import com.epam.jwd.fitness_center.controller.ResponseCreator;
 import com.epam.jwd.fitness_center.controller.command.*;
 import com.epam.jwd.fitness_center.exception.ServiceException;
 import com.epam.jwd.fitness_center.model.entity.Order;
@@ -23,10 +23,10 @@ public class MakeOrderCommand implements Command {
 
     private final OrderService orderService;
     private final UserService userService;
-    private final RequestFactory requestFactory;
+    private final ResponseCreator responseCreator;
 
-    MakeOrderCommand(RequestFactory requestFactory) {
-        this.requestFactory = requestFactory;
+    MakeOrderCommand(ResponseCreator responseCreator) {
+        this.responseCreator = responseCreator;
         this.orderService = ServiceProvider.getInstance().getOrderService();
         this.userService = ServiceProvider.getInstance().getUserService();
     }
@@ -35,21 +35,21 @@ public class MakeOrderCommand implements Command {
     public CommandResponse execute(CommandRequest request) {
         Optional<Long> itemIdOptional, trainerIdOptional, periodOptional;
         Optional<UserDetails> userDetailsOptional = CommandHelper.retrieveUserDetailsFromSession(request);
-        if (!userDetailsOptional.isPresent()) return requestFactory.createRedirectResponse(PagePath.ERROR);
+        if (!userDetailsOptional.isPresent()) return responseCreator.createRedirectResponse(PagePath.ERROR);
         UserDetails userDetails = userDetailsOptional.get();
         itemIdOptional = parseLongRequestParameter(request, RequestParameter.PROGRAM);
         periodOptional = parseLongRequestParameter(request, RequestParameter.PERIOD);
-        if (!itemIdOptional.isPresent()) return requestFactory.createRedirectResponse(PagePath.ERROR);
+        if (!itemIdOptional.isPresent()) return responseCreator.createRedirectResponse(PagePath.ERROR);
         if (!periodOptional.isPresent()) periodOptional = Optional.of(DEFAULT_PERIOD);
         if (request.getParameter("trainer") != null) {
             trainerIdOptional = parseLongRequestParameter(request, Attribute.TRAINER);
-            if (!trainerIdOptional.isPresent()) return requestFactory.createRedirectResponse(PagePath.ERROR);
+            if (!trainerIdOptional.isPresent()) return responseCreator.createRedirectResponse(PagePath.ERROR);
             try {
                 userService.updateUserStatus(UserStatus.ACTIVE, userDetails.getUserId());
                 userService.updateUserDetailsTrainerId(userDetails, trainerIdOptional.get());
             } catch (ServiceException e) {
                 LOG.error(e);
-                return requestFactory.createRedirectResponse(PagePath.ERROR500);
+                return responseCreator.createRedirectResponse(PagePath.ERROR500);
             }
         }
         Order order;
@@ -58,12 +58,12 @@ public class MakeOrderCommand implements Command {
                     userDetails.getPersonalTrainerId(), periodOptional.get(), composeCommentForTrainer(request));
         } catch (ServiceException e) {
             LOG.error(e);
-            return requestFactory.createRedirectResponse(PagePath.ERROR500);
+            return responseCreator.createRedirectResponse(PagePath.ERROR500);
         }
         request.addToSession(Attribute.ORDER, order);
         request.addToSession(Attribute.CREDIT_PERCENTAGE, PaymentService.DEFAULT_CREDIT_PERCENTAGE);
         request.addToSession(Attribute.CREDIT_PERIOD, PaymentService.DEFAULT_CREDIT_PERIOD);
-        return requestFactory.createRedirectResponse(PagePath.SHOW_PAYMENT_REDIRECT);
+        return responseCreator.createRedirectResponse(PagePath.SHOW_PAYMENT_REDIRECT);
     }
 
     private String composeCommentForTrainer(CommandRequest request) {

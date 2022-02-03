@@ -30,13 +30,10 @@ public class ItemDaoImpl extends BaseDao<Item> {
 
     private static final String UPDATE_QUERY_ADDITION = "name = ?, price = ?";
 
-    {
-        updateQuery = String.format(updateQuery, UPDATE_QUERY_ADDITION);
-        insertQuery = INSERT_NEW_ITEM_QUERY;
-    }
-
     ItemDaoImpl(ConnectionPool pool) {
         super(pool, LOG);
+        updateQuery = String.format(updateQuery, UPDATE_QUERY_ADDITION);
+        insertQuery = INSERT_NEW_ITEM_QUERY;
     }
 
     @Override

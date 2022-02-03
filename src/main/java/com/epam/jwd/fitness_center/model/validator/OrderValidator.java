@@ -15,5 +15,4 @@ public final class OrderValidator {
         }
         return cardNumber.matches(CARD_NUMBER_REGEX);
     }
-
 }

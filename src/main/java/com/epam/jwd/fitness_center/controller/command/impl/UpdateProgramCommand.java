@@ -1,7 +1,7 @@
 package com.epam.jwd.fitness_center.controller.command.impl;
 
 import com.epam.jwd.fitness_center.controller.PagePath;
-import com.epam.jwd.fitness_center.controller.RequestFactory;
+import com.epam.jwd.fitness_center.controller.ResponseCreator;
 import com.epam.jwd.fitness_center.controller.command.*;
 import com.epam.jwd.fitness_center.exception.ServiceException;
 import com.epam.jwd.fitness_center.model.entity.*;
@@ -17,12 +17,12 @@ public class UpdateProgramCommand implements Command {
     private static final Logger LOG = LogManager.getLogger(UpdateProgramCommand.class);
     public static final String PROGRAM_NOT_CHANGED_MARKER = "false";
     public static final String PROGRAM_REFUSED_MARKER = "refused";
-    private final RequestFactory requestFactory;
+    private final ResponseCreator responseCreator;
     private final OrderService orderService;
     private final ProgramService programService;
 
-    UpdateProgramCommand(RequestFactory requestFactory) {
-        this.requestFactory = requestFactory;
+    UpdateProgramCommand(ResponseCreator responseCreator) {
+        this.responseCreator = responseCreator;
         orderService = ServiceProvider.getInstance().getOrderService();
         programService = ServiceProvider.getInstance().getProgramService();
     }
@@ -33,38 +33,38 @@ public class UpdateProgramCommand implements Command {
         String comment = request.getParameter(RequestParameter.COMMENT);
         Optional<Long> orderIdOptional = CommandHelper.retrievePositiveLongParameter(request, RequestParameter.ORDER_ID);
         if (!orderIdOptional.isPresent() || programChangeMarker == null) {
-            return requestFactory.createRedirectResponse(PagePath.ERROR);
+            return responseCreator.createRedirectResponse(PagePath.ERROR);
         }
         Optional<Object> optionalUser = request.retrieveFromSession(Attribute.USER);
         long orderId = orderIdOptional.get();
         try {
             Optional<Order> optionalOrder = orderService.findOrderById(orderId);
             if (!optionalUser.isPresent() || !optionalOrder.isPresent()) {
-                return CommandHelper.createInfoErrorResponse(requestFactory, request);
+                return CommandHelper.createInfoErrorResponse(responseCreator, request);
             }
             Order order = optionalOrder.get();
             User user = (User) optionalUser.get();
             Optional<Program> programOptional;
             if (order.getOrderStatus() != OrderStatus.PENDING_CLIENT
                     && order.getOrderStatus() != OrderStatus.PENDING_TRAINER) {
-                return CommandHelper.createInfoErrorResponse(requestFactory, request);
+                return CommandHelper.createInfoErrorResponse(responseCreator, request);
             }
             if (user.getRole() == UserRole.TRAINER) {
                 if (!order.getAssignmentTrainerId().equals(user.getId()) && !order.getTrainerId().equals(user.getId())) {
-                    return CommandHelper.createInfoErrorResponse(requestFactory, request);
+                    return CommandHelper.createInfoErrorResponse(responseCreator, request);
                 }
                 programOptional = programService.find(orderId);
             } else {
                 programOptional = programService.findByOrderAndClientId(orderId, user.getId());
             }
             if (!programOptional.isPresent()) {
-                return CommandHelper.createInfoErrorResponse(requestFactory, request);
+                return CommandHelper.createInfoErrorResponse(responseCreator, request);
             }
             Program program = programOptional.get();
             request.addToSession(Attribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_SUCCESS);
             if (programChangeMarker.equals(PROGRAM_NOT_CHANGED_MARKER)) {
                 orderService.updateOrderStatus(OrderStatus.ACTIVE, orderId);
-                return requestFactory.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
+                return responseCreator.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
             }
             if (programChangeMarker.equals(PROGRAM_REFUSED_MARKER)) {
                 program.setProgramStatus(ProgramStatus.REFUSED);
@@ -72,7 +72,7 @@ public class UpdateProgramCommand implements Command {
                 order.setComment(comment);
             } else {
                 if (!updateProgram(request, program, user.getRole())) {
-                    return requestFactory.createRedirectResponse(PagePath.ERROR);
+                    return responseCreator.createRedirectResponse(PagePath.ERROR);
                 }
             }
             if (user.getRole() == UserRole.TRAINER) {
@@ -83,9 +83,9 @@ public class UpdateProgramCommand implements Command {
             orderService.update(order);
         } catch (ServiceException e) {
             LOG.error("Error during order confirmation", e);
-            return requestFactory.createRedirectResponse(PagePath.ERROR500);
+            return responseCreator.createRedirectResponse(PagePath.ERROR500);
         }
-        return requestFactory.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
+        return responseCreator.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
     }
 
     private boolean updateProgram(CommandRequest request, Program program, UserRole role) {

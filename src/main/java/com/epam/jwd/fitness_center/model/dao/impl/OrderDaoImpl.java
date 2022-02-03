@@ -104,15 +104,12 @@ public class OrderDaoImpl extends BaseDao<Order> implements OrderDao {
             "SET order_status_id = (SELECT id FROM order_status WHERE order_status=?)\n" +
             "WHERE `order`.id = ?";
 
-    {
+    OrderDaoImpl(ConnectionPool pool) {
+        super(pool, LOG);
         selectAllQuery = SELECT_ALL_ORDERS;
         insertQuery = INSERT_NEW_ORDER;
         selectByIdQuery = SELECT_ORDER_BY_ID;
         updateQuery = UPDATE_ORDER_BY_ID;
-    }
-
-    OrderDaoImpl(ConnectionPool pool) {
-        super(pool, LOG);
     }
 
     @Override

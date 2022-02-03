@@ -1,7 +1,7 @@
 package com.epam.jwd.fitness_center.controller.command.impl;
 
 import com.epam.jwd.fitness_center.controller.PagePath;
-import com.epam.jwd.fitness_center.controller.RequestFactory;
+import com.epam.jwd.fitness_center.controller.ResponseCreator;
 import com.epam.jwd.fitness_center.controller.command.*;
 import com.epam.jwd.fitness_center.exception.ServiceException;
 import com.epam.jwd.fitness_center.model.entity.Order;
@@ -16,12 +16,12 @@ import java.util.Optional;
 
 public class PaymentCommand implements Command {
     private static final Logger LOG = LogManager.getLogger(PaymentCommand.class);
-    private final RequestFactory requestFactory;
+    private final ResponseCreator responseCreator;
     private final PaymentService paymentService;
     private final OrderService orderService;
 
-    PaymentCommand(RequestFactory requestFactory) {
-        this.requestFactory = requestFactory;
+    PaymentCommand(ResponseCreator responseCreator) {
+        this.responseCreator = responseCreator;
         paymentService = ServiceProvider.getInstance().getPaymentService();
         orderService = ServiceProvider.getInstance().getOrderService();
     }
@@ -30,11 +30,11 @@ public class PaymentCommand implements Command {
     public CommandResponse execute(CommandRequest request) {
         Optional<Object> orderOptional = request.retrieveFromSession(Attribute.ORDER);
         if (!orderOptional.isPresent()) {
-            return requestFactory.createRedirectResponse(PagePath.ERROR);
+            return responseCreator.createRedirectResponse(PagePath.ERROR);
         }
         Order order = (Order) orderOptional.get();
         if (order.getOrderStatus() != OrderStatus.PAYMENT_AWAITING) {
-            return requestFactory.createRedirectResponse(PagePath.ERROR);
+            return responseCreator.createRedirectResponse(PagePath.ERROR);
         }
         String cardNumber = request.getParameter(RequestParameter.CARD_NUMBER);
         if (request.getParameter(RequestParameter.CREDIT_CHECKBOX) != null) {
@@ -52,7 +52,7 @@ public class PaymentCommand implements Command {
         request.removeFromSession(Attribute.CREDIT_PERCENTAGE);
         request.removeFromSession(Attribute.CREDIT_PERIOD);
         request.addToSession(Attribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_SUCCESS);
-        return requestFactory.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
+        return responseCreator.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
     }
 
     private Optional<CommandResponse> processPayment(CommandRequest request, Order order, String cardNumber) {
@@ -60,19 +60,19 @@ public class PaymentCommand implements Command {
             if (!paymentService.checkCardExistence(cardNumber)) {
                 request.addToSession(Attribute.ERROR_PAYMENT_BUNDLE_KEY,
                         ResourceBundleKey.INFO_PAYMENT_CARD_NOT_EXIST);
-                return Optional.of(requestFactory.createRedirectResponse(PagePath.SHOW_PAYMENT_REDIRECT));
+                return Optional.of(responseCreator.createRedirectResponse(PagePath.SHOW_PAYMENT_REDIRECT));
             }
             if (!paymentService.checkCardBalance(cardNumber, order.getPrice(), false)) {
                 request.addToSession(Attribute.ERROR_PAYMENT_BUNDLE_KEY,
                         ResourceBundleKey.INFO_PAYMENT_INSUFFICIENT_FUNDS);
-                return Optional.of(requestFactory.createRedirectResponse(PagePath.SHOW_PAYMENT_REDIRECT));
+                return Optional.of(responseCreator.createRedirectResponse(PagePath.SHOW_PAYMENT_REDIRECT));
             }
             orderService.updateOrderStatus(OrderStatus.UNTAKEN, order.getId());
             paymentService.doPayment(cardNumber, order);
             return Optional.empty();
         } catch (ServiceException e) {
             LOG.error("Error during payment processing", e);
-            return Optional.of(requestFactory.createRedirectResponse(PagePath.ERROR500));
+            return Optional.of(responseCreator.createRedirectResponse(PagePath.ERROR500));
         }
     }
 
@@ -82,19 +82,19 @@ public class PaymentCommand implements Command {
             if (!paymentService.checkCardExistence(cardNumber)) {
                 request.addToSession(Attribute.ERROR_PAYMENT_BUNDLE_KEY,
                         ResourceBundleKey.INFO_PAYMENT_CARD_NOT_EXIST);
-                return Optional.of(requestFactory.createRedirectResponse(PagePath.SHOW_PAYMENT_REDIRECT));
+                return Optional.of(responseCreator.createRedirectResponse(PagePath.SHOW_PAYMENT_REDIRECT));
             }
             if (!paymentService.checkCardBalance(cardNumber, order.getPrice(), true)) {
                 request.addToSession(Attribute.ERROR_PAYMENT_BUNDLE_KEY,
                         ResourceBundleKey.INFO_PAYMENT_INSUFFICIENT_FUNDS);
-                return Optional.of(requestFactory.createRedirectResponse(PagePath.SHOW_PAYMENT_REDIRECT));
+                return Optional.of(responseCreator.createRedirectResponse(PagePath.SHOW_PAYMENT_REDIRECT));
             }
             orderService.updateOrderStatus(OrderStatus.UNTAKEN, order.getId());
             paymentService.establishCredit(cardNumber, order);
             return Optional.empty();
         } catch (ServiceException e) {
             LOG.error("Error during credit processing", e);
-            return Optional.of(requestFactory.createRedirectResponse(PagePath.ERROR500));
+            return Optional.of(responseCreator.createRedirectResponse(PagePath.ERROR500));
         }
     }
 }

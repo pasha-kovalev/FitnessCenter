@@ -1,13 +1,13 @@
 package com.epam.jwd.fitness_center.controller.command;
 
-import com.epam.jwd.fitness_center.controller.RequestFactory;
+import com.epam.jwd.fitness_center.controller.ResponseCreator;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
 import java.util.Optional;
 
-/** Interface of result of {@link RequestFactory#createRequest(HttpServletRequest)} that wraps http request
+/** Interface of result of {@link ResponseCreator#createRequest(HttpServletRequest)} that wraps http request
  *
  * @author Pavel Kovalev
  * @version 1.0

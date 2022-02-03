@@ -1,7 +1,7 @@
 package com.epam.jwd.fitness_center.controller.command.impl;
 
 import com.epam.jwd.fitness_center.controller.PagePath;
-import com.epam.jwd.fitness_center.controller.RequestFactory;
+import com.epam.jwd.fitness_center.controller.ResponseCreator;
 import com.epam.jwd.fitness_center.controller.command.Attribute;
 import com.epam.jwd.fitness_center.controller.command.Command;
 import com.epam.jwd.fitness_center.controller.command.CommandRequest;
@@ -23,12 +23,12 @@ import java.util.Optional;
 
 public class ShowOrderPageCommand implements Command {
     private static final Logger LOG = LogManager.getLogger(ShowOrderPageCommand.class);
-    private final RequestFactory requestFactory;
+    private final ResponseCreator responseCreator;
     private final ItemServiceImpl itemService;
     private final UserService userService;
 
-    ShowOrderPageCommand(RequestFactory requestFactory) {
-        this.requestFactory = requestFactory;
+    ShowOrderPageCommand(ResponseCreator responseCreator) {
+        this.responseCreator = responseCreator;
         itemService = ServiceProvider.getInstance().getItemService();
         userService = ServiceProvider.getInstance().getUserService();
     }
@@ -44,12 +44,12 @@ public class ShowOrderPageCommand implements Command {
             trainers = userService.findActiveTrainers();
         } catch (ServiceException e) {
             LOG.error(e);
-            return requestFactory.createRedirectResponse(PagePath.ERROR500);
+            return responseCreator.createRedirectResponse(PagePath.ERROR500);
         }
         request.addAttributeToJsp(Attribute.PRODUCT_LIST, products);
         request.addAttributeToJsp(Attribute.TRAINER_LIST, trainers);
         addDiscountListToJsp(request, products);
-        return requestFactory.createForwardResponse(PagePath.SHOW_ORDER);
+        return responseCreator.createForwardResponse(PagePath.SHOW_ORDER);
     }
 
     private void addDiscountListToJsp(CommandRequest request, List<Item> products) {

@@ -1,7 +1,7 @@
 package com.epam.jwd.fitness_center.controller.command.impl;
 
 import com.epam.jwd.fitness_center.controller.PagePath;
-import com.epam.jwd.fitness_center.controller.RequestFactory;
+import com.epam.jwd.fitness_center.controller.ResponseCreator;
 import com.epam.jwd.fitness_center.controller.command.Attribute;
 import com.epam.jwd.fitness_center.controller.command.Command;
 import com.epam.jwd.fitness_center.controller.command.CommandRequest;
@@ -17,11 +17,11 @@ import java.util.List;
 
 public class ShowAboutPageCommand implements Command {
     private static final Logger LOG = LogManager.getLogger(ShowAboutPageCommand.class);
-    private final RequestFactory requestFactory;
+    private final ResponseCreator responseCreator;
     private final UserService userService;
 
-    ShowAboutPageCommand(RequestFactory requestFactory) {
-        this.requestFactory = requestFactory;
+    ShowAboutPageCommand(ResponseCreator responseCreator) {
+        this.responseCreator = responseCreator;
         userService = ServiceProvider.getInstance().getUserService();
     }
 
@@ -32,9 +32,9 @@ public class ShowAboutPageCommand implements Command {
             trainers = userService.findActiveTrainers();
         } catch (ServiceException e) {
             LOG.error(e);
-            return requestFactory.createRedirectResponse(PagePath.ERROR500);
+            return responseCreator.createRedirectResponse(PagePath.ERROR500);
         }
         request.addAttributeToJsp(Attribute.TRAINER_LIST, trainers);
-        return requestFactory.createForwardResponse(PagePath.SHOW_ABOUT);
+        return responseCreator.createForwardResponse(PagePath.SHOW_ABOUT);
     }
 }

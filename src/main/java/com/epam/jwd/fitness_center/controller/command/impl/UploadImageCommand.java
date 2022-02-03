@@ -1,7 +1,7 @@
 package com.epam.jwd.fitness_center.controller.command.impl;
 
 import com.epam.jwd.fitness_center.controller.PagePath;
-import com.epam.jwd.fitness_center.controller.RequestFactory;
+import com.epam.jwd.fitness_center.controller.ResponseCreator;
 import com.epam.jwd.fitness_center.controller.command.Command;
 import com.epam.jwd.fitness_center.controller.command.CommandHelper;
 import com.epam.jwd.fitness_center.controller.command.CommandRequest;
@@ -23,11 +23,11 @@ import java.util.Optional;
 
 public class UploadImageCommand implements Command {
     private static final Logger LOG = LogManager.getLogger(UploadImageCommand.class);
-    private final RequestFactory requestFactory;
+    private final ResponseCreator responseCreator;
     private final UserService userService;
 
-    UploadImageCommand(RequestFactory requestFactory) {
-        this.requestFactory = requestFactory;
+    UploadImageCommand(ResponseCreator responseCreator) {
+        this.responseCreator = responseCreator;
         userService = ServiceProvider.getInstance().getUserService();
     }
 
@@ -36,12 +36,12 @@ public class UploadImageCommand implements Command {
         Optional<User> userOptional = CommandHelper.retrieveUserFromSession(request);
         Optional<Part> filePartOptional = request.getPart("file");
         if (!userOptional.isPresent() || !filePartOptional.isPresent()) {
-            return requestFactory.createRedirectResponse(PagePath.ERROR);
+            return responseCreator.createRedirectResponse(PagePath.ERROR);
         }
         User user = userOptional.get();
         Optional<String> fileNameOptional = uploadImage(request, filePartOptional.get(), user);
         if (!fileNameOptional.isPresent()) {
-            return requestFactory.createRedirectResponse(PagePath.ERROR);
+            return responseCreator.createRedirectResponse(PagePath.ERROR);
         }
         String photoPath = "./images/" + fileNameOptional.get();
         user.setPhotoPath(photoPath);
@@ -49,9 +49,9 @@ public class UploadImageCommand implements Command {
             userService.update(user);
         } catch (ServiceException e) {
             LOG.error("Unable to update user. {}", e.getMessage());
-            return requestFactory.createRedirectResponse(PagePath.ERROR500);
+            return responseCreator.createRedirectResponse(PagePath.ERROR500);
         }
-        return requestFactory.createRedirectResponse(PagePath.SHOW_CABINET_REDIRECT);
+        return responseCreator.createRedirectResponse(PagePath.SHOW_CABINET_REDIRECT);
     }
 
     private Optional<String> uploadImage(CommandRequest request, Part filePart, User user) {
