@@ -56,6 +56,12 @@ public class LoginCommand implements Command {
         }
         if (userDetails != null) {
             request.addToSession(Attribute.USER_DETAILS, userDetails);
+            try {
+                userService.findUserById(userDetails.getPersonalTrainerId())
+                           .ifPresent(u -> request.addToSession(Attribute.TRAINER_EMAIL, u.getEmail()));
+            } catch (ServiceException e) {
+                LOG.error("Unable to find personal trainer for user with id {}", user.getId());
+            }
         }
         return responseCreator.createRedirectResponse(PagePath.MAIN_REDIRECT);
     }

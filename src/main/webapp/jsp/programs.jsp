@@ -80,16 +80,13 @@
         <div class="w3-col l3 m6 w3-light-grey w3-container w3-padding-16">
             <p>${specText1}</p>
         </div>
-
         <div class="w3-col l3 m6 w3-grey w3-container w3-padding-16">
             <p>${specText2}</p>
 
         </div>
-
         <div class="w3-col l3 m6 w3-dark-grey w3-container w3-padding-16">
             <p>${specText3} </p>
         </div>
-
         <div class="w3-col l3 m6 w3-black w3-container w3-padding-16">
             <p>${specText4}</p>
         </div>
@@ -114,13 +111,12 @@
             <h3>${planTitle}</h3>
             <p>${planDesc}</p>
         </div>
-
         <c:forEach var="item" items="${requestScope.productList}" >
             <c:if test="${not (item.name eq 'transformation')}">
                 <div class="w3-third w3-margin-bottom">
                     <ul class="w3-ul w3-border w3-center w3-hover-shadow">
                         <li class="w3-black w3-xlarge w3-padding-32">
-                                ${fn:toUpperCase(fn:substring(item.name, 0, 1))}${fn:substring(item.name, 1, item.name.length())}
+                            ${fn:toUpperCase(fn:substring(item.name, 0, 1))}${fn:substring(item.name, 1, item.name.length())}
                         </li>
                         <c:forEach var="li" items="${fn:split(item.description, '\\\\')}" >
                             <li class="w3-padding-16">${li}</li>

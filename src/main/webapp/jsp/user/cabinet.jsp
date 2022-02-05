@@ -58,12 +58,17 @@
         </div>
     </div>
     <hr>
+    <div class="w3-padding">
+        <span>Тренер: <strong>${sessionScope.trainerEmail}</strong></span><br>
+    </div>
     <div class="w3-bar-block">
         <button class="w3-bar-item w3-button w3-padding" onclick="showOrders(true)">
             <i class="fa fa-bullseye fa-fw"></i> ${currentOrders}</button>
         <button class="w3-bar-item w3-button w3-padding" onclick="showOrders(false)">
             <i class="fa fa-history fa-fw"></i>${orders}</button>
     </div>
+
+
 </nav>
 <div class="w3-main" style="margin-left:300px;padding-top:90px; height: auto; padding-bottom: 50px; min-height: 95%">
     <div id="mainData" class="userData"></div>

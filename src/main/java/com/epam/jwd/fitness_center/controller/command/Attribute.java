@@ -19,6 +19,7 @@ public final class Attribute {
     public static final String PROGRAM = "program";
     public static final String CURRENT_PAGE = "currentPage";
     public static final String ITEM = "item";
+    public static final String TRAINER_EMAIL = "trainerEmail";
 
     private Attribute() {
     }
