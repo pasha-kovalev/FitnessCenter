@@ -39,6 +39,7 @@ public final class RequestParameter {
     public static final String PRICE = "price";
     public static final String IS_NEW = "new";
     public static final String DISCOUNT = "discount";
+    public static final String DESCRIPTION = "description";
 
     private RequestParameter() {
     }

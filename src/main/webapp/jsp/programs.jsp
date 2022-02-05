@@ -1,5 +1,6 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <fmt:setLocale value="${sessionScope.locale}"/>
 <fmt:setBundle basename="locale"/>
@@ -53,6 +54,14 @@
     h1, h2, h3, h4, h5, h6 {
         font-family: "PT serif";
     }
+    ul {
+        min-height: 755px;
+        display: flex;
+        flex-direction: column;
+    }
+    ul > :nth-last-child(2){
+        margin-top: auto;
+    }
 </style>
 <body style="background-color: #F5F5F5; color: black">>
 <jsp:include page="component/header.jsp" flush="true"/>
@@ -100,103 +109,42 @@
             <img src="${pageContext.request.contextPath}/images/beforeafter3.png" style="width:100%">
         </div>
     </div>
-
     <div class="w3-row-padding" id="plans">
         <div class="w3-center w3-padding-64">
             <h3>${planTitle}</h3>
             <p>${planDesc}</p>
         </div>
 
-        <div class="w3-third w3-margin-bottom">
-            <ul class="w3-ul w3-border w3-center w3-hover-shadow">
-                <li class="w3-black w3-xlarge w3-padding-32">${basicTitle}</li>
-                <li class="w3-padding-16"> ${basicLi1}</li>
-                <li class="w3-padding-16">${basicLi2}</li>
-                <li class="w3-padding-16">
-                    ${basicLi3}</li>
-                <li class="w3-padding-16">
-                    ${basicLi4}</li>
-                <li class="w3-padding-16">
-                    <h2 class="w3-wide">${basicPrice}</h2>
-                    <span class="w3-opacity">${permonth}</span>
-                </li>
-
-                <li class="w3-light-grey w3-padding-24">
-                    <c:choose>
-                        <c:when test="${empty sessionScope.user}">
-                            <a href="${pageContext.request.contextPath}/controller?command=show_signup"
-                               class="w3-button w3-white w3-padding-large">${sign}</a>
-                        </c:when>
-                        <c:otherwise>
-                            <a href="${pageContext.request.contextPath}/controller?command=show_order"
-                               class="w3-button w3-white w3-padding-large">${buy}</a>
-                        </c:otherwise>
-                    </c:choose>
-                </li>
-            </ul>
-        </div>
-
-        <div class="w3-third w3-margin-bottom">
-            <ul class="w3-ul w3-border w3-center w3-hover-shadow">
-                <li class="w3-dark-grey w3-xlarge w3-padding-32">${proTitle}</li>
-                <li class="w3-padding-16">
-                    ${proLi1}</li>
-                <li class="w3-padding-16"> ${proLi2}</li>
-                <li class="w3-padding-16">${proLi3}</li>
-                <li class="w3-padding-16">
-                    ${proLi4}</li>
-                <li class="w3-padding-16">
-                    ${proLi5}</li>
-
-                <li class="w3-padding-16">
-                    <h2 class="w3-wide">${proPrice}</h2>
-                    <span class="w3-opacity">${permonth}</span>
-                </li>
-                <li class="w3-light-grey w3-padding-24">
-                    <c:choose>
-                        <c:when test="${empty sessionScope.user}">
-                            <a href="${pageContext.request.contextPath}/controller?command=show_signup"
-                               class="w3-button w3-white w3-padding-large">${sign}</a>
-                        </c:when>
-                        <c:otherwise>
-                            <a href="${pageContext.request.contextPath}/controller?command=show_order"
-                               class="w3-button w3-white w3-padding-large">${buy}</a>
-                        </c:otherwise>
-                    </c:choose>
-                </li>
-            </ul>
-        </div>
-
-        <div class="w3-third w3-margin-bottom">
-            <ul class="w3-ul w3-border w3-center w3-hover-shadow">
-                <li class="w3-black w3-xlarge w3-padding-32">${premiumTitle}</li>
-                <li class="w3-padding-16">
-                    ${premiumLi1}</li>
-                <li class="w3-padding-16">
-                    ${premiumLi2}</li>
-                <li class="w3-padding-16">${premiumLi3}</li>
-                <li class="w3-padding-16">${premiumLi4}</li>
-                <li class="w3-padding-16">${premiumLi5}</li>
-                <li class="w3-padding-16">${premiumLi6}</li>
-
-                <li class="w3-padding-16">
-                    <h2 class="w3-wide">${premiumPrice}</h2>
-                    <span class="w3-opacity">${permonth}</span>
-                </li>
-                <li class="w3-light-grey w3-padding-24">
-                    <c:choose>
-                        <c:when test="${empty sessionScope.user}">
-                            <a href="${pageContext.request.contextPath}/controller?command=show_signup"
-                               class="w3-button w3-white w3-padding-large">${sign}</a>
-                        </c:when>
-                        <c:otherwise>
-                            <a href="${pageContext.request.contextPath}/controller?command=show_order"
-                               class="w3-button w3-white w3-padding-large">${buy}</a>
-                        </c:otherwise>
-                    </c:choose>
-                </li>
-            </ul>
-        </div>
+        <c:forEach var="item" items="${requestScope.productList}" >
+            <c:if test="${not (item.name eq 'transformation')}">
+                <div class="w3-third w3-margin-bottom">
+                    <ul class="w3-ul w3-border w3-center w3-hover-shadow">
+                        <li class="w3-black w3-xlarge w3-padding-32">
+                                ${fn:toUpperCase(fn:substring(item.name, 0, 1))}${fn:substring(item.name, 1, item.name.length())}
+                        </li>
+                        <c:forEach var="li" items="${fn:split(item.description, '\\\\')}" >
+                            <li class="w3-padding-16">${li}</li>
+                        </c:forEach>
+                        <li class="w3-padding-16">
+                            <h2>${item.price}BYN</h2>
+                            <span class="w3-opacity">${permonth}</span>
+                        </li>
+                        <li class="w3-light-grey w3-padding-24">
+                            <c:choose>
+                                <c:when test="${empty sessionScope.user}">
+                                    <a href="${pageContext.request.contextPath}/controller?command=show_signup"
+                                       class="w3-button w3-white w3-padding-large">${sign}</a>
+                                </c:when>
+                                <c:otherwise>
+                                    <a href="${pageContext.request.contextPath}/controller?command=show_order"
+                                       class="w3-button w3-white w3-padding-large">${buy}</a>
+                                </c:otherwise>
+                            </c:choose>
+                        </li>
+                    </ul>
+                </div>
+            </c:if>
+        </c:forEach>
     </div>
 </div>
 <div>

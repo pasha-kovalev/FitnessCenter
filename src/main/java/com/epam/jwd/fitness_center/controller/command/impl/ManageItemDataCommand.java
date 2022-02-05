@@ -27,13 +27,14 @@ public class ManageItemDataCommand implements Command {
     public CommandResponse execute(CommandRequest request) {
         String itemName = request.getParameter(RequestParameter.NAME);
         String itemPrice = request.getParameter(RequestParameter.PRICE);
+        String itemDescription = request.getParameter(RequestParameter.DESCRIPTION);
         Optional<Long> itemIdOptional = CommandHelper.retrievePositiveLongParameter(request, RequestParameter.ID);
-        if (!itemIdOptional.isPresent() || itemName == null || itemPrice == null) {
+        if (!itemIdOptional.isPresent() || itemName == null || itemPrice == null || itemDescription == null) {
             return responseCreator.createRedirectResponse(PagePath.ERROR);
         }
         long itemId = itemIdOptional.get();
         try {
-            if (!itemService.update(itemId, itemName, itemPrice)) {
+            if (!itemService.update(itemId, itemName, itemPrice, itemDescription)) {
                 return responseCreator.createRedirectResponse(PagePath.ERROR);
             }
         } catch (ServiceException e) {

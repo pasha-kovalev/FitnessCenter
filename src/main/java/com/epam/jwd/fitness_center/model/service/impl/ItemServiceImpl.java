@@ -62,16 +62,18 @@ public class ItemServiceImpl implements EntityService<Item> {
         }
     }
 
-    public boolean update(Long id, String name, String price) throws ServiceException {
+    public boolean update(Long id, String name, String price, String description) throws ServiceException {
         Optional<Item> optionalItem = find(id);
         if (!optionalItem.isPresent()) {
             return false;
         }
         Item item = optionalItem.get();
         name = TextEscapeUtil.escapeHtml(name);
+        description = TextEscapeUtil.escapeHtml(description);
         BigDecimal priceNumber = BigDecimal.valueOf(Double.parseDouble(TextEscapeUtil.escapeHtml(price)));
         item.setName(name);
         item.setPrice(priceNumber);
+        item.setDescription(description);
         if (!ItemValidator.isValidItem(item)) {
             throw new ServiceException("Item is not valid");
         }
@@ -82,10 +84,11 @@ public class ItemServiceImpl implements EntityService<Item> {
         }
     }
 
-    public Item insert(String name, String price) throws ServiceException {
+    public Item insert(String name, String price, String description) throws ServiceException {
         name = TextEscapeUtil.escapeHtml(name);
+        description = TextEscapeUtil.escapeHtml(description);
         BigDecimal priceNumber = new BigDecimal(TextEscapeUtil.escapeHtml(price));
-        Item item = new Item(name, priceNumber);
+        Item item = new Item(name, priceNumber, description);
         if (!ItemValidator.isValidItem(item)) {
             throw new ServiceException("Item is not valid");
         }

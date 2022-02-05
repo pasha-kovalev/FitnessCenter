@@ -24,6 +24,7 @@
 <fmt:message var="discount" key="admin.cabinet.button.discount"/>
 <fmt:message var="naming" key="admin.cabinet.button.naming"/>
 <fmt:message var="cost" key="admin.cabinet.button.cost"/>
+<fmt:message var="desc" key="admin.cabinet.button.desc"/>
 <fmt:message var="delete" key="admin.cabinet.button.delete"/>
 <fmt:message var="add" key="admin.cabinet.button.add"/>
 <fmt:message var="save" key="admin.cabinet.button.save"/>
@@ -219,6 +220,7 @@
                     .append($(`<tr>
                                    <th onclick="sortTable(0)" style="cursor: pointer">${naming}</th>
                                    <th onclick="sortTable(0, true)" style="cursor: pointer">${cost}</th>
+                                   <th>${desc}</th>
                                </tr>`));
                 $.each(responseJson, function (index, item) {
                     $("<tr style='border-color:'>").appendTo($table)
@@ -229,6 +231,10 @@
                                              oninput="setCustomValidity('')">`).text(item.name)))
                         .append($(`<td><input type="number" required readonly class="inp-adm price" name="price" min="10" max="9999"
                                           value="` + item.price + `" step=".01"></td>`))
+                        .append($("<td class='item-desc' >")
+                            .append($(`<textarea required readonly class="item-desc" name="item-desc" rows="4"
+                                             cols="30" minlength="2" maxlength="1000" oninvalid="setCustomValidity('${notValidTitle}')"
+                                             oninput="setCustomValidity('')">`).text(item.description)))
                         .append($("<td>").append(`<button onclick="editItem(this)" ` +
                             `class="btn btn-warning">${change}</button>`))
                         .append($("<td>").append(`<button onclick="editItem(this, true)" ` +
@@ -242,6 +248,11 @@
                                              style="border: 1px solid whitesmoke;">`)))
                     .append($(`<td><input type="number" required class="inp-adm price" name="price" min="10" max="9999"
                                           value="" step=".01" style="border: 1px solid whitesmoke;"></td>`))
+                    .append($("<td class='item-desc' >")
+                        .append($(`<textarea required class="item-desc" name="item-desc" rows="4"
+                                             cols="30" minlength="2" maxlength="1000" oninvalid="setCustomValidity('${notValidTitle}')"
+                                             oninput="setCustomValidity('') value=""
+                                             style="border: 1px solid whitesmoke;">`)))
                     .append($("<td>").append(`<button onclick="addNewItem(this)" ` +
                         `class="btn btn-danger">${add}</button>`));
             },
@@ -278,7 +289,7 @@
         })
     }
 
-    function sendItemData(id, name, price, elem) {
+    function sendItemData(id, name, price, desc, elem) {
         if (name === '' || price === '' || price === '0') {
             elem.style.border = '1px solid red';
             return;
@@ -286,7 +297,7 @@
         jQuery.ajax({
             type: 'POST',
             url: '${pageContext.request.contextPath}/controller',
-            data: jQuery.param({command: 'manage_item_data', id: id, name: name, price: price}),
+            data: jQuery.param({command: 'manage_item_data', id: id, name: name, price: price, description: desc}),
             success: function (responseJson) {
                 console.log(responseJson);
                 if (responseJson.includes('error')) {
@@ -314,15 +325,16 @@
         })
     }
 
-    function sendNewItemData(name, price, elem) {
-        if (name === '' || price === '' || price === '0') {
+    function sendNewItemData(name, price,desc, elem) {
+        if (name === '' || price === '' || price === '0' || desc === '') {
             elem.style.border = '1px solid red';
             return;
         }
+        console.log("hi")
         jQuery.ajax({
             type: 'POST',
             url: '${pageContext.request.contextPath}/controller',
-            data: jQuery.param({command: 'manage_new_item_data', name: name, price: price}),
+            data: jQuery.param({command: 'manage_new_item_data', name: name, price: price, description: desc}),
             success: function (responseJson) {
                 console.log(responseJson);
                 if (responseJson.includes('error')) {
@@ -355,12 +367,15 @@
     }
 
     function addNewItem(el) {
+        console.log("hi")
         var trClosest = $(el).closest('tr');
-        var textArea = trClosest.find('textarea')[0];
+        var textArea1 = trClosest.find('textarea')[0];
+        var textArea2 = trClosest.find('textarea')[1];
         var input = trClosest.find('.price')[0];
-        var name = textArea.value;
+        var name = textArea1.value;
+        var desc = textArea2.value;
         var price = input.value;
-        sendNewItemData(name, price, trClosest[0]);
+        sendNewItemData(name, price, desc, trClosest[0]);
     }
 
     function editItem(el, isToDelete = false) {
@@ -370,21 +385,27 @@
         if(isFormEditing === true && ("item" + id) !== editingElem) {
             isFormEditing = false;
         }
-        var textArea = trClosest.find('textarea')[0];
+        var textArea1 = trClosest.find('textarea')[0];
+        var textArea2 = trClosest.find('textarea')[1];
         var input = trClosest.find('.price')[0];
-        var name = textArea.value;
+        var name = textArea1.value;
+        var desc = textArea2.value;
         var price = input.value;
         if (isToDelete) {
             deleteItem(id, trClosest[0]);
         } else if (isFormEditing) {
-            sendItemData(id, name, price, trClosest[0]);
+            sendItemData(id, name, price, desc, trClosest[0]);
             $(el).closest('button')[0].innerText = "${change}"
-            textArea.readOnly = true;
+            textArea1.readOnly = true;
+            textArea2.readOnly = true;
+            $(textArea2).attr('rows', 4)
             input.readOnly = true;
             isFormEditing = false;
             editingElem = "";
         } else {
-            textArea.readOnly = false;
+            textArea1.readOnly = false;
+            textArea2.readOnly = false;
+            $(textArea2).attr('rows', 15)
             input.readOnly = false;
             $(el).closest('button')[0].innerText = "${save}"
             isFormEditing = true;

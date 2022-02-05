@@ -18,6 +18,7 @@ public final class Attribute {
     public static final String TRAINER = "trainer";
     public static final String PROGRAM = "program";
     public static final String CURRENT_PAGE = "currentPage";
+    public static final String ITEM = "item";
 
     private Attribute() {
     }

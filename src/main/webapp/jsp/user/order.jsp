@@ -152,6 +152,7 @@
         currentTab = currentTab + n;
         if (currentTab >= x.length) {
             document.getElementById("order").submit();
+            document.getElementById("order").style.display = "none";
             return false;
         }
         showTab(currentTab);
