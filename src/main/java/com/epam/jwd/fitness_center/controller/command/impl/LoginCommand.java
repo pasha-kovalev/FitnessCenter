@@ -6,6 +6,7 @@ import com.epam.jwd.fitness_center.controller.command.*;
 import com.epam.jwd.fitness_center.exception.ServiceException;
 import com.epam.jwd.fitness_center.model.entity.User;
 import com.epam.jwd.fitness_center.model.entity.UserDetails;
+import com.epam.jwd.fitness_center.model.entity.UserStatus;
 import com.epam.jwd.fitness_center.model.service.UserService;
 import com.epam.jwd.fitness_center.model.service.impl.ServiceProvider;
 import org.apache.logging.log4j.LogManager;
@@ -41,6 +42,10 @@ public class LoginCommand implements Command {
             return responseCreator.createRedirectResponse(PagePath.LOGIN_REDIRECT);
         }
         User user = optionalUser.get();
+        if(user.getStatus() == UserStatus.BANNED) {
+            request.addToSession(Attribute.ERROR_LOGIN_BUNDLE_KEY, ResourceBundleKey.BANNED_ERROR);
+            return responseCreator.createRedirectResponse(PagePath.LOGIN_REDIRECT);
+        }
         request.clearSession();
         request.createSession();
         request.addToSession(Attribute.USER, user);
@@ -49,7 +54,9 @@ public class LoginCommand implements Command {
         } catch (ServiceException e) {
             userDetails = null;
         }
-        if (userDetails != null) request.addToSession(Attribute.USER_DETAILS, userDetails);
+        if (userDetails != null) {
+            request.addToSession(Attribute.USER_DETAILS, userDetails);
+        }
         return responseCreator.createRedirectResponse(PagePath.MAIN_REDIRECT);
     }
 }

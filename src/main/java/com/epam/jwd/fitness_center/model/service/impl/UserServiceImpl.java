@@ -99,8 +99,7 @@ public class UserServiceImpl implements UserService {
         }
         final byte[] enteredPassword = password.getBytes(StandardCharsets.UTF_8);
         final Optional<User> readUser = findUserByEmail(email);
-        if (readUser.isPresent() && !(readUser.get().getStatus() == UserStatus.UNCONFIRMED) &&
-                !(readUser.get().getStatus() == UserStatus.BANNED)) {
+        if (readUser.isPresent() && !(readUser.get().getStatus() == UserStatus.UNCONFIRMED)) {
             final byte[] hashedPassword = readUser.get()
                     .getPassword()
                     .getBytes(StandardCharsets.UTF_8);

@@ -5,8 +5,6 @@ import com.epam.jwd.fitness_center.model.entity.Item;
 import java.math.BigDecimal;
 
 public final class ItemValidator {
-    private static final String NUMBER_REGEX = "\\d+";
-
     private ItemValidator() {
     }
 

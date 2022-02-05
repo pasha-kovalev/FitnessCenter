@@ -18,7 +18,6 @@ import java.util.Properties;
  */
 class ConnectionFactory {
     public static final String DB_URL_PROPERTY = "url";
-    public static final String DB_DRIVER_PROPERTY = "driver";
     private static final Logger LOG = LogManager.getLogger(ConnectionFactory.class);
     private static final String DATABASE_CONFIG_PATH = "properties/database/database.properties";
     private static final String DB_URL;

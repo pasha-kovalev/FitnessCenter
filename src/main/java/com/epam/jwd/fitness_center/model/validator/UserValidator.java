@@ -4,7 +4,7 @@ import com.epam.jwd.fitness_center.model.entity.User;
 
 public final class UserValidator {
     private static final String PASSWORD_REGEX = "\\w{4,20}";
-    private static final String EMAIL_REGEX = "\\w{5,}@\\w+\\.[a-z]{2,4}$";
+    private static final String EMAIL_REGEX = "\\w{5,30}@\\w+\\.[a-z]{2,4}$";
     private static final String NAME_REGEX = "([А-Яа-я]{1,20})|([A-Z][a-z]{1,20})";
 
     private UserValidator() {
@@ -16,7 +16,6 @@ public final class UserValidator {
 
     public static boolean isValidPassword(String password) {
         return isValidString(password, PASSWORD_REGEX);
-
     }
 
     public static boolean isValidName(String name) {
