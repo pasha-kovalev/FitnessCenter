@@ -25,11 +25,12 @@ public class ManageNewItemDataCommand implements Command {
     public CommandResponse execute(CommandRequest request) {
         String itemName = request.getParameter(RequestParameter.NAME);
         String itemPrice = request.getParameter(RequestParameter.PRICE);
-        if (itemName == null || itemPrice == null) {
+        String itemDescription = request.getParameter(RequestParameter.DESCRIPTION);
+        if (itemName == null || itemPrice == null || itemDescription == null) {
             return responseCreator.createRedirectResponse(PagePath.ERROR);
         }
         try {
-            itemService.insert(itemName, itemPrice);
+            itemService.insert(itemName, itemPrice, itemDescription);
         } catch (ServiceException e) {
             LOG.error(e);
             return responseCreator.createRedirectResponse(PagePath.ERROR);
