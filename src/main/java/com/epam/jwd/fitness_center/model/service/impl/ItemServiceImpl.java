@@ -69,7 +69,7 @@ public class ItemServiceImpl implements EntityService<Item> {
         }
         Item item = optionalItem.get();
         name = TextEscapeUtil.escapeHtml(name);
-        BigDecimal priceNumber = new BigDecimal(TextEscapeUtil.escapeHtml(price));
+        BigDecimal priceNumber = BigDecimal.valueOf(Double.parseDouble(TextEscapeUtil.escapeHtml(price)));
         item.setName(name);
         item.setPrice(priceNumber);
         if (!ItemValidator.isValidItem(item)) {

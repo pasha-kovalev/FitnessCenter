@@ -34,7 +34,9 @@
     <meta charset="UTF-8">
     <title>${title}</title>
     <link href="${pageContext.request.contextPath}/style/style.css" type="text/css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/script/paging.js"></script>
     <style>
         footer {
             position: relative;
@@ -71,6 +73,7 @@
     </div>
 </nav>
 <div class="w3-main" style="margin-left:300px;padding-top:90px; height: auto; padding-bottom: 50px; min-height: 95%">
+    <input id="myInput" type="text" style="margin-left: 255px;">
     <div id="mainData"></div>
     <div id="review" style="visibility: hidden; position: absolute; background-color: white;
                             min-width: 140px;min-height: 30px;color: black; padding: 10px">
@@ -102,21 +105,22 @@
         overlayBg.style.display = "none";
     }
 
-    function showUsers() {
+    function showUsers(rowId, pageNum) {
+        document.getElementById("myInput").style.display = "";
         jQuery.ajax({
             type: 'POST',
             url: '${pageContext.request.contextPath}/controller?command=show_manage_users',
             success: function (responseJson) {
                 document.getElementById("mainData").innerHTML = "";
-                var $table = $(`<table class="custom-table" id="mainTable">`).appendTo($("#mainData"));
-                $("<thead>").appendTo($table)
+                var $table = $(`<table class="custom-table table-striped" id="tableData">`).appendTo($("#mainData"));
+                $(`<thead id="table-thead">`).appendTo($table)
                     .append($(`<tr>
                                    <th onclick="sortTable(0, true)" style="cursor: pointer">ID</th>
                                    <th>${login}</th>
                                    <th>${name}</th>
                                    <th>${surname}</th>
-                                   <th onclick="filterBy('role')" style="cursor: pointer">${role}</th>
-                                   <th onclick="filterBy('status')" style="cursor: pointer">${status}</th>
+                                   <th>${role}</th>
+                                   <th>${status}</th>
                                </tr>`));
                 $.each(responseJson, function (index, user) {
                     var lastTd = `<button onclick="editUser(this)" ` +
@@ -136,17 +140,28 @@
                 });
                 insertOptions(getRoles(), 'role-select');
                 insertOptions(getStatuses(), 'status-select');
+            },
+            complete: function () {
+                $('#tableData').paging({limit:10});
+                if(rowId != null) {
+                    highlightTr(rowId);
+
+                }
+                if(pageNum != null) {
+                    $(".paging-nav").find('[data-page="' + pageNum +'"]')[0].click();
+                }
             }
         });
     }
 
-    function showUsersDiscount() {
+    function showUsersDiscount(rowId) {
+        document.getElementById("myInput").style.display  = "none";
         jQuery.ajax({
             type: 'POST',
             url: '${pageContext.request.contextPath}/controller?command=show_manage_discount',
             success: function (responseJson) {
                 document.getElementById("mainData").innerHTML = "";
-                var $table = $(`<table class="custom-table" id="mainTable">`).appendTo($("#mainData"));
+                var $table = $(`<table class="custom-table" id="tableData">`).appendTo($("#mainData"));
                 $("<thead>").appendTo($table)
                     .append($(`<tr>
                                    <th onclick="sortTable(0, true)" style="cursor: pointer">ID</th>
@@ -175,6 +190,11 @@
                         .append($("<td>").append(lastTd));
                     console.log(getDetailsById(responseJson.userDetails, user.id));
                 });
+            },
+            complete: function () {
+                if(rowId != null) {
+                    highlightTr(rowId);
+                }
             }
         });
     }
@@ -187,13 +207,14 @@
         )[0].discount;
     }
 
-    function showItems() {
+    function showItems(rowId) {
+        document.getElementById("myInput").style.display = "none";
         jQuery.ajax({
             type: 'GET',
             url: '${pageContext.request.contextPath}/controller?command=show_manage_items',
             success: function (responseJson) {
                 document.getElementById("mainData").innerHTML = "";
-                var $table = $(`<table class="custom-table" id="mainTable" style="min-width: 600px">`).appendTo($("#mainData"));
+                var $table = $(`<table class="custom-table" id="tableData" style="min-width: 600px">`).appendTo($("#mainData"));
                 $("<thead>").appendTo($table)
                     .append($(`<tr>
                                    <th onclick="sortTable(0)" style="cursor: pointer">${naming}</th>
@@ -223,6 +244,11 @@
                                           value="" step=".01" style="border: 1px solid whitesmoke;"></td>`))
                     .append($("<td>").append(`<button onclick="addNewItem(this)" ` +
                         `class="btn btn-danger">${add}</button>`));
+            },
+            complete: function () {
+                if(rowId != null) {
+                    highlightTr(rowId);
+                }
             }
         });
     }
@@ -232,6 +258,7 @@
             elem.style.border = '1px solid red';
             return;
         }
+        var page = document.getElementsByClassName("selected-page")[0].getAttribute('data-page');
         jQuery.ajax({
             type: 'POST',
             url: '${pageContext.request.contextPath}/controller',
@@ -245,7 +272,7 @@
                 if (responseJson.includes('error')) {
                     elem.style.border = '1px solid red';
                 } else {
-                    elem.style.border = '1px solid green';
+                    showUsers(id, page);
                 }
             }
         })
@@ -265,7 +292,7 @@
                 if (responseJson.includes('error')) {
                     elem.style.border = '1px solid red';
                 } else {
-                    elem.style.border = '1px solid green';
+                    showItems(id);
                 }
             }
         })
@@ -281,8 +308,7 @@
                 if (responseJson.toString().includes('error')) {
                     elem.style.border = '1px solid red';
                 } else {
-                    elem.style.border = '1px solid green';
-                    elem.style.display = 'none';
+                    hideTr(id);
                 }
             }
         })
@@ -302,7 +328,7 @@
                 if (responseJson.includes('error')) {
                     elem.style.border = '1px solid red';
                 } else {
-                    elem.style.border = '1px solid green';
+                    showItems();
                 }
             }
         });
@@ -322,7 +348,7 @@
                 if (responseJson.includes('error')) {
                     elem.style.border = '1px solid red';
                 } else {
-                    elem.style.border = '1px solid green';
+                    showUsersDiscount(id);
                 }
             }
         });
@@ -433,7 +459,7 @@
 
     function sortTable(n, isNumber = false) {
         var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-        table = document.getElementById("mainTable");
+        table = document.getElementById("tableData");
         switching = true;
         dir = "asc";
         while (switching) {
@@ -481,17 +507,15 @@
     function getRoles() {
         var arr = [];
         <c:forEach var="entry" items="${UserRole.values()}">
-        arr.push('${entry}');
+            if('${entry}' !== '${UserRole.GUEST.name()}') {
+                arr.push('${entry}');
+            }
         </c:forEach>
         return arr;
     }
 
     function getStatuses() {
-        var arr = [];
-        <c:forEach var="entry" items="${UserStatus.values()}">
-        arr.push('${entry}');
-        </c:forEach>
-        return arr;
+        return ['ACTIVE', 'BANNED'];
     }
 
     function insertOptions(arr, id) {
@@ -501,43 +525,29 @@
         });
     }
 
-    function filterBy(columnName) {
-        var arr = [];
-        var className = '';
-        switch (columnName) {
-            case 'role':
-                arr = getRoles();
-                className = "role-td"
-                break;
-            case 'status':
-                arr = getStatuses();
-                className = "status-td"
-                break;
-        }
-        var size = arr.length;
-        var filter, table, tr, td, i, txtValue;
-        filter = arr[statusArrCurrentPos];
-        table = document.getElementById("mainTable");
-        tr = table.getElementsByTagName("tr");
-        if (statusArrCurrentPos === size || filter === '${UserRole.GUEST.name()}') {
-            for (i = 0; i < tr.length; i++) {
-                tr[i].style.display = "";
-            }
-        } else {
-            for (i = 0; i < tr.length; i++) {
-                td = tr[i].getElementsByClassName(className)[0];
-                if (td) {
-                    txtValue = td.textContent || td.innerText;
-                    if (txtValue.toUpperCase() == filter) {
-                        tr[i].style.display = "";
-                    } else {
-                        tr[i].style.display = "none";
-                    }
-                }
-            }
-        }
-        statusArrCurrentPos = ++statusArrCurrentPos % (size + 1);
+
+
+    function hideTr(id) {
+        var el = $("td:contains("+ id +")")[0].parentNode;
+        el.style.display = 'none';
     }
+
+    function highlightTr(id) {
+        var el = $("td:contains("+ id +")")[0].parentNode;
+        el.style.border = '1px solid green';
+    }
+
+    $(document).ready(function(){
+        $("#myInput").on("keyup", function() {
+            if($(this).val() == "") {
+                showUsers();
+            }
+            var value = $(this).val().toLowerCase();
+            $("tbody tr").filter(function() {
+                $(this).toggle($(this).children('td').slice(0, 6).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
 </script>
 </body>
 </html>

@@ -12,6 +12,7 @@ public class ResourceBundleKey {
     public static final String INFO_ERROR_LINK = "info.email.error.link";
     public static final String INFO_VALID_LINK = "emailInfo.msg.success";
     public static final String LOGIN_ERROR = "login.exception";
+    public static final String BANNED_ERROR = "banned.exception";
     public static final String SIGNUP_ERROR = "signup.error";
     public static final String INFO_SUCCESS = "payment.msg.success";
     public static final String INFO_PAYMENT_CARD_NOT_EXIST = "payment.err.cardNotExist";
