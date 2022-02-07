@@ -20,6 +20,7 @@ public final class Attribute {
     public static final String CURRENT_PAGE = "currentPage";
     public static final String ITEM = "item";
     public static final String TRAINER_EMAIL = "trainerEmail";
+    public static final String GLOBAL_SESSION_MAP = "globalSessionMap";
 
     private Attribute() {
     }

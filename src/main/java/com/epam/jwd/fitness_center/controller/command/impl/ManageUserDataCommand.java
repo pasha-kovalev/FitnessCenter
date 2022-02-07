@@ -3,6 +3,7 @@ package com.epam.jwd.fitness_center.controller.command.impl;
 import com.epam.jwd.fitness_center.controller.PagePath;
 import com.epam.jwd.fitness_center.controller.ResponseCreator;
 import com.epam.jwd.fitness_center.controller.command.*;
+import com.epam.jwd.fitness_center.controller.listener.HttpSessionListenerImpl;
 import com.epam.jwd.fitness_center.exception.ServiceException;
 import com.epam.jwd.fitness_center.model.entity.UserRole;
 import com.epam.jwd.fitness_center.model.entity.UserStatus;
@@ -12,6 +13,8 @@ import com.google.gson.Gson;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.servlet.http.HttpSession;
+import java.util.Map;
 import java.util.Optional;
 
 public class ManageUserDataCommand implements Command {
@@ -29,7 +32,6 @@ public class ManageUserDataCommand implements Command {
 
     @Override
     public CommandResponse execute(CommandRequest request) {
-        //todo в постраничном режиме выводить
         String[] fieldNames = request.getParameterValues(RequestParameter.NAME);
         String[] values = request.getParameterValues(RequestParameter.VALUE);
         Optional<Long> userIdOptional = CommandHelper.retrievePositiveLongParameter(request, RequestParameter.USER_ID);
@@ -41,7 +43,11 @@ public class ManageUserDataCommand implements Command {
             for (int i = 0; i < fieldNames.length; i++) {
                 switch (fieldNames[i]) {
                     case STATUS_FIELD_NAME:
-                        userService.updateUserStatus(UserStatus.valueOf(values[i].toUpperCase()), userId);
+                        UserStatus status = UserStatus.valueOf(values[i].toUpperCase());
+                        userService.updateUserStatus(status, userId);
+                        if(status == UserStatus.BANNED) {
+                            invalidateUserSession(request, userId);
+                        }
                         break;
                     case ROLE_FIELD_NAME:
                         userService.updateUserRole(UserRole.valueOf(values[i].toUpperCase()), userId);
@@ -57,5 +63,13 @@ public class ManageUserDataCommand implements Command {
         }
         String json = new Gson().toJson(ResourceBundleKey.INFO_SUCCESS);
         return responseCreator.createAjaxResponse(json);
+    }
+
+    private void invalidateUserSession(CommandRequest request, long userId) {
+        Map<Long, HttpSession> sessionMap = HttpSessionListenerImpl.getSessionMap(request.getServletContext());
+        HttpSession httpSession = sessionMap.get(userId);
+        if (httpSession != null) {
+            httpSession.invalidate();
+        }
     }
 }

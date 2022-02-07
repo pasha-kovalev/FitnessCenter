@@ -3,6 +3,7 @@ package com.epam.jwd.fitness_center.controller.command.impl;
 import com.epam.jwd.fitness_center.controller.PagePath;
 import com.epam.jwd.fitness_center.controller.ResponseCreator;
 import com.epam.jwd.fitness_center.controller.command.*;
+import com.epam.jwd.fitness_center.controller.listener.HttpSessionListenerImpl;
 import com.epam.jwd.fitness_center.exception.ServiceException;
 import com.epam.jwd.fitness_center.model.entity.User;
 import com.epam.jwd.fitness_center.model.entity.UserDetails;
@@ -49,6 +50,7 @@ public class LoginCommand implements Command {
         request.clearSession();
         request.createSession();
         request.addToSession(Attribute.USER, user);
+        HttpSessionListenerImpl.getSessionMap(request.getServletContext()).put(user.getId(), request.getSession());
         try {
             userDetails = userService.findUserDetails(user.getId());
         } catch (ServiceException e) {
