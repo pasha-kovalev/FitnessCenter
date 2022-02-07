@@ -10,7 +10,7 @@ public interface ResponseCreator {
     /** Returns the instance of a concrete class
      * @return instance of class that implements the interface
      */
-    static ResponseCreator getInstance() {
+    static ResponseCreator getCreator() {
         return SimpleResponseCreator.getInstance();
     }
 

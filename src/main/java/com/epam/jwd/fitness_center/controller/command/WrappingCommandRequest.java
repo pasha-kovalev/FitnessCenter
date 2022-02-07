@@ -41,6 +41,11 @@ public class WrappingCommandRequest implements CommandRequest {
     }
 
     @Override
+    public HttpSession getSession() {
+        return request.getSession();
+    }
+
+    @Override
     public Optional<Object> retrieveFromSession(String name) {
         return Optional.ofNullable(request.getSession(false))
                 .map(session -> session.getAttribute(name));
