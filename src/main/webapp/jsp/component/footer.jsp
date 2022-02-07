@@ -10,6 +10,6 @@
         <a href="${pageContext.request.contextPath}/controller?command=switch_locale&locale=en">EN</a>
         <a href="${pageContext.request.contextPath}/controller?command=switch_locale&locale=ru">Русский</a>
     </p>
-    <p class="w3-medium">&#169; ${author} 2021-2022</p>
+    <p class="w3-medium">&#169; 2021-22 ${author}</p>
 </footer>
 

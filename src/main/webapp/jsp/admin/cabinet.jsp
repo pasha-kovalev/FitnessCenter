@@ -109,7 +109,7 @@
     function showUsers(rowId, pageNum) {
         document.getElementById("myInput").style.display = "";
         jQuery.ajax({
-            type: 'POST',
+            type: 'GET',
             url: '${pageContext.request.contextPath}/controller?command=show_manage_users',
             success: function (responseJson) {
                 document.getElementById("mainData").innerHTML = "";
@@ -158,7 +158,7 @@
     function showUsersDiscount(rowId) {
         document.getElementById("myInput").style.display  = "none";
         jQuery.ajax({
-            type: 'POST',
+            type: 'GET',
             url: '${pageContext.request.contextPath}/controller?command=show_manage_discount',
             success: function (responseJson) {
                 document.getElementById("mainData").innerHTML = "";

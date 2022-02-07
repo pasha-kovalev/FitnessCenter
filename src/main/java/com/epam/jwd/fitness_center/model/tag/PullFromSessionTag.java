@@ -1,4 +1,4 @@
-package com.epam.jwd.fitness_center.controller.tag;
+package com.epam.jwd.fitness_center.model.tag;
 
 import javax.servlet.jsp.tagext.TagSupport;
 
