@@ -156,7 +156,7 @@
             .text();
         document.getElementById("mainData").innerHTML = "";
         jQuery.ajax({
-            type: 'POST',
+            type: 'GET',
             url: '${pageContext.request.contextPath}/controller?command=show_program_details&orderId=' + orderId,
             success: function (program) {
                 $("#mainData").append($("<h1>").text("${program}"));

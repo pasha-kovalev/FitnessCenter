@@ -6,7 +6,7 @@
 
     <tag>
         <name>pullSessionAttribute</name>
-        <tag-class>com.epam.jwd.fitness_center.controller.tag.PullFromSessionTag</tag-class>
+        <tag-class>com.epam.jwd.fitness_center.model.tag.PullFromSessionTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>attribute</name>

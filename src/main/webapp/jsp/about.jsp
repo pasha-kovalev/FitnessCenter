@@ -36,42 +36,45 @@
 <div class="w3-content" style="max-width:1100px">
     <h1 class="w3-center" style="margin-top: 72px">${meeting}</h1>
     <c:forEach var="trainer" items="${requestScope.trainerList}" varStatus="loopStatus">
-        <c:choose>
-            <c:when test="${loopStatus.index % 2 == 0}">
-                <div class="w3-row w3-padding-64">
-                    <div class="w3-col l6 w3-padding-large">
-                        <h1 class="w3-left">${trainer.firstName} ${trainer.secondName}</h1><br>
-                        <br><br><br>
-                        <p class="w3-large">
-                                ${trainer.description}
-                        </p>
-                    </div>
+        <c:if test="${not empty trainer.description and not empty trainer.photoPath}">
+            <c:choose>
+                <c:when test="${loopStatus.index % 2 == 0}">
+                    <div class="w3-row w3-padding-64">
+                        <div class="w3-col l6 w3-padding-large">
+                            <h1 class="w3-left">${trainer.firstName} ${trainer.secondName}</h1><br>
+                            <br><br><br>
+                            <p class="w3-large">
+                                    ${trainer.description}
+                            </p>
+                        </div>
 
-                    <div class="w3-col l6 w3-padding-large">
-                        <img src="<c:out value='${trainer.photoPath}'/>" class="w3-round w3-image" width="600"
-                             height="750">
+                        <div class="w3-col l6 w3-padding-large">
+                            <img src="<c:out value='${trainer.photoPath}'/>" class="w3-round w3-image" width="600"
+                                 height="750">
+                        </div>
                     </div>
-                </div>
-            </c:when>
-            <c:otherwise>
-                <div class="w3-row w3-padding-64">
-                    <div class="w3-col m6 w3-padding-large w3-hide-small">
-                        <img src="${trainer.photoPath}" class="w3-round w3-image" width="600" height="750">
-                    </div>
+                </c:when>
+                <c:otherwise>
+                    <div class="w3-row w3-padding-64">
+                        <div class="w3-col m6 w3-padding-large w3-hide-small">
+                            <img src="${trainer.photoPath}" class="w3-round w3-image" width="600" height="750">
+                        </div>
 
-                    <div class="w3-col m6 w3-padding-large">
-                        <h1 class="w3-left">${trainer.firstName} ${trainer.secondName}</h1>
-                        <br><br><br>
-                        <p class="w3-large">
-                                ${trainer.description}
-                        </p>
+                        <div class="w3-col m6 w3-padding-large">
+                            <h1 class="w3-left">${trainer.firstName} ${trainer.secondName}</h1>
+                            <br><br><br>
+                            <p class="w3-large">
+                                    ${trainer.description}
+                            </p>
+                        </div>
                     </div>
-                </div>
-            </c:otherwise>
-        </c:choose>
-        <c:if test="${not loopStatus.last}">
-            <hr>
+                </c:otherwise>
+            </c:choose>
+            <c:if test="${not loopStatus.last}">
+                <hr>
+            </c:if>
         </c:if>
+
     </c:forEach>
 </div>
 <div>
