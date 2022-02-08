@@ -42,6 +42,9 @@
 </style>
 <body style="background-color: #F5F5F5; color: black">>
 <c:set var="item" scope="page" value="${requestScope.item}"/>
+<c:if test="${requestScope.item.isArchive eq 'true'}">
+    <jsp:forward page="error/error.jsp" />
+</c:if>
 <jsp:include page="component/header.jsp" flush="true"/>
 <div class="w3-content" style="max-width:1100px;margin-top:40px;margin-bottom:80px">
     <p class="w3-center"
@@ -92,7 +95,7 @@
                            class="w3-button w3-white w3-padding-large">${sign}</a>
                     </c:when>
                     <c:otherwise>
-                        <a href="${pageContext.request.contextPath}/controller?command=show_order"
+                        <a href="${pageContext.request.contextPath}/controller?command=show_order&id=${item.id}"
                            class="w3-button w3-white w3-padding-large">${buy}</a>
                     </c:otherwise>
                 </c:choose>

@@ -8,16 +8,18 @@ public final class Item implements Entity, Cloneable {
     private String name;
     private BigDecimal price;
     private String description;
+    private boolean isArchive;
 
-    public Item(Long id, String name, BigDecimal price, String description) {
+    public Item(Long id, String name, BigDecimal price, String description, boolean isArchive) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.description = description;
+        this.isArchive = isArchive;
     }
 
     public Item(String name, BigDecimal price, String description) {
-        this(null, name, price, description);
+        this(null, name, price, description, false);
     }
 
     public Long getId() {
@@ -44,6 +46,22 @@ public final class Item implements Entity, Cloneable {
         this.price = price;
     }
 
+    public boolean getIsArchive() {
+        return isArchive;
+    }
+
+    public void setIsArchive(boolean archive) {
+        isArchive = archive;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("Item{");
@@ -59,11 +77,4 @@ public final class Item implements Entity, Cloneable {
         return (Item) super.clone();
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 }

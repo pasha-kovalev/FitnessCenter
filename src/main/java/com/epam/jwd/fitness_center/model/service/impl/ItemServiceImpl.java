@@ -37,12 +37,11 @@ public class ItemServiceImpl implements EntityService<Item> {
         }
     }
 
-    public void delete(long id) throws ServiceException {
-        try {
-            itemDao.delete(id);
-        } catch (DaoException e) {
-            throw new ServiceException("Unable to delete item", e);
-        }
+    public void changeIsArchive(long id) throws ServiceException {
+        Optional<Item> optionalItem = find(id);
+        Item item = optionalItem.orElseThrow(() -> new ServiceException("Item not found. Id: " + id));
+        item.setIsArchive(!item.getIsArchive());
+        update(item);
     }
 
     public Optional<Item> find(long id) throws ServiceException {
@@ -130,6 +129,6 @@ public class ItemServiceImpl implements EntityService<Item> {
     private BigDecimal calcFinalPrice(BigDecimal price, BigDecimal discount) {
         return discount == null ? price
                 : price.subtract(price.multiply(discount.divide(BigDecimal.valueOf(PERCENT_DIVISOR))),
-                new MathContext(MONEY_PRECISION));
+                new MathContext(MONEY_PRECISION)).setScale(MONEY_PRECISION);
     }
 }

@@ -25,7 +25,8 @@
 <fmt:message var="naming" key="admin.cabinet.button.naming"/>
 <fmt:message var="cost" key="admin.cabinet.button.cost"/>
 <fmt:message var="desc" key="admin.cabinet.button.desc"/>
-<fmt:message var="delete" key="admin.cabinet.button.delete"/>
+<fmt:message var="archive" key="admin.cabinet.button.archive"/>
+<fmt:message var="unarchive" key="admin.cabinet.button.unarchive"/>
 <fmt:message var="add" key="admin.cabinet.button.add"/>
 <fmt:message var="save" key="admin.cabinet.button.save"/>
 
@@ -113,6 +114,9 @@
             url: '${pageContext.request.contextPath}/controller?command=show_manage_users',
             success: function (responseJson) {
                 document.getElementById("mainData").innerHTML = "";
+                if(rowId != null) {
+                    document.getElementById("mainData").style.display = "none";
+                }
                 var $table = $(`<table class="custom-table table-striped" id="tableData">`).appendTo($("#mainData"));
                 $(`<thead id="table-thead">`).appendTo($table)
                     .append($(`<tr>
@@ -145,11 +149,7 @@
             complete: function () {
                 $('#tableData').paging({limit:10});
                 if(rowId != null) {
-                    highlightTr(rowId);
-
-                }
-                if(pageNum != null) {
-                    $(".paging-nav").find('[data-page="' + pageNum +'"]')[0].click();
+                    setTimeout(() => {  highlightTr(rowId); }, 50);
                 }
             }
         });
@@ -223,6 +223,12 @@
                                    <th>${desc}</th>
                                </tr>`));
                 $.each(responseJson, function (index, item) {
+                    var lastTd = `<button onclick="editItem(this, true)" ` +
+                        `class="btn btn-danger">${archive}</button>`;
+                    if(item.isArchive) {
+                        lastTd = `<button onclick="editItem(this, true)" ` +
+                            `class="btn btn-danger">${unarchive}</button>`;
+                    }
                     $("<tr style='border-color:'>").appendTo($table)
                         .append($("<td class='item-id' style='display: none'>").text(item.id))
                         .append($("<td class='item-name' >")
@@ -237,8 +243,7 @@
                                              oninput="setCustomValidity('')">`).text(item.description)))
                         .append($("<td>").append(`<button onclick="editItem(this)" ` +
                             `class="btn btn-warning">${change}</button>`))
-                        .append($("<td>").append(`<button onclick="editItem(this, true)" ` +
-                            `class="btn btn-danger">${delete}</button>`));
+                        .append($("<td>").append(lastTd));
                 });
                 $("<tr style='border-color:'>").appendTo($table)
                     .append($("<td class='item-name' >")
@@ -309,17 +314,17 @@
         })
     }
 
-    function deleteItem(id, elem) {
+    function manageItemArchive(id, elem) {
         jQuery.ajax({
             type: 'POST',
             url: '${pageContext.request.contextPath}/controller',
-            data: jQuery.param({command: 'delete_item', id: id}),
+            data: jQuery.param({command: 'manage_item_archive', id: id}),
             success: function (responseJson) {
                 console.log(responseJson);
                 if (responseJson.toString().includes('error')) {
                     elem.style.border = '1px solid red';
                 } else {
-                    hideTr(id);
+                    showItems(id);
                 }
             }
         })
@@ -392,7 +397,7 @@
         var desc = textArea2.value;
         var price = input.value;
         if (isToDelete) {
-            deleteItem(id, trClosest[0]);
+            manageItemArchive(id, trClosest[0]);
         } else if (isFormEditing) {
             sendItemData(id, name, price, desc, trClosest[0]);
             $(el).closest('button')[0].innerText = "${change}"
@@ -546,16 +551,23 @@
         });
     }
 
-
-
     function hideTr(id) {
         var el = $("td:contains("+ id +")")[0].parentNode;
         el.style.display = 'none';
     }
 
     function highlightTr(id) {
-        var el = $("td:contains("+ id +")")[0].parentNode;
+        var el = $("td:contains("+ id +")").filter(function() {
+            return $(this).text() == id;
+        });
+        el = el[0].parentNode;
+        console.log();
+        if(document.getElementsByClassName("paging-nav")[0] !== undefined) {
+            $(document.getElementsByClassName("paging-nav")[0]).find('[data-page="' + (Math.ceil(el.rowIndex / 10) - 1) +'"]')[0].click();
+            $(".paging-nav").click();
+        }
         el.style.border = '1px solid green';
+        document.getElementById("mainData").style.display = "";
     }
 
     $(document).ready(function(){

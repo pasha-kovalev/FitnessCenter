@@ -112,7 +112,7 @@
             <p>${planDesc}</p>
         </div>
         <c:forEach var="item" items="${requestScope.productList}" >
-            <c:if test="${not (item.name eq 'transformation')}">
+            <c:if test="${(not (item.name eq 'transformation')) and (item.isArchive eq 'false')}">
                 <div class="w3-third w3-margin-bottom">
                     <ul class="w3-ul w3-border w3-center w3-hover-shadow">
                         <li class="w3-black w3-xlarge w3-padding-32">
@@ -132,7 +132,7 @@
                                        class="w3-button w3-white w3-padding-large">${sign}</a>
                                 </c:when>
                                 <c:otherwise>
-                                    <a href="${pageContext.request.contextPath}/controller?command=show_order"
+                                    <a href="${pageContext.request.contextPath}/controller?command=show_order&id=${item.id}"
                                        class="w3-button w3-white w3-padding-large">${buy}</a>
                                 </c:otherwise>
                             </c:choose>
