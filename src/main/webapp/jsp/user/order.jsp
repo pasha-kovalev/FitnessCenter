@@ -23,13 +23,14 @@
     <title>${title}</title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <link href="${pageContext.request.contextPath}/style/style.css" type="text/css" rel="stylesheet">
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 </head>
 <style>
     .tab {
         display: none;
     }
 </style>
-<body class="form2" onload="refreshPrice()">
+<body class="form2" onload="selectItem()">
 <jsp:include page="../component/header.jsp" flush="true"/>
 <form id="order" name="order-form" action="${pageContext.request.contextPath}/controller?command=order" method="post">
     <h1>${title}</h1>
@@ -101,6 +102,7 @@
     var price = document.getElementById("price");
     var totalPrice = document.getElementById("total");
     showTab(currentTab);
+
     program.onchange = function () {
         if (program.options[program.selectedIndex].text === 'transformation') {
             periods.value = "3";
@@ -108,14 +110,16 @@
         } else {
             periods.disabled = false;
         }
-
         refreshPrice();
     }
 
     periods.onchange = function () {
         refreshPrice();
     }
-
+    function selectItem() {
+        $("#program option[value=${param.id}]").attr('selected', 'true');
+        $("#program").trigger("change");
+    }
     function refreshPrice() {
         if (program.options[program.selectedIndex].text === 'transformation') {
             price.innerHTML = parseFloat(program.options[program.selectedIndex].getAttribute("price")) + " ";

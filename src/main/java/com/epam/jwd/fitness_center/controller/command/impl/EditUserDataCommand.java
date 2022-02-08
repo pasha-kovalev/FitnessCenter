@@ -38,7 +38,6 @@ public class EditUserDataCommand implements Command {
         User user = userOptional.get();
         try {
             userService.updateUserData(user.getId(), fieldName, value);
-
             request.addToSession(Attribute.USER, userService.findUserById(user.getId())
                     .orElseThrow(() -> new ServiceException("User not found")));
         } catch (ServiceException e) {

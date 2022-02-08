@@ -8,6 +8,7 @@ import com.epam.jwd.fitness_center.controller.command.CommandRequest;
 import com.epam.jwd.fitness_center.controller.command.CommandResponse;
 import com.epam.jwd.fitness_center.exception.ServiceException;
 import com.epam.jwd.fitness_center.model.entity.User;
+import com.epam.jwd.fitness_center.model.entity.UserRole;
 import com.epam.jwd.fitness_center.model.service.UserService;
 import com.epam.jwd.fitness_center.model.service.impl.ServiceProvider;
 import com.google.gson.Gson;
@@ -38,6 +39,7 @@ public class ShowManageUsersPageCommand implements Command {
             LOG.error(e);
             return responseCreator.createRedirectResponse(PagePath.ERROR500);
         }
+        users.removeIf(u -> u.getRole() == UserRole.ADMIN);
         String json = new Gson().toJson(users);
         return responseCreator.createAjaxResponse(json);
     }

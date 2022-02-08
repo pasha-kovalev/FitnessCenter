@@ -9,6 +9,7 @@ import com.epam.jwd.fitness_center.model.entity.OrderStatus;
 import com.epam.jwd.fitness_center.model.entity.UserDetails;
 import com.epam.jwd.fitness_center.model.service.OrderService;
 import com.epam.jwd.fitness_center.model.service.impl.ServiceProvider;
+import com.google.gson.Gson;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,7 +19,7 @@ public class SendOrderReviewCommand implements Command {
     private static final Logger LOG = LogManager.getLogger(SendOrderReviewCommand.class);
     private final ResponseCreator responseCreator;
     private final OrderService orderService;
-
+    //TODO BUG
     SendOrderReviewCommand(ResponseCreator responseCreator) {
         this.responseCreator = responseCreator;
         orderService = ServiceProvider.getInstance().getOrderService();
@@ -48,7 +49,7 @@ public class SendOrderReviewCommand implements Command {
             LOG.error(e);
             return responseCreator.createRedirectResponse(PagePath.ERROR500);
         }
-        request.addToSession(Attribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_SUCCESS);
-        return responseCreator.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
+        String json = new Gson().toJson(ResourceBundleKey.INFO_SUCCESS);
+        return responseCreator.createAjaxResponse(json);
     }
 }

@@ -4,6 +4,7 @@ import com.epam.jwd.fitness_center.exception.DaoException;
 import com.epam.jwd.fitness_center.exception.ServiceException;
 import com.epam.jwd.fitness_center.model.dao.OrderDao;
 import com.epam.jwd.fitness_center.model.dao.impl.DaoProvider;
+import com.epam.jwd.fitness_center.model.entity.Item;
 import com.epam.jwd.fitness_center.model.entity.Order;
 import com.epam.jwd.fitness_center.model.entity.OrderStatus;
 import com.epam.jwd.fitness_center.model.entity.Program;
@@ -64,10 +65,12 @@ public class OrderServiceImpl implements OrderService {
             throw new ServiceException("Not valid period: " + period);
         }
         BigDecimal price = calcPrice(userDetailsId, itemId, period);
+        Item item = ServiceProvider.getInstance().getItemService().find(itemId)
+                    .orElseThrow(() -> new ServiceException("Item not found by item id: " + itemId));
         Order order = new Order.Builder()
                 .setUserDetailsId(userDetailsId)
                 .setOrderStatus(status)
-                .setItem(ServiceProvider.getInstance().getItemService().find(itemId).get())
+                .setItem(item)
                 .setTrainerId(trainerId)
                 .setPrice(price)
                 .setComment(commentEscaped)
@@ -178,5 +181,4 @@ public class OrderServiceImpl implements OrderService {
         order.setReview(TextEscapeUtil.escapeHtml(review));
         return update(order);
     }
-
 }

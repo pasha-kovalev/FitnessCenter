@@ -73,6 +73,7 @@ public class WrappingCommandRequest implements CommandRequest {
 
     @Override
     public void createSession() {
+        clearSession();
         request.getSession(true);
     }
 
