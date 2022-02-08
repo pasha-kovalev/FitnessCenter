@@ -14,6 +14,7 @@ import java.util.Optional;
 //todo jstl formatting for num internalization
 public class ManageNewDiscountCommand implements Command {
     private static final Logger LOG = LogManager.getLogger(ManageNewDiscountCommand.class);
+    public static final String TRUE_VALUE = "true";
 
     private final ResponseCreator responseCreator;
     private final UserService userService;
@@ -25,14 +26,18 @@ public class ManageNewDiscountCommand implements Command {
 
     @Override
     public CommandResponse execute(CommandRequest request) {
-        //todo admin can add discount to all corporate users at once
         Optional<Long> userIdOptional = CommandHelper.retrievePositiveLongParameter(request, RequestParameter.ID);
         String discountStr = request.getParameter(RequestParameter.DISCOUNT);
+        String isForAllRole = request.getParameter(RequestParameter.CHANGE_ALL);
         if (!userIdOptional.isPresent() || discountStr == null) {
             return responseCreator.createRedirectResponse(PagePath.ERROR);
         }
         try {
-            userService.updateUserDetailsDiscount(userIdOptional.get(), discountStr);
+            if(isForAllRole != null && isForAllRole.equals(TRUE_VALUE)) {
+                userService.updateUserDiscountByRole(userIdOptional.get(), discountStr);
+            } else {
+                userService.updateUserDetailsDiscount(userIdOptional.get(), discountStr);
+            }
         } catch (ServiceException e) {
             LOG.error(e);
             return responseCreator.createRedirectResponse(PagePath.ERROR);
