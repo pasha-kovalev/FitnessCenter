@@ -24,6 +24,7 @@
 <fmt:message var="period" key="payment.info.period"/>
 <fmt:message var="perMonth" key="payment.info.perMonth"/>
 <fmt:message var="submit" key="payment.button.submit"/>
+<fmt:message var="later" key="payment.button.later"/>
 <fmt:message var="notValidTitle" key="payment.input.notValid"/>
 <fmt:message var="month2" key="order.period.month2"/>
 <fmt:message var="money" key="order.price.money"/>
@@ -32,11 +33,19 @@
     <title>${title}</title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <link href="${pageContext.request.contextPath}/style/style.css" type="text/css" rel="stylesheet">
+    <style>
+        [type=text]{
+            -webkit-appearance: button
+        }
+        a {
+            text-decoration: none;
+        }
+    </style>
 </head>
 <body class="form2" onload="outPayment()">
 <jsp:include page="../component/header.jsp" flush="true"/>
 <form id="order" name="payment-form" action="${pageContext.request.contextPath}/controller?command=payment"
-      method="post">
+      method="post" style="top:45%">
     <h1>${title}</h1>
     <p id="incorrect">
         <ct:pullSessionAttribute attribute="errorPaymentMsg" name="msg"/>
@@ -45,34 +54,6 @@
         </c:if>
     </p>
     <div>
-        <label for="name">${name}</label>
-        <input id="name" type="text" maxlength="20" required
-               oninvalid="setCustomValidity('${notValidTitle}')" oninput="setCustomValidity('')">
-        <label for="cvv">CVV</label>
-        <input id="cvv" type="text" pattern="[0-9]{3}" type="text" required
-               oninvalid="setCustomValidity('${notValidTitle}')" oninput="setCustomValidity('')">
-        <label>Срок</label>
-        <select>
-            <option value="01">${month01}</option>
-            <option value="02">${month02} </option>
-            <option value="03">${month03}</option>
-            <option value="04">${month04}</option>
-            <option value="05">${month05}</option>
-            <option value="06">${month06}</option>
-            <option value="07">${month07}</option>
-            <option value="08">${month08}</option>
-            <option value="09">${month09}</option>
-            <option value="10">${month10}</option>
-            <option value="11">${month11}</option>
-            <option value="12">${month12}</option>
-        </select>
-        <select>
-            <option value="21"> 2021</option>
-            <option value="22"> 2022</option>
-            <option value="23"> 2023</option>
-            <option value="24"> 2024</option>
-            <option value="25"> 2025</option>
-        </select>
         <label for="ccn">${ccn}</label>
         <input id="ccn" name="cardNumber" type="tel" inputmode="numeric" pattern="[0-9]{16}"
                placeholder="1111222233334444" required
@@ -85,6 +66,9 @@
     </div>
     <div style="overflow:auto; padding-top: 36px;">
         <div style="float:right;">
+            <a href="/controller?command=show_cabinet">
+                <input id="refuse-button" type="text" value="${later}" style="width: 152px; text-align: center"/>
+            </a>
             <input id="payment-button" type="submit" value="${submit}"/>
         </div>
     </div>
@@ -108,7 +92,7 @@
             priceElem.innerHTML = pricePerMonth + " ${money}";
             creditInfo.style.display = "block";
         } else {
-            priceElem.innerHTML = price.toString();
+            priceElem.innerHTML = price.toString() + " ${money}";
             creditInfo.style.display = "none";
         }
     }

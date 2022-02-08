@@ -3,9 +3,10 @@ package com.epam.jwd.fitness_center.model.validator;
 import com.epam.jwd.fitness_center.model.entity.User;
 
 public final class UserValidator {
-    private static final String PASSWORD_REGEX = "\\w{4,20}";
-    private static final String EMAIL_REGEX = "\\w{5,30}@\\w+\\.[a-z]{2,4}$";
-    private static final String NAME_REGEX = "([А-Яа-я]{1,20})|([A-Z][a-z]{1,20})";
+    //todo pass regex (+jsp)
+    private static final String PASSWORD_REGEX = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+$).{6,30}$";
+    private static final String EMAIL_REGEX = "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$";
+    private static final String NAME_REGEX = "([А-Яа-я]{1,100})|([A-Za-z]{1,100})";
 
     private UserValidator() {
     }

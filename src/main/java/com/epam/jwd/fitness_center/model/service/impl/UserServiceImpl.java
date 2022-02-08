@@ -94,12 +94,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<User> authenticate(String email, String password) throws ServiceException {
-        if (!UserValidator.isValidEmail(email) || !UserValidator.isValidPassword(password)) {
+        if (!UserValidator.isValidEmail(email)) {
             return Optional.empty();
         }
         final byte[] enteredPassword = password.getBytes(StandardCharsets.UTF_8);
         final Optional<User> readUser = findUserByEmail(email);
-        if (readUser.isPresent() && !(readUser.get().getStatus() == UserStatus.UNCONFIRMED)) {
+        if (readUser.isPresent() && readUser.get().getStatus() != UserStatus.UNCONFIRMED) {
             final byte[] hashedPassword = readUser.get()
                     .getPassword()
                     .getBytes(StandardCharsets.UTF_8);

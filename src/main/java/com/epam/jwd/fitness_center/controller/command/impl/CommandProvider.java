@@ -52,7 +52,7 @@ public class CommandProvider {
         commands.put(SHOW_MANAGE_ITEMS, new ShowManageItemsPageCommand(responseCreator));
         commands.put(MANAGE_ITEM_DATA, new ManageItemDataCommand(responseCreator));
         commands.put(MANAGE_NEW_ITEM_DATA, new ManageNewItemDataCommand(responseCreator));
-        commands.put(DELETE_ITEM, new DeleteItemCommand(responseCreator));
+        commands.put(MANAGE_ITEM_ARCHIVE, new ManageItemArchivingCommand(responseCreator));
         commands.put(SHOW_MANAGE_DISCOUNT, new ShowManageDiscountPageCommand(responseCreator));
         commands.put(MANAGE_NEW_DISCOUNT, new ManageNewDiscountCommand(responseCreator));
     }

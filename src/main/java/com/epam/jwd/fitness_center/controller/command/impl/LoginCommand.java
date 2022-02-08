@@ -47,7 +47,6 @@ public class LoginCommand implements Command {
             request.addToSession(Attribute.ERROR_LOGIN_BUNDLE_KEY, ResourceBundleKey.BANNED_ERROR);
             return responseCreator.createRedirectResponse(PagePath.LOGIN_REDIRECT);
         }
-        request.clearSession();
         request.createSession();
         request.addToSession(Attribute.USER, user);
         HttpSessionListenerImpl.getSessionMap(request.getServletContext()).put(user.getId(), request.getSession());

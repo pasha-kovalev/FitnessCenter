@@ -43,6 +43,13 @@
         th {
             text-align: inherit;
         }
+        a {
+            cursor: pointer;
+        }
+        #send-button {
+            width: 100px;
+            text-align: center;
+        }
     </style>
 </head>
 <body onload="showOrders(true)">
@@ -74,13 +81,12 @@
     <div id="mainData" class="userData"></div>
     <form id="reviewForm" name="review-form" method="get" style="visibility: hidden; position: absolute">
         <div>
-
             <textarea id="review" name="review" rows="2" cols="33" maxlength="1000" required
                       oninvalid="setCustomValidity('${notValidTitle}')" oninput="setCustomValidity('')"></textarea>
         </div>
         <div style="overflow:auto;">
             <div style="float:right;">
-                <input id="send-button" type="submit" value="Отправить"/>
+                <input id="send-button" type="text" onclick="sendReview(this)" value="Отправить"/>
             </div>
         </div>
     </form>
@@ -94,8 +100,14 @@
     var mainDataLoaded = false;
     var reviewLoaded = false;
 
+    function reset() {
+        reviewLoaded = true;
+        showReview();
+    }
+
     function showOrders(isActive) {
         document.getElementById("mainData").innerHTML = "";
+        reset();
         var isCurrentOrdersStr = isActive ? "true" : "false";
         jQuery.ajax({
             type: 'GET',
@@ -112,8 +124,8 @@
                             lastTd = "<a " +
                                 "href=\"${pageContext.request.contextPath}/controller?command=show_payment&orderId="
                                 + order.id + "\" class=\"btn btn-success\">${pay}</a>" + `<a style="margin-left: 16px"` +
-                                "href=\"${pageContext.request.contextPath}/controller?command=cancel_order&orderId="
-                                + order.id + "\" class=\"btn btn-danger\">${refuse}</a>";
+                                "onclick='refusePayment("+order.id+")'"+
+                                " class=\"btn btn-danger\">${refuse}</a>";
                             break;
                         case "${OrderStatus.PENDING_CLIENT.name()}":
                             lastTd = "<a " +
@@ -150,7 +162,47 @@
         })
     }
 
+    function refusePayment(orderId) {
+        jQuery.ajax({
+            type: 'POST',
+            url: '${pageContext.request.contextPath}/controller',
+            data: jQuery.param({
+                command: 'cancel_order',
+                orderId: orderId,
+            }),
+            success: function (responseJson) {
+                if (responseJson.includes('error')) {
+                    elem.style.border = '1px solid red';
+                } else {
+                    showOrders(true);
+                }
+            }
+        })
+    }
+        function sendReview(elem) {
+            var form = $("#reviewForm")[0];
+            console.log();
+            jQuery.ajax({
+                type: 'POST',
+                url:  $(form).attr('action'),
+                data: jQuery.param({
+                    review: $(form).find("textarea").first().val()
+                }),
+                success: function (responseJson) {
+                    if (responseJson.includes('error')) {
+                        console.log($(form).attr('action').toString());
+                        elem.style.border = '1px solid red';
+                    } else {
+                        console.log($(form).attr('action').toString());
+                        showReview();
+                        showOrders(false);
+                    }
+                }
+            })
+    }
+
     function showProgram(el) {
+        reset();
         var orderId = $(el).closest("tr")
             .find(".orderIdTd")
             .text();
@@ -187,13 +239,22 @@
         var form = document.getElementById("reviewForm");
         if (reviewLoaded) {
             form.style.visibility = 'hidden';
+            jQuery.each( $(".btn-warning"), function(index, item) {
+                    $(item).css("pointer-events","auto");
+            });
             reviewLoaded = false;
         } else {
+            jQuery.each( $(".btn-warning"), function(index, item) {
+                if(item != el) {
+                    $(item).css("pointer-events","none");
+                }
+            });
             var buttonTd = $(el).closest("td");
             var orderId = $(el).closest("tr")
                 .find(".orderIdTd")
                 .text();
             form.action = '${pageContext.request.contextPath}/controller?command=send_review&orderId=' + orderId;
+            form.method = 'POST';
             var top = $(buttonTd).position().top + $(buttonTd).outerHeight();
             var left = $(el).position().left;
             $("#reviewForm").css({top: top, left: left});

@@ -8,6 +8,7 @@ import com.epam.jwd.fitness_center.model.entity.Order;
 import com.epam.jwd.fitness_center.model.entity.OrderStatus;
 import com.epam.jwd.fitness_center.model.service.OrderService;
 import com.epam.jwd.fitness_center.model.service.impl.ServiceProvider;
+import com.google.gson.Gson;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -46,7 +47,7 @@ public class CancelOrderCommand implements Command {
             LOG.error("Error during order confirmation", e);
             return responseCreator.createRedirectResponse(PagePath.ERROR500);
         }
-        request.addToSession(Attribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_SUCCESS);
-        return responseCreator.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
+        String json = new Gson().toJson(ResourceBundleKey.INFO_SUCCESS);
+        return responseCreator.createAjaxResponse(json);
     }
 }

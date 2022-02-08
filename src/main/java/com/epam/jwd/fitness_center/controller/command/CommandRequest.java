@@ -63,7 +63,7 @@ public interface CommandRequest {
     void clearSession();
 
     /**
-     * Creates new session
+     * Creates new session even if session instance exists
      */
     void createSession();
 

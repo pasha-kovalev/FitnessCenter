@@ -35,7 +35,6 @@ public class SignupCommand implements Command {
         final String lastname = request.getParameter(RequestParameter.LASTNAME);
         Optional<CommandResponse> response = registerUser(request, login, password, passwordRepeat, firstName, lastname);
         if (response.isPresent()) return response.get();
-        request.clearSession();
         request.createSession();
         request.addToSession(RequestParameter.LOGIN, login);
         return responseCreator.createRedirectResponse(PagePath.MAIL_INFO_REDIRECT);

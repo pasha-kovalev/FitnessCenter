@@ -5,12 +5,23 @@
 <fmt:setLocale value="${sessionScope.locale}"/>
 <fmt:setBundle basename="locale"/>
 <fmt:message var="title" key="user.cabinet.title"/>
-<fmt:message var="welcome" key="user.cabinet.welcome"/>
-<fmt:message var="currentOrders" key="user.cabinet.currentOrders"/>
-<fmt:message var="personalTrainer" key="user.cabinet.personalTrainer"/>
-<fmt:message var="orders" key="user.cabinet.orders"/>
-<fmt:message var="settings" key="user.cabinet.settings"/>
-<fmt:message var="notValidTitle" key="payment.input.notValid"/>
+<fmt:message var="activeOrders" key="trainer.cabinet.activeOrders"/>
+<fmt:message var="notProcOrders" key="trainer.cabinet.notProcOrders"/>
+<fmt:message var="history" key="trainer.cabinet.history"/>
+<fmt:message var="settings" key="trainer.cabinet.settings"/>
+<fmt:message var="fistName" key="trainer.cabinet.fistName"/>
+<fmt:message var="lastName" key="trainer.cabinet.lastName"/>
+<fmt:message var="desc" key="trainer.cabinet.desc"/>
+<fmt:message var="photo" key="trainer.cabinet.photo"/>
+<fmt:message var="program" key="trainer.cabinet.program"/>
+<fmt:message var="personalTrainer" key="trainer.cabinet.personalTrainer"/>
+<fmt:message var="take" key="trainer.cabinet.take"/>
+<fmt:message var="process" key="trainer.cabinet.process"/>
+<fmt:message var="view" key="trainer.cabinet.view"/>
+<fmt:message var="orderDate" key="trainer.cabinet.orderDate"/>
+<fmt:message var="status" key="trainer.cabinet.status"/>
+<fmt:message var="chooseImg" key="trainer.cabinet.chooseImg"/>
+<fmt:message var="submit" key="button.submit"/>
 
 <html>
 <head>
@@ -26,6 +37,36 @@
         th {
             text-align: inherit;
         }
+        .custom-file-input::-webkit-file-upload-button {
+            visibility: hidden;
+        }
+        .custom-file-input {
+            width: 150px;
+        }
+        .custom-file-input::before {
+            -webkit-appearance: button;
+            content: '${chooseImg}';
+            display: inline-block;
+            background-color: #ffffffff;
+            color: black;
+            padding: 4px;
+            border: 2px black;
+            cursor: pointer;
+            outline: none;
+            white-space: nowrap;
+        }
+
+        #submit-image {
+            display: inline-block;
+            background-color: #ffffffff;
+            color: black;
+            padding: 4px;
+            border: 2px black;
+            cursor: pointer;
+            outline: none;
+            white-space: nowrap;
+        }
+
     </style>
 </head>
 <body onload="showOrders('active')">
@@ -43,16 +84,16 @@
     <hr>
     <div class="w3-bar-block">
         <button class="w3-bar-item w3-button w3-padding" onclick="showOrders('active')">
-            <i class="fa fa-bullseye fa-fw"></i>Мои заказы
+            <i class="fa fa-bullseye fa-fw"></i>${activeOrders}
         </button>
         <button class="w3-bar-item w3-button w3-padding" onclick="showOrders('untaken')">
-            <i class="fa fa-bullseye fa-fw"></i>Необработанные заказы
+            <i class="fa fa-bullseye fa-fw"></i>${notProcOrders}
         </button>
         <button class="w3-bar-item w3-button w3-padding" onclick="showOrders('history')">
-            <i class="fa fa-history fa-fw"></i>История заказов
+            <i class="fa fa-history fa-fw"></i>${history}
         </button>
         <button class="w3-bar-item w3-button w3-padding" onclick="showSetting()">
-            <i class="fa fa-gear fa-fw"></i>Настройки
+            <i class="fa fa-gear fa-fw"></i>${settings}
         </button>
     </div>
 </nav>
@@ -71,6 +112,16 @@
     var reviewLoaded = false;
     var isFormEditing = false;
 
+    function resetDefault() {
+        mainDataLoaded = false;
+        isFiltered = false;
+        reviewLoaded = false;
+        isFormEditing = false;
+        var review = document.getElementById("review");
+        review.style.visibility = 'hidden';
+        review.innerHTML = "";
+    }
+
     function w3_open() {
         if (mySidebar.style.display === 'block') {
             mySidebar.style.display = 'none';
@@ -87,37 +138,39 @@
     }
 
     function showSetting() {
+        resetDefault();
         document.getElementById("mainData").innerHTML = "";
-        $("#mainData").append($("<h1>").text("Настройки"));
+        $("#mainData").append($("<h1>").text("${settings}"));
         var $div = $("<div style='padding-left: 100px'>").appendTo($("#mainData"));
-        $div.append($("<h3>").text("ИМЯ"))
+        $div.append($("<h3>").text("${fistName}"))
             .append($(`<textarea id="firstname" name="firstname" rows="1" cols="33" maxlength="45" required readonly
             oninvalid="setCustomValidity('${notValidTitle}')" oninput="setCustomValidity('')">`)
                 .text("${sessionScope.user.firstName}"))
             .append($(`<button class="edit-btn w3-bar-item w3-button" onclick="editSettings(this)">`)
                 .append($(`<i class="fa fa-edit fa-fw">`)))
-            .append($("<h3>").text("ФАМИЛИЯ"))
+            .append($("<h3>").text("${lastName}"))
             .append($(`<textarea id="lastname" name="lastname" rows="1" cols="33" maxlength="45" required readonly
                      oninvalid="setCustomValidity('${notValidTitle}')" oninput="setCustomValidity('')">`)
                 .text("${sessionScope.user.secondName}"))
             .append($(`<button class="edit-btn w3-bar-item w3-button" onclick="editSettings(this)">`)
                 .append($(`<i class="fa fa-edit fa-fw">`)))
-            .append($("<h3>").text("ОПИСАНИЕ"))
+            .append($("<h3>").text("${desc}"))
             .append($(`<textarea id="description" name="description" rows="6" cols="66" maxlength="1000" required readonly
                      oninvalid="setCustomValidity('${notValidTitle}')" oninput="setCustomValidity('')">`)
                 .text("${sessionScope.user.description}"))
             .append($(`<button class="edit-btn w3-bar-item w3-button" onclick="editSettings(this)">`)
                 .append($(`<i class="fa fa-edit fa-fw">`)))
-            .append($("<h3>").text("ФОТО"))
+            .append($("<h3>").text("${photo}"))
             .append($(`<img src="${sessionScope.user.photoPath}" class="w3-round w3-image" width="600" height="750">`))
             .append(`<form action="${pageContext.request.contextPath}/controller?command=upload_image"
                                enctype="multipart/form-data" method="post" style="padding-top: 10px">
-                            <input type="file" name="file" />
-                            <input type="submit" />
+                            <input type="file" name="file" class="custom-file-input" accept="image/*" />
+                            <input type="submit" id="submit-image" value="${submit}" />
                          </form>`);
     }
 
     function showOrders(status) {
+        resetDefault();
         jQuery.ajax({
             type: 'GET',
             url: '${pageContext.request.contextPath}/controller?command=show_trainer_orders&orderStatuses=' + status,
@@ -125,11 +178,11 @@
                 document.getElementById("mainData").innerHTML = "";
                 var $table = $(`<table class="custom-table" id="mainTable">`).appendTo($("#mainData"));
                 $("<thead>").appendTo($table)
-                    .append($(`<tr><th onclick="sortTable(0)" style="cursor: pointer">Дата заказа</th>
-                                   <th>Программа</th>
+                    .append($(`<tr><th onclick="sortTable(0)" style="cursor: pointer">${orderDate}</th>
+                                   <th>${program}</th>
                                    <th onclick="filterByTrainer('${sessionScope.user.secondName}')"
-                                       style="cursor: pointer">Личный тренер</th>
-                                   <th>Статус</th></tr>`));
+                                       style="cursor: pointer">${personalTrainer}</th>
+                                   <th>${status}</th></tr>`));
                 $.each(responseJson, function (index, order) {
                     var lastTd;
                     switch (order.orderStatus) {
@@ -137,23 +190,23 @@
                             lastTd = "<a " +
                                 "href=\"${pageContext.request.contextPath}/controller" +
                                 "?command=show_make_program&orderId=" + order.id +
-                                '" class="btn btn-danger">Взять</a>';
+                                '" class="btn btn-danger">${take}</a>';
                             break;
                         case "${OrderStatus.TAKEN.name()}":
                             lastTd = "<a " +
                                 "href=\"${pageContext.request.contextPath}/controller" +
                                 "?command=show_make_program&orderId=" + order.id +
-                                '" class="btn btn-danger">Обработать</a>';
+                                '" class="btn btn-danger">${process}</a>';
                             break;
                         case "${OrderStatus.PENDING_TRAINER.name()}":
                             lastTd = "<a " +
                                 "href=\"${pageContext.request.contextPath}/controller?command=show_program&orderId="
-                                + order.id + "\" class=\"btn btn-warning\">View</a>";
+                                + order.id + "\" class=\"btn btn-warning\">${view}</a>";
                             break;
                         case "${OrderStatus.COMPLETED.name()}":
                             if (order.review != null) {
                                 lastTd = "<button class=\"btn btn-success\" " +
-                                    "onclick='showReview(this)'>Смотреть отзыв</button>";
+                                    "onclick='showReview(this)'>${view}</button>";
                             } else {
                                 lastTd = "";
                             }
@@ -289,9 +342,12 @@
             sendUserData(textArea.getAttribute("name"), textArea.value, textArea)
             textArea.readOnly = true;
             $(i).attr('class', 'fa fa-edit fa-fw');
+            console.log();
+            $('.fa-edit').parent().css("pointer-events","auto");
             isFormEditing = false;
         } else {
             $(i).attr('class', 'fa fa-check fa-fw');
+            $('.fa-edit').parent().css("pointer-events","none");
             textArea.readOnly = false;
             isFormEditing = true;
         }

@@ -455,7 +455,7 @@ button.btn.btn-danger {
     font-weight: 500;
 }
 
-.form2 input:not([name="acceptCredit"]):not([type="button"]):not([type="submit"]) {
+.form2 input:not([name="acceptCredit"]):not([type="button"]):not([type="submit"]):not([id="refuse-button"]) {
     display: block;
     border: 1px solid gray;
     height: 50px;
@@ -732,7 +732,7 @@ select {
 button,
 [type=button],
 [type=reset],
-[type=submit] {
+[type=submit]{
     -webkit-appearance: button
 }
 
