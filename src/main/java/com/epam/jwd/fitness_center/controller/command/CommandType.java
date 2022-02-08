@@ -7,7 +7,8 @@ import java.util.List;
 
 import static com.epam.jwd.fitness_center.model.entity.UserRole.*;
 
-/**The enum represents command type and roles allowed to execute that command
+/**
+ * The enum represents command type and roles allowed to execute that command
  *
  * @author Pavel Kovalev
  * @version 1.0
@@ -65,7 +66,9 @@ public enum CommandType {
         this.allowedRoles = roles != null && roles.length > 0 ? Arrays.asList(roles) : UserRole.valuesAsList();
     }
 
-    /**Gets command type by its string representation
+    /**
+     * Gets command type by its string representation
+     *
      * @param name name of command type
      * @return command type
      */
@@ -78,7 +81,9 @@ public enum CommandType {
         return DEFAULT;
     }
 
-    /**Gets allowed roles for a command
+    /**
+     * Gets allowed roles for a command
+     *
      * @return List of allowed roles
      */
     public List<UserRole> getAllowedRoles() {

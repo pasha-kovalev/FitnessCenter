@@ -48,6 +48,7 @@
         th {
             text-align: inherit;
         }
+
         .for-all {
             margin-top: 10px;
         }
@@ -102,6 +103,7 @@
         isFormEditing = false;
         editingElem = "";
     }
+
     function w3_open() {
         if (mySidebar.style.display === 'block') {
             mySidebar.style.display = 'none';
@@ -125,7 +127,7 @@
             url: '${pageContext.request.contextPath}/controller?command=show_manage_users',
             success: function (responseJson) {
                 document.getElementById("mainData").innerHTML = "";
-                if(rowId != null) {
+                if (rowId != null) {
                     document.getElementById("mainData").style.display = "none";
                 }
                 var $table = $(`<table class="custom-table table-striped" id="tableData">`).appendTo($("#mainData"));
@@ -153,16 +155,18 @@
                         .append($(`<td class="status-select-td" style="display: none">`)
                             .append(`<select name="status-select" class="status-select">`))
                         .append($("<td>").append(lastTd))
-                        .append($("<td>").append(`<button onclick="deleteUser(`+ user.id +`, this)" ` +
+                        .append($("<td>").append(`<button onclick="deleteUser(` + user.id + `, this)" ` +
                             `class="btn btn-danger">${delete}</button>`));
                 });
                 insertOptions(getRoles(), 'role-select');
                 insertOptions(getStatuses(), 'status-select');
             },
             complete: function () {
-                $('#tableData').paging({limit:10});
-                if(rowId != null) {
-                    setTimeout(() => {  highlightTr(rowId); }, 50);
+                $('#tableData').paging({limit: 10});
+                if (rowId != null) {
+                    setTimeout(() => {
+                        highlightTr(rowId);
+                    }, 50);
                 }
             }
         });
@@ -187,7 +191,7 @@
 
     function showUsersDiscount(rowId) {
         reset();
-        document.getElementById("myInput").style.display  = "none";
+        document.getElementById("myInput").style.display = "none";
         jQuery.ajax({
             type: 'GET',
             url: '${pageContext.request.contextPath}/controller?command=show_manage_discount',
@@ -221,11 +225,11 @@
                         .append($("<td>").append(lastTd))
                         .append($("<td class='for-all-td' style='display: none'>")
                             .append(`<input type="checkbox" class="for-all" name="for-all">
-                                     <label for="for-all">For all `+ user.role +` </label>`));
+                                     <label for="for-all">For all ` + user.role + ` </label>`));
                 });
             },
             complete: function () {
-                if(rowId != null) {
+                if (rowId != null) {
                     highlightTr(rowId);
                 }
             }
@@ -258,7 +262,7 @@
                 $.each(responseJson, function (index, item) {
                     var lastTd = `<button onclick="editItem(this, true)" ` +
                         `class="btn btn-danger">${archive}</button>`;
-                    if(item.isArchive) {
+                    if (item.isArchive) {
                         lastTd = `<button onclick="editItem(this, true)" ` +
                             `class="btn btn-danger">${unarchive}</button>`;
                     }
@@ -295,7 +299,7 @@
                         `class="btn btn-danger">${add}</button>`));
             },
             complete: function () {
-                if(rowId != null) {
+                if (rowId != null) {
                     highlightTr(rowId);
                 }
             }
@@ -361,7 +365,7 @@
         })
     }
 
-    function sendNewItemData(name, price,desc, elem) {
+    function sendNewItemData(name, price, desc, elem) {
         if (name === '' || price === '' || price === '0' || desc === '') {
             elem.style.border = '1px solid red';
             return;
@@ -418,7 +422,7 @@
     function editItem(el, isToDelete = false) {
         var trClosest = $(el).closest('tr');
         var id = trClosest.find('.item-id')[0].innerHTML;
-        if(isFormEditing === true && ("item" + id) !== editingElem) {
+        if (isFormEditing === true && ("item" + id) !== editingElem) {
             isFormEditing = false;
         }
         var textArea1 = trClosest.find('textarea')[0];
@@ -444,8 +448,8 @@
             $(textArea2).attr('rows', 15)
             input.readOnly = false;
             $(el).closest('button')[0].innerText = "${save}"
-            $('.btn').css("pointer-events","none");
-            $(el).closest('button').first().css("pointer-events","auto");
+            $('.btn').css("pointer-events", "none");
+            $(el).closest('button').first().css("pointer-events", "auto");
             isFormEditing = true;
             editingElem = "item" + id;
         }
@@ -455,7 +459,7 @@
         var trClosest = $(el).closest('tr');
         var id = trClosest.find('.user-id')[0].innerHTML;
         var checkboxTd = trClosest.find('.for-all-td')[0];
-        if(isFormEditing === true && ("disc" + id) !== editingElem) {
+        if (isFormEditing === true && ("disc" + id) !== editingElem) {
             isFormEditing = false;
         }
         var input = trClosest.find('.discount')[0];
@@ -463,7 +467,7 @@
         if (isFormEditing) {
             sendNewDiscount(id, discount, trClosest[0]);
             $(el).closest('button')[0].innerText = "${change}";
-            $('.btn-warning').css("pointer-events","auto");
+            $('.btn-warning').css("pointer-events", "auto");
             input.style.border = "";
             checkboxTd.style.display = 'none';
             input.readOnly = true;
@@ -473,8 +477,8 @@
             input.readOnly = false;
             input.style.border = "1px solid gray";
             checkboxTd.style.display = '';
-            $('.btn-warning').css("pointer-events","none");
-            $(el).closest('button').first().css("pointer-events","auto");
+            $('.btn-warning').css("pointer-events", "none");
+            $(el).closest('button').first().css("pointer-events", "auto");
             $(el).closest('button')[0].innerText = "${save}"
             isFormEditing = true;
             editingElem = "disc" + id;
@@ -484,9 +488,9 @@
     function editUser(el) {
         var trClosest = $(el).closest('tr');
         var id = trClosest.find('.user-id')[0].innerHTML;
-        if(isFormEditing === true && ("user" + id) !== editingElem) {
+        if (isFormEditing === true && ("user" + id) !== editingElem) {
             isFormEditing = false;
-            $('.btn').css("pointer-events","auto");
+            $('.btn').css("pointer-events", "auto");
         }
         var roleTd = trClosest.find('.role-td')[0];
         var statusTd = trClosest.find('.status-td')[0];
@@ -500,15 +504,15 @@
             displayByElem(roleTd);
             displayByElem(statusTd);
             $(el).closest('button')[0].innerText = "${change}";
-            $('.btn').css("pointer-events","auto");
+            $('.btn').css("pointer-events", "auto");
             $(el).attr('class', 'btn btn-warning');
             isFormEditing = false;
             editingElem = "";
         } else {
             $(roleSelectTd.firstChild).val(roleTd.innerText);
             $(statusSelectTd.firstChild).val(statusTd.innerText);
-            $('.btn').css("pointer-events","none");
-            $(el).closest('button').first().css("pointer-events","auto");
+            $('.btn').css("pointer-events", "none");
+            $(el).closest('button').first().css("pointer-events", "auto");
             displayByElem(roleTd, true);
             displayByElem(statusTd, true);
             displayByElem(roleSelectTd);
@@ -578,9 +582,9 @@
     function getRoles() {
         var arr = [];
         <c:forEach var="entry" items="${UserRole.values()}">
-            if('${entry}' !== '${UserRole.GUEST.name()}') {
-                arr.push('${entry}');
-            }
+        if ('${entry}' !== '${UserRole.GUEST.name()}') {
+            arr.push('${entry}');
+        }
         </c:forEach>
         return arr;
     }
@@ -597,30 +601,30 @@
     }
 
     function hideTr(id) {
-        var el = $("td:contains("+ id +")")[0].parentNode;
+        var el = $("td:contains(" + id + ")")[0].parentNode;
         el.style.display = 'none';
     }
 
     function highlightTr(id) {
-        var el = $("td:contains("+ id +")").filter(function() {
+        var el = $("td:contains(" + id + ")").filter(function () {
             return $(this).text() == id;
         });
         el = el[0].parentNode;
-        if(document.getElementsByClassName("paging-nav")[0] !== undefined) {
-            $(document.getElementsByClassName("paging-nav")[0]).find('[data-page="' + (Math.ceil(el.rowIndex / 10) - 1) +'"]')[0].click();
+        if (document.getElementsByClassName("paging-nav")[0] !== undefined) {
+            $(document.getElementsByClassName("paging-nav")[0]).find('[data-page="' + (Math.ceil(el.rowIndex / 10) - 1) + '"]')[0].click();
             $(".paging-nav").click();
         }
         el.style.border = '1px solid green';
         document.getElementById("mainData").style.display = "";
     }
 
-    $(document).ready(function(){
-        $("#myInput").on("keyup", function() {
-            if($(this).val() == "") {
+    $(document).ready(function () {
+        $("#myInput").on("keyup", function () {
+            if ($(this).val() == "") {
                 showUsers();
             }
             var value = $(this).val().toLowerCase();
-            $("tbody tr").filter(function() {
+            $("tbody tr").filter(function () {
                 $(this).toggle($(this).children('td').slice(0, 6).text().toLowerCase().indexOf(value) > -1)
             });
         });

@@ -3,6 +3,7 @@ package com.epam.jwd.fitness_center.model.dao.impl;
 import com.epam.jwd.fitness_center.exception.DaoException;
 import com.epam.jwd.fitness_center.model.connection.ConnectionPool;
 import com.epam.jwd.fitness_center.model.dao.BaseDao;
+import com.epam.jwd.fitness_center.model.dao.TokenDao;
 import com.epam.jwd.fitness_center.model.entity.Token;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,7 +14,7 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
-public class TokenDaoImpl extends BaseDao<Token> {
+public class TokenDaoImpl extends BaseDao<Token> implements TokenDao {
     private static final Logger LOG = LogManager.getLogger(TokenDaoImpl.class);
     private static final String TOKEN_TABLE_NAME = "user_token";
     private static final String ID_FIELD_NAME = "id";
@@ -81,15 +82,17 @@ public class TokenDaoImpl extends BaseDao<Token> {
         return rows > 0;
     }
 
-    //todo interface
+    @Override
     public long removeByUserId(Long userId) throws DaoException {
         return executeUpdate(DELETE_BY_USER_ID_QUERY, st -> st.setLong(1, userId));
     }
 
+    @Override
     public List<Token> findByUserId(Long userId) throws DaoException {
         return executePrepared(SELECT_BY_USER_ID_QUERY, this::extractResult, st -> st.setLong(1, userId));
     }
 
+    @Override
     public void removeExpiredToken(int days) throws DaoException {
         executeUpdate(DELETE_BY_DAYS_QUERY, st -> st.setLong(1, days));
     }

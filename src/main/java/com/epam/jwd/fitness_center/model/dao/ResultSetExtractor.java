@@ -8,19 +8,25 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**Functional interface of metho
+/**
+ * Functional interface of metho
+ *
  * @param <T>
  */
 @FunctionalInterface
 public interface ResultSetExtractor<T extends Entity> {
-    /**Retrieves values from a result set into an entity
+    /**
+     * Retrieves values from a result set into an entity
+     *
      * @param resultSet result set
      * @return entity
      * @throws DaoException when error while query execution occurs
      */
     T extract(ResultSet resultSet) throws DaoException;
 
-    /**Retrieves all entities from result set
+    /**
+     * Retrieves all entities from result set
+     *
      * @param resultSet result set
      * @return list of extracted entities
      * @throws DaoException when error while query execution occurs

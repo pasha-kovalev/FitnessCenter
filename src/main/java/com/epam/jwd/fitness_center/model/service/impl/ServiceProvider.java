@@ -5,7 +5,7 @@ import com.epam.jwd.fitness_center.model.service.*;
 public final class ServiceProvider {
     private final UserService userService;
     private final MailService mailService;
-    private final ItemServiceImpl itemService;
+    private final ItemService itemService;
     private final OrderService orderService;
     private final PaymentService paymentService;
     private final ProgramService programService;
@@ -31,7 +31,7 @@ public final class ServiceProvider {
         return mailService;
     }
 
-    public ItemServiceImpl getItemService() {
+    public ItemService getItemService() {
         return itemService;
     }
 

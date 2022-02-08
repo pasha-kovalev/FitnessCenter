@@ -16,8 +16,10 @@ import static com.epam.jwd.fitness_center.controller.command.Attribute.GLOBAL_SE
 @WebListener
 public class HttpSessionListenerImpl implements HttpSessionListener {
 
-    /**Retrieves session map from servlet context (or creates if null)
+    /**
+     * Retrieves session map from servlet context (or creates if null)
      * where key is user id and value is session of user
+     *
      * @param appContext servlet context
      * @return session map
      */
@@ -41,7 +43,9 @@ public class HttpSessionListenerImpl implements HttpSessionListener {
         removeFromSessionMap(se);
     }
 
-    /**Removes session from session map
+    /**
+     * Removes session from session map
+     *
      * @param se http session event
      */
     private void removeFromSessionMap(HttpSessionEvent se) {
@@ -49,7 +53,9 @@ public class HttpSessionListenerImpl implements HttpSessionListener {
         sessionMap.values().remove(se.getSession());
     }
 
-    /**Sets default locale to session
+    /**
+     * Sets default locale to session
+     *
      * @param session http session event
      */
     private void setDefaultLocale(HttpSession session) {

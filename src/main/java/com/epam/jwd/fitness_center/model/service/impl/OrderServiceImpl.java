@@ -8,6 +8,7 @@ import com.epam.jwd.fitness_center.model.entity.Item;
 import com.epam.jwd.fitness_center.model.entity.Order;
 import com.epam.jwd.fitness_center.model.entity.OrderStatus;
 import com.epam.jwd.fitness_center.model.entity.Program;
+import com.epam.jwd.fitness_center.model.service.ItemService;
 import com.epam.jwd.fitness_center.model.service.OrderService;
 import com.epam.jwd.fitness_center.model.service.ProgramService;
 import com.epam.jwd.fitness_center.model.util.TextEscapeUtil;
@@ -63,7 +64,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = optionalOrder.orElseThrow(() -> new ServiceException("Order not found. ID: " + orderId));
         OrderStatus status = order.getOrderStatus();
         try {
-            if(status == OrderStatus.COMPLETED || status == OrderStatus.CANCELLED) {
+            if (status == OrderStatus.COMPLETED || status == OrderStatus.CANCELLED) {
                 return orderDao.delete(orderId);
             }
             return false;
@@ -81,7 +82,7 @@ public class OrderServiceImpl implements OrderService {
         }
         BigDecimal price = calcPrice(userDetailsId, itemId, period);
         Item item = ServiceProvider.getInstance().getItemService().find(itemId)
-                    .orElseThrow(() -> new ServiceException("Item not found by item id: " + itemId));
+                .orElseThrow(() -> new ServiceException("Item not found by item id: " + itemId));
         Order order = new Order.Builder()
                 .setUserDetailsId(userDetailsId)
                 .setOrderStatus(status)
@@ -109,7 +110,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private BigDecimal calcPrice(long userDetailsId, long itemId, long itemAmount) throws ServiceException {
-        ItemServiceImpl itemService = ServiceProvider.getInstance().getItemService();
+        ItemService itemService = ServiceProvider.getInstance().getItemService();
         return itemService.calculateItemPriceForUser(userDetailsId, itemId).multiply(new BigDecimal(itemAmount));
     }
 

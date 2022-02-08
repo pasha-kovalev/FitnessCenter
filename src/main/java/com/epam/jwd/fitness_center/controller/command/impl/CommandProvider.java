@@ -11,7 +11,7 @@ import static com.epam.jwd.fitness_center.controller.command.CommandType.*;
 
 public class CommandProvider {
     private final EnumMap<CommandType, Command> commands = new EnumMap(CommandType.class);
-    private final ResponseCreator responseCreator = ResponseCreator.getCreator();
+    private final ResponseCreator responseCreator = SimpleResponseCreator.getInstance();
 
     private CommandProvider() {
         commands.put(DEFAULT, new DefaultCommand(responseCreator));

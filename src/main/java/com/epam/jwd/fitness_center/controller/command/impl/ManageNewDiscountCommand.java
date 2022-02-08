@@ -11,11 +11,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Optional;
-//todo jstl formatting for num internalization
-public class ManageNewDiscountCommand implements Command {
-    private static final Logger LOG = LogManager.getLogger(ManageNewDiscountCommand.class);
-    public static final String TRUE_VALUE = "true";
 
+public class ManageNewDiscountCommand implements Command {
+    public static final String TRUE_VALUE = "true";
+    private static final Logger LOG = LogManager.getLogger(ManageNewDiscountCommand.class);
     private final ResponseCreator responseCreator;
     private final UserService userService;
 
@@ -33,7 +32,7 @@ public class ManageNewDiscountCommand implements Command {
             return responseCreator.createRedirectResponse(PagePath.ERROR);
         }
         try {
-            if(isForAllRole != null && isForAllRole.equals(TRUE_VALUE)) {
+            if (isForAllRole != null && isForAllRole.equals(TRUE_VALUE)) {
                 userService.updateUserDiscountByRole(userIdOptional.get(), discountStr);
             } else {
                 userService.updateUserDetailsDiscount(userIdOptional.get(), discountStr);

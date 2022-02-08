@@ -6,7 +6,7 @@ import com.epam.jwd.fitness_center.model.dao.impl.DaoProvider;
 import com.epam.jwd.fitness_center.model.dao.impl.ItemDaoImpl;
 import com.epam.jwd.fitness_center.model.entity.Item;
 import com.epam.jwd.fitness_center.model.entity.UserDetails;
-import com.epam.jwd.fitness_center.model.service.EntityService;
+import com.epam.jwd.fitness_center.model.service.ItemService;
 import com.epam.jwd.fitness_center.model.service.UserService;
 import com.epam.jwd.fitness_center.model.util.TextEscapeUtil;
 import com.epam.jwd.fitness_center.model.validator.ItemValidator;
@@ -18,7 +18,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 //todo add interface also for dao
-public class ItemServiceImpl implements EntityService<Item> {
+public class ItemServiceImpl implements ItemService {
     private static final int MONEY_PRECISION = 2;
     private static final int PERCENT_DIVISOR = 100;
 
@@ -37,6 +37,7 @@ public class ItemServiceImpl implements EntityService<Item> {
         }
     }
 
+    @Override
     public void changeIsArchive(long id) throws ServiceException {
         Optional<Item> optionalItem = find(id);
         Item item = optionalItem.orElseThrow(() -> new ServiceException("Item not found. Id: " + id));
@@ -44,6 +45,7 @@ public class ItemServiceImpl implements EntityService<Item> {
         update(item);
     }
 
+    @Override
     public Optional<Item> find(long id) throws ServiceException {
         try {
             return itemDao.read(id);
@@ -61,6 +63,7 @@ public class ItemServiceImpl implements EntityService<Item> {
         }
     }
 
+    @Override
     public boolean update(Long id, String name, String price, String description) throws ServiceException {
         Optional<Item> optionalItem = find(id);
         if (!optionalItem.isPresent()) {
@@ -83,6 +86,7 @@ public class ItemServiceImpl implements EntityService<Item> {
         }
     }
 
+    @Override
     public Item insert(String name, String price, String description) throws ServiceException {
         name = TextEscapeUtil.escapeHtml(name);
         description = TextEscapeUtil.escapeHtml(description);
@@ -107,7 +111,7 @@ public class ItemServiceImpl implements EntityService<Item> {
         }
     }
 
-
+    @Override
     public BigDecimal calculateItemPriceForUser(long userId, long itemId) throws ServiceException {
         UserService userService = ServiceProvider.getInstance().getUserService();
         userService.findUserDetails(userId);
@@ -119,12 +123,12 @@ public class ItemServiceImpl implements EntityService<Item> {
         return calcFinalPrice(optionalItem.get().getPrice(), userDetails.getDiscount());
     }
 
+    @Override
     public List<Item> modifyItemsByDiscount(List<Item> items, BigDecimal discount) {
         return items.stream()
                 .peek(i -> i.setPrice(calcFinalPrice(i.getPrice(), discount)))
                 .collect(Collectors.toList());
     }
-
 
     private BigDecimal calcFinalPrice(BigDecimal price, BigDecimal discount) {
         return discount == null ? price

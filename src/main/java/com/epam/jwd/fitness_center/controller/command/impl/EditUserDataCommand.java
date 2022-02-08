@@ -13,7 +13,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Optional;
 
-//todo add settings for user
 public class EditUserDataCommand implements Command {
     private static final Logger LOG = LogManager.getLogger(EditUserDataCommand.class);
 
@@ -31,8 +30,6 @@ public class EditUserDataCommand implements Command {
         String value = request.getParameter(RequestParameter.VALUE);
         Optional<User> userOptional = CommandHelper.retrieveUserFromSession(request);
         if (!userOptional.isPresent() || fieldName == null || value == null) {
-            //todo add logs like this
-            LOG.error("Cannot execute command. Parameters:{},{}", fieldName, value);
             return responseCreator.createRedirectResponse(PagePath.ERROR);
         }
         User user = userOptional.get();
@@ -41,8 +38,7 @@ public class EditUserDataCommand implements Command {
             request.addToSession(Attribute.USER, userService.findUserById(user.getId())
                     .orElseThrow(() -> new ServiceException("User not found")));
         } catch (ServiceException e) {
-            //todo add logs like this
-            LOG.error(e);
+            LOG.error("Unable to edit user data", e);
             return responseCreator.createRedirectResponse(PagePath.ERROR);
         }
         String json = new Gson().toJson(ResourceBundleKey.INFO_SUCCESS);

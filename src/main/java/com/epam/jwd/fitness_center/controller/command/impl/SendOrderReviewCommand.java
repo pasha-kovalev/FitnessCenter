@@ -19,7 +19,7 @@ public class SendOrderReviewCommand implements Command {
     private static final Logger LOG = LogManager.getLogger(SendOrderReviewCommand.class);
     private final ResponseCreator responseCreator;
     private final OrderService orderService;
-    //TODO BUG
+
     SendOrderReviewCommand(ResponseCreator responseCreator) {
         this.responseCreator = responseCreator;
         orderService = ServiceProvider.getInstance().getOrderService();

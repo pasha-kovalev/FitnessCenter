@@ -1,6 +1,7 @@
 package com.epam.jwd.fitness_center.exception;
 
-/**The class represents service exception
+/**
+ * The class represents service exception
  *
  * @author Pavel Kovalev
  * @version 1.0

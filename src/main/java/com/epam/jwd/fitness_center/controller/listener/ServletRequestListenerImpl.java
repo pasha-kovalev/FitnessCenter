@@ -13,7 +13,9 @@ import java.io.UnsupportedEncodingException;
 public class ServletRequestListenerImpl implements ServletRequestListener {
     private static final Logger LOG = LogManager.getLogger(ServletRequestListenerImpl.class);
 
-    /**Sets character encoding
+    /**
+     * Sets character encoding
+     *
      * @param sre servlet request initialization event
      */
     @Override

@@ -162,6 +162,7 @@ public class UserDaoImpl extends BaseDao<User> implements UserDao {
         return rows > 0;
     }
 
+    @Override
     public boolean updateRole(UserRole role, long id) throws DaoException {
         int rows = executeUpdate(UPDATE_USER_ROLE_BY_ID, st -> {
             st.setString(1, role.name().toLowerCase());
@@ -176,20 +177,16 @@ public class UserDaoImpl extends BaseDao<User> implements UserDao {
                 st -> st.setString(1, email));
     }
 
-    /*public Optional<User> findByRole(UserRole role) throws DaoException {
-        return executePreparedForEntity(SELECT_USERS_BY_ROLE, this::extractResult,
-                st -> st.setString(1, role.toString().toLowerCase()));
-    }
-*/
+    @Override
     public List<User> findActiveTrainers() throws DaoException {
         return executeStatement(SELECT_ACTIVE_TRAINERS, this::extractResult);
     }
 
+    @Override
     public List<User> findActiveClients() throws DaoException {
         return executeStatement(SELECT_ACTIVE_CLIENTS, this::extractResult);
     }
 
-    //todo IN OTHER and delete to upper case make roleOf [instead of valueOf] like nmikle did
     @Override
     protected User extractResult(ResultSet rs) throws DaoException {
         try {

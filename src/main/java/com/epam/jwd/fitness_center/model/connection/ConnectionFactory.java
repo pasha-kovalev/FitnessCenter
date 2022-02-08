@@ -11,7 +11,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-/**Class for database connection creation
+/**
+ * Class for database connection creation
  *
  * @author Pavel Kovalev
  * @version 1.0
@@ -46,7 +47,8 @@ class ConnectionFactory {
     private ConnectionFactory() {
     }
 
-    /**Creates database proxy connection
+    /**
+     * Creates database proxy connection
      *
      * @return new database proxy connection
      * @throws DatabaseConnectionException if error while creating connection occurred

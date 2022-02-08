@@ -41,12 +41,15 @@
         th {
             text-align: inherit;
         }
+
         .custom-file-input::-webkit-file-upload-button {
             visibility: hidden;
         }
+
         .custom-file-input {
             width: 150px;
         }
+
         .custom-file-input::before {
             -webkit-appearance: button;
             content: '${chooseImg}';
@@ -215,7 +218,7 @@
                             } else {
                                 lastTd = "";
                             }
-                            lastTd2 = `<button onclick="deleteOrder(`+ order.id +`, this)" ` +
+                            lastTd2 = `<button onclick="deleteOrder(` + order.id + `, this)" ` +
                                 `class="btn btn-danger">${delete}</button>`;
                             break;
                         default:
@@ -367,11 +370,11 @@
             textArea.readOnly = true;
             $(i).attr('class', 'fa fa-edit fa-fw');
             console.log();
-            $('.fa-edit').parent().css("pointer-events","auto");
+            $('.fa-edit').parent().css("pointer-events", "auto");
             isFormEditing = false;
         } else {
             $(i).attr('class', 'fa fa-check fa-fw');
-            $('.fa-edit').parent().css("pointer-events","none");
+            $('.fa-edit').parent().css("pointer-events", "none");
             textArea.readOnly = false;
             isFormEditing = true;
         }

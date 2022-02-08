@@ -26,13 +26,13 @@ public class DeleteUserCommand implements Command {
     public CommandResponse execute(CommandRequest request) {
         Optional<Long> userIdOptional = CommandHelper.retrievePositiveLongParameter(request, RequestParameter.ID);
         boolean isDeleted;
-        if(!userIdOptional.isPresent()) {
+        if (!userIdOptional.isPresent()) {
             return CommandHelper.createInfoErrorResponse(responseCreator, request);
         }
         try {
             isDeleted = userService.deleteUser(userIdOptional.get());
         } catch (ServiceException e) {
-            LOG.error(e);
+            LOG.error("Unable to delete user", e);
             return responseCreator.createRedirectResponse(PagePath.ERROR500);
         }
         String json = new Gson().toJson(isDeleted);

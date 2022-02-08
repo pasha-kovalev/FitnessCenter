@@ -1,14 +1,14 @@
 package com.epam.jwd.fitness_center.model.dao.impl;
 
 import com.epam.jwd.fitness_center.model.connection.ConnectionPoolManager;
-import com.epam.jwd.fitness_center.model.dao.CardDao;
+import com.epam.jwd.fitness_center.model.dao.*;
 
 public class DaoProvider {
-    private final UserDaoImpl userDao = new UserDaoImpl(ConnectionPoolManager.getInstance());
-    private final TokenDaoImpl tokenDao = new TokenDaoImpl(ConnectionPoolManager.getInstance());
-    private final UserDetailsDaoImpl userDetailsDao = new UserDetailsDaoImpl(ConnectionPoolManager.getInstance());
+    private final UserDao userDao = new UserDaoImpl(ConnectionPoolManager.getInstance());
+    private final TokenDao tokenDao = new TokenDaoImpl(ConnectionPoolManager.getInstance());
+    private final UserDetailsDao userDetailsDao = new UserDetailsDaoImpl(ConnectionPoolManager.getInstance());
     private final ItemDaoImpl itemDao = new ItemDaoImpl(ConnectionPoolManager.getInstance());
-    private final OrderDaoImpl orderDao = new OrderDaoImpl(ConnectionPoolManager.getInstance());
+    private final OrderDao orderDao = new OrderDaoImpl(ConnectionPoolManager.getInstance());
     private final CardDao cardDao = new CardDaoImpl(ConnectionPoolManager.getInstance());
 
     private final ProgramDaoImpl programDao = new ProgramDaoImpl(ConnectionPoolManager.getInstance());
@@ -24,15 +24,15 @@ public class DaoProvider {
         return programDao;
     }
 
-    public UserDaoImpl getUserDao() {
+    public UserDao getUserDao() {
         return userDao;
     }
 
-    public TokenDaoImpl getTokenDao() {
+    public TokenDao getTokenDao() {
         return tokenDao;
     }
 
-    public UserDetailsDaoImpl getUserDetailsDao() {
+    public UserDetailsDao getUserDetailsDao() {
         return userDetailsDao;
     }
 
@@ -40,7 +40,7 @@ public class DaoProvider {
         return itemDao;
     }
 
-    public OrderDaoImpl getOrderDao() {
+    public OrderDao getOrderDao() {
         return orderDao;
     }
 

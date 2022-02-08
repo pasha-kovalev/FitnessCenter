@@ -10,7 +10,9 @@ import java.sql.*;
 import java.util.List;
 import java.util.Optional;
 
-/**Dao abstract class with base methods and queries
+/**
+ * Dao abstract class with base methods and queries
+ *
  * @param <T> entity type
  */
 public abstract class BaseDao<T extends Entity> implements EntityDao<T> {
@@ -25,14 +27,12 @@ public abstract class BaseDao<T extends Entity> implements EntityDao<T> {
     protected static final int FIRST_COLUMN_INDEX = 1;
 
     protected final ConnectionPool pool;
-
+    private final String deleteById;
+    private final Logger logger;
     protected String insertQuery;
     protected String updateQuery;
     protected String selectAllQuery;
     protected String selectByIdQuery;
-    private final String deleteById;
-
-    private final Logger logger;
 
     {
         insertQuery = String.format(INSERT_INTO, getTableName(), String.join(COMMA, getFields()));
@@ -47,7 +47,9 @@ public abstract class BaseDao<T extends Entity> implements EntityDao<T> {
         this.logger = logger;
     }
 
-    /**Inserts new entity
+    /**
+     * Inserts new entity
+     *
      * @param entity entity
      * @return inserted entity
      * @throws DaoException when error while query execution occurs or cannot insert new entity
@@ -63,7 +65,8 @@ public abstract class BaseDao<T extends Entity> implements EntityDao<T> {
         }
     }
 
-    /**Selects all entities
+    /**
+     * Selects all entities
      *
      * @return list of found entities
      * @throws DaoException when error while query execution occurs
@@ -73,7 +76,8 @@ public abstract class BaseDao<T extends Entity> implements EntityDao<T> {
         return executeStatement(selectAllQuery, this::extractResult);
     }
 
-    /**Finds entity by id
+    /**
+     * Finds entity by id
      *
      * @param id entity id
      * @return optional with entity or empty optional
@@ -85,7 +89,9 @@ public abstract class BaseDao<T extends Entity> implements EntityDao<T> {
                 st -> st.setLong(1, id));
     }
 
-    /**Deletes entity by id
+    /**
+     * Deletes entity by id
+     *
      * @param id entity id
      * @return true if deleting was successful
      * @throws DaoException when error while query execution occurs
@@ -95,9 +101,11 @@ public abstract class BaseDao<T extends Entity> implements EntityDao<T> {
         return executeUpdate(deleteById, st -> st.setLong(1, id)) > 0;
     }
 
-    /**Executes sql query using prepared statement
-     * @param sql sql query
-     * @param extractor extractor of result set
+    /**
+     * Executes sql query using prepared statement
+     *
+     * @param sql                 sql query
+     * @param extractor           extractor of result set
      * @param statementPreparator preparator for statement
      * @return list of found entities or empty list
      * @throws DaoException when error while query execution occurs
@@ -115,8 +123,10 @@ public abstract class BaseDao<T extends Entity> implements EntityDao<T> {
         }
     }
 
-    /**Executes sql insert query using prepared statement
-     * @param sql sql query
+    /**
+     * Executes sql insert query using prepared statement
+     *
+     * @param sql                 sql query
      * @param statementPreparator preparator for statement
      * @return id of entity in db
      * @throws DaoException when error while query execution occurs
@@ -135,8 +145,10 @@ public abstract class BaseDao<T extends Entity> implements EntityDao<T> {
         }
     }
 
-    /**Executes sql update query using prepared statement
-     * @param sql sql query
+    /**
+     * Executes sql update query using prepared statement
+     *
+     * @param sql                 sql query
      * @param statementPreparator preparator for statement
      * @return either the row count or 0 for SQL statements that return nothing
      * @throws DaoException when error while query execution occurs
@@ -152,8 +164,10 @@ public abstract class BaseDao<T extends Entity> implements EntityDao<T> {
         }
     }
 
-    /**Executes sql query using statement
-     * @param sql sql query
+    /**
+     * Executes sql query using statement
+     *
+     * @param sql       sql query
      * @param extractor extractor of result set
      * @return list of found entities or empty list
      * @throws DaoException when error while query execution occurs
@@ -168,9 +182,11 @@ public abstract class BaseDao<T extends Entity> implements EntityDao<T> {
         }
     }
 
-    /**Executes sql query using prepared statement when one return entity is expected
-     * @param sql sql query
-     * @param extractor extractor of result set
+    /**
+     * Executes sql query using prepared statement when one return entity is expected
+     *
+     * @param sql                 sql query
+     * @param extractor           extractor of result set
      * @param statementPreparator preparator for statement
      * @return returns optional with entity or empty optional
      * @throws DaoException when error while query execution occurs
@@ -181,28 +197,36 @@ public abstract class BaseDao<T extends Entity> implements EntityDao<T> {
         return entities.isEmpty() ? Optional.empty() : Optional.of(entities.get(0));
     }
 
-    /**Gets the table name
+    /**
+     * Gets the table name
+     *
      * @return table name
      */
     protected abstract String getTableName();
 
-    /**Gets the table fields
+    /**
+     * Gets the table fields
+     *
      * @return list of fields
      */
     protected abstract List<String> getFields();
 
-    /**Retrieves values from a result set into an entity
+    /**
+     * Retrieves values from a result set into an entity
+     *
      * @param rs result set
      * @return entity
      * @throws DaoException when error while query execution occurs
      */
     protected abstract T extractResult(ResultSet rs) throws DaoException;
 
-    /**Fills the statement with values from given entity
+    /**
+     * Fills the statement with values from given entity
+     *
      * @param statement prepared statement
-     * @param entity entity
+     * @param entity    entity
      * @throws SQLException if parameterIndex does not correspond to a parameter marker in the SQL statement;
-     * if a database access error occurs or this method is called on a closed PreparedStatement
+     *                      if a database access error occurs or this method is called on a closed PreparedStatement
      */
     protected abstract void fillEntity(PreparedStatement statement, T entity) throws SQLException;
 }

@@ -4,7 +4,7 @@ import com.epam.jwd.fitness_center.controller.PagePath;
 import com.epam.jwd.fitness_center.controller.ResponseCreator;
 import com.epam.jwd.fitness_center.controller.command.*;
 import com.epam.jwd.fitness_center.exception.ServiceException;
-import com.epam.jwd.fitness_center.model.service.impl.ItemServiceImpl;
+import com.epam.jwd.fitness_center.model.service.ItemService;
 import com.epam.jwd.fitness_center.model.service.impl.ServiceProvider;
 import com.google.gson.Gson;
 import org.apache.logging.log4j.LogManager;
@@ -16,7 +16,7 @@ public class ManageItemDataCommand implements Command {
     private static final Logger LOG = LogManager.getLogger(ManageItemDataCommand.class);
 
     private final ResponseCreator responseCreator;
-    private final ItemServiceImpl itemService;
+    private final ItemService itemService;
 
     ManageItemDataCommand(ResponseCreator responseCreator) {
         this.responseCreator = responseCreator;

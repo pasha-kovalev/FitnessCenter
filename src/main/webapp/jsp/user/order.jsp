@@ -54,9 +54,10 @@
             <option value="3">3 ${month2}</option>
         </select>
         <c:if test="${empty sessionScope.userDetails or sessionScope.userDetails.personalTrainerId == 0}">
-        <label style="margin-top: 20px;" for="trainer">${choosePersonal}
-            <a href="/controller?command=show_about" target="_blank" rel="noopener noreferrer" style="color: darkblue; font-weight: bold; letter-spacing: 0.1px;">(${more})</a>:
-        </label>
+            <label style="margin-top: 20px;" for="trainer">${choosePersonal}
+                <a href="/controller?command=show_about" target="_blank" rel="noopener noreferrer"
+                   style="color: darkblue; font-weight: bold; letter-spacing: 0.1px;">(${more})</a>:
+            </label>
             <select id="trainer" name="trainer" form="order" required>
                 <c:forEach var="trainer" items="${requestScope.trainerList}">
                     <option value="${trainer.id}">${trainer.firstName} ${trainer.secondName}</option>
@@ -121,10 +122,12 @@
     periods.onchange = function () {
         refreshPrice();
     }
+
     function selectItem() {
         $("#program option[value=${param.id}]").attr('selected', 'true');
         $("#program").trigger("change");
     }
+
     function refreshPrice() {
         if (program.options[program.selectedIndex].text === 'transformation') {
             price.innerHTML = parseFloat(program.options[program.selectedIndex].getAttribute("price")) + " ";
@@ -135,7 +138,6 @@
             totalPrice.innerHTML = parseFloat(program.options[program.selectedIndex].getAttribute("total")) *
                 parseFloat(periods.options[periods.selectedIndex].getAttribute("value")) + " ";
         }
-
     }
 
     function showTab(n) {

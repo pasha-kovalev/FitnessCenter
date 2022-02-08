@@ -1,5 +1,5 @@
-(function($) {
-    $(function() {
+(function ($) {
+    $(function () {
         $.widget("zpd.paging", {
             options: {
                 limit: 5,
@@ -7,7 +7,7 @@
                 activePage: 0,
                 rows: []
             },
-            _create: function() {
+            _create: function () {
                 var rows = $("tbody", this.element).children();
                 this.options.rows = rows;
                 this.options.rowDisplayStyle = rows.css('display');
@@ -15,35 +15,35 @@
                 this.element.after(nav);
                 this.showPage(0);
             },
-            _getNavBar: function() {
+            _getNavBar: function () {
                 var rows = this.options.rows;
                 var nav = $('<div>', {class: 'paging-nav'});
                 for (var i = 0; i < Math.ceil(rows.length / this.options.limit); i++) {
                     this._on($('<a>', {
-                        href: '#',
-                        text: (i + 1),
-                        "data-page": (i),
-                        class: "selected-page"
-                    }).appendTo(nav),
-                            {click: "pageClickHandler"});
+                            href: '#',
+                            text: (i + 1),
+                            "data-page": (i),
+                            class: "selected-page"
+                        }).appendTo(nav),
+                        {click: "pageClickHandler"});
                 }
                 //create previous link
                 this._on($('<a>', {
-                    href: '#',
-                    text: '<',
-                    "data-direction": -1
-                }).prependTo(nav),
-                        {click: "pageStepHandler"});
+                        href: '#',
+                        text: '<',
+                        "data-direction": -1
+                    }).prependTo(nav),
+                    {click: "pageStepHandler"});
                 //create next link
                 this._on($('<a>', {
-                    href: '#',
-                    text: '>',
-                    "data-direction": +1
-                }).appendTo(nav),
-                        {click: "pageStepHandler"});
+                        href: '#',
+                        text: '>',
+                        "data-direction": +1
+                    }).appendTo(nav),
+                    {click: "pageStepHandler"});
                 return nav;
             },
-            showPage: function(pageNum) {
+            showPage: function (pageNum) {
                 var num = pageNum * 1; //it has to be numeric
                 this.options.activePage = num;
                 var rows = this.options.rows;
@@ -56,14 +56,14 @@
                     }
                 }
             },
-            pageClickHandler: function(event) {
+            pageClickHandler: function (event) {
                 event.preventDefault();
                 $(event.target).siblings().attr('class', "");
                 $(event.target).attr('class', "selected-page");
                 var pageNum = $(event.target).attr('data-page');
                 this.showPage(pageNum);
             },
-            pageStepHandler: function(event) {
+            pageStepHandler: function (event) {
                 event.preventDefault();
                 //get the direction and ensure it's numeric
                 var dir = $(event.target).attr('data-direction') * 1;

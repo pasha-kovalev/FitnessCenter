@@ -18,10 +18,9 @@ import java.util.Map;
 import java.util.Optional;
 
 public class ManageUserDataCommand implements Command {
-    private static final Logger LOG = LogManager.getLogger(ManageUserDataCommand.class);
     public static final String STATUS_FIELD_NAME = "status";
     public static final String ROLE_FIELD_NAME = "role";
-
+    private static final Logger LOG = LogManager.getLogger(ManageUserDataCommand.class);
     private final ResponseCreator responseCreator;
     private final UserService userService;
 
@@ -45,7 +44,7 @@ public class ManageUserDataCommand implements Command {
                     case STATUS_FIELD_NAME:
                         UserStatus status = UserStatus.valueOf(values[i].toUpperCase());
                         userService.updateUserStatus(status, userId);
-                        if(status == UserStatus.BANNED) {
+                        if (status == UserStatus.BANNED) {
                             invalidateUserSession(request, userId);
                         }
                         break;

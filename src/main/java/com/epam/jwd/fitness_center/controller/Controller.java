@@ -1,6 +1,7 @@
 package com.epam.jwd.fitness_center.controller;
 
 import com.epam.jwd.fitness_center.controller.command.*;
+import com.epam.jwd.fitness_center.controller.command.impl.CommandProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -13,7 +14,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-/** Represents a controller
+/**
+ * Represents a controller
+ *
  * @author Pavel Kovalev
  * @version 1.0
  */
@@ -22,10 +25,9 @@ import java.io.IOException;
         maxFileSize = 1024 * 1024 * 5,
         maxRequestSize = 1024 * 1024 * 5 * 5)
 public class Controller extends HttpServlet {
+    public static final String COMMAND_NAME_PARAM = "command";
     private static final long serialVersionUID = -5223997271791449828L;
     private static final Logger LOG = LogManager.getLogger(Controller.class);
-
-    public static final String COMMAND_NAME_PARAM = "command";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -37,13 +39,15 @@ public class Controller extends HttpServlet {
         processRequest(req, resp);
     }
 
-    /** Executes command from request parameter and then proceed with command response
-     * @param req http request
+    /**
+     * Executes command from request parameter and then proceed with command response
+     *
+     * @param req  http request
      * @param resp http response
      */
     private void processRequest(HttpServletRequest req, HttpServletResponse resp) {
         final String commandName = req.getParameter(COMMAND_NAME_PARAM);
-        final Command command = Command.of(commandName);
+        final Command command = CommandProvider.getInstance().of(commandName);
         final CommandRequest commandRequest = new WrappingCommandRequest(req);
         final CommandResponse commandResponse = command.execute(commandRequest);
         if (commandResponse.getPath() != null &&
@@ -53,9 +57,11 @@ public class Controller extends HttpServlet {
         proceedWithResponse(req, resp, commandResponse);
     }
 
-    /** Writes ajax data to response or forwards request or sends redirect
-     * @param req http request
-     * @param resp http response
+    /**
+     * Writes ajax data to response or forwards request or sends redirect
+     *
+     * @param req             http request
+     * @param resp            http response
      * @param commandResponse executed response
      */
     private void proceedWithResponse(HttpServletRequest req, HttpServletResponse resp,
@@ -73,8 +79,10 @@ public class Controller extends HttpServlet {
         }
     }
 
-    /**Handles ajax response
-     * @param resp http response
+    /**
+     * Handles ajax response
+     *
+     * @param resp            http response
      * @param commandResponse command response with json data
      * @throws IOException when writing to http response exception occurs
      */
@@ -84,11 +92,13 @@ public class Controller extends HttpServlet {
         resp.getWriter().write(commandResponse.getAjaxData());
     }
 
-    /** Forwards request or sends redirect
-     * @param req http request
-     * @param resp http response
+    /**
+     * Forwards request or sends redirect
+     *
+     * @param req             http request
+     * @param resp            http response
      * @param commandResponse command response
-     * @throws IOException when send redirect exception occurs
+     * @throws IOException      when send redirect exception occurs
      * @throws ServletException when forward exception occurs
      */
     private void forwardOrRedirectToResponseLocation(HttpServletRequest req, HttpServletResponse resp,

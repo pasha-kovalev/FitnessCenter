@@ -22,7 +22,6 @@ public class ItemDaoImpl extends BaseDao<Item> {
     private static final String DESCRIPTION_FIELD_NAME = "description";
     private static final String ARCHIVE_FIELD_NAME = "archive";
 
-
     private static final List<String> TABLE_FIELDS = Arrays.asList(
             ID_FIELD_NAME, NAME_FIELD_NAME, PRICE_FIELD_NAME, DESCRIPTION_FIELD_NAME, ARCHIVE_FIELD_NAME
     );
@@ -51,9 +50,9 @@ public class ItemDaoImpl extends BaseDao<Item> {
 
     @Override
     protected void fillEntity(PreparedStatement statement, Item item) throws SQLException {
-            statement.setString(1, item.getName());
-            statement.setBigDecimal(2, item.getPrice());
-            statement.setString(3, item.getDescription());
+        statement.setString(1, item.getName());
+        statement.setBigDecimal(2, item.getPrice());
+        statement.setString(3, item.getDescription());
     }
 
     @Override
