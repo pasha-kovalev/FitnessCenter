@@ -4,9 +4,11 @@ import com.epam.jwd.fitness_center.exception.DaoException;
 import com.epam.jwd.fitness_center.model.connection.ConnectionPool;
 import com.epam.jwd.fitness_center.model.dao.BaseDao;
 import com.epam.jwd.fitness_center.model.entity.UserDetails;
+import com.epam.jwd.fitness_center.model.entity.UserRole;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -33,6 +35,11 @@ public class UserDetailsDaoImpl extends BaseDao<UserDetails> {
             "personal_trainer_id = ? where user_id = ?";
     private final String SELECT_BY_USER_ID_QUERY = selectAllQuery + " WHERE "
             + USER_ID_FIELD_NAME + " = ?";
+
+    private static final String UPDATE_DISCOUNT_BY_ROLE_QUERY = "update user_details\n" +
+            "join user u on u.id = user_id\n" +
+            "set discount = ?\n" +
+            "where role_id = (SELECT id FROM user_role WHERE account_role = ?)";
 
     UserDetailsDaoImpl(ConnectionPool pool) {
         super(pool, LOG);
@@ -85,6 +92,14 @@ public class UserDetailsDaoImpl extends BaseDao<UserDetails> {
                 st.setLong(2, details.getPersonalTrainerId());
             }
             st.setLong(3, details.getUserId());
+        });
+        return rows > 0;
+    }
+
+    public boolean updateDiscountByRole(BigDecimal discount, UserRole role) throws DaoException {
+        int rows = executeUpdate(UPDATE_DISCOUNT_BY_ROLE_QUERY, st -> {
+            st.setBigDecimal(1, discount);
+            st.setString(2, role.name());
         });
         return rows > 0;
     }

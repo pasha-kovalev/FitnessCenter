@@ -45,4 +45,6 @@ public interface OrderDao extends EntityDao<Order> {
      * @throws DaoException when error while query execution occurs
      */
     List<Order> findByAssignmentTrainerId(Long trainerId) throws DaoException;
+
+    List<Order> findActiveByUserId(Long userId) throws DaoException;
 }

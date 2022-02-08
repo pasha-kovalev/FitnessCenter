@@ -9,6 +9,7 @@
 <fmt:message var="month1" key="order.period.month1"/>
 <fmt:message var="month2" key="order.period.month2"/>
 <fmt:message var="choosePersonal" key="order.label.choosePersonal"/>
+<fmt:message var="more" key="order.label.more"/>
 <fmt:message var="finalPrice" key="order.label.finalPrice"/>
 <fmt:message var="money" key="order.price.money"/>
 <fmt:message var="trainerInfo" key="order.label.trainerInfo"/>
@@ -38,10 +39,12 @@
         <label style="margin-top: 20px;" for="program">${chooseProgram}</label>
         <select id="program" name="program" form="order" style="padding: 0;">
             <c:forEach var="item" items="${requestScope.productList}" varStatus="loop">
-                <option value="${item.id}"
-                        price="${item.price}"
-                        total="${requestScope.productListDiscount[loop.index].price}">
-                        ${item.name}</option>
+                <c:if test="${item.isArchive eq 'false'}">
+                    <option value="${item.id}"
+                            price="${item.price}"
+                            total="${requestScope.productListDiscount[loop.index].price}">
+                            ${item.name}</option>
+                </c:if>
             </c:forEach>
         </select>
         <label for="period">${choosePeriod}</label>
@@ -51,7 +54,9 @@
             <option value="3">3 ${month2}</option>
         </select>
         <c:if test="${empty sessionScope.userDetails or sessionScope.userDetails.personalTrainerId == 0}">
-            <label style="margin-top: 20px;" for="trainer">${choosePersonal}</label>
+        <label style="margin-top: 20px;" for="trainer">${choosePersonal}
+            <a href="/controller?command=show_about" target="_blank" rel="noopener noreferrer" style="color: darkblue; font-weight: bold; letter-spacing: 0.1px;">(${more})</a>:
+        </label>
             <select id="trainer" name="trainer" form="order" required>
                 <c:forEach var="trainer" items="${requestScope.trainerList}">
                     <option value="${trainer.id}">${trainer.firstName} ${trainer.secondName}</option>

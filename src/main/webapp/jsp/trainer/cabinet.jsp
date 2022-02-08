@@ -22,6 +22,10 @@
 <fmt:message var="status" key="trainer.cabinet.status"/>
 <fmt:message var="chooseImg" key="trainer.cabinet.chooseImg"/>
 <fmt:message var="submit" key="button.submit"/>
+<fmt:message var="delete" key="admin.cabinet.button.delete"/>
+<fmt:message var="password" key="signup.password"/>
+<fmt:message var="passwordTitle" key="signup.password.input.title"/>
+<fmt:message var="errorMismatch" key="signup.error.passwordMismatch"/>
 
 <html>
 <head>
@@ -185,6 +189,7 @@
                                    <th>${status}</th></tr>`));
                 $.each(responseJson, function (index, order) {
                     var lastTd;
+                    var lastTd2;
                     switch (order.orderStatus) {
                         case "${OrderStatus.UNTAKEN.name()}":
                             lastTd = "<a " +
@@ -210,7 +215,8 @@
                             } else {
                                 lastTd = "";
                             }
-
+                            lastTd2 = `<button onclick="deleteOrder(`+ order.id +`, this)" ` +
+                                `class="btn btn-danger">${delete}</button>`;
                             break;
                         default:
                             lastTd = "";
@@ -224,8 +230,26 @@
                         .append($(`<td class="trainer-name">`).text(order.trainerName))
                         .append($("<td>").text(order.orderStatus))
                         .append($(`<td class="reviewTd" hidden>`).text(order.review == null ? "" : order.review))
+                        .append($("<td>").append(lastTd2))
                         .append($("<td>").append(lastTd));
                 });
+            }
+        })
+    }
+
+    function deleteOrder(id, elem) {
+        jQuery.ajax({
+            type: 'POST',
+            url: '${pageContext.request.contextPath}/controller',
+            data: jQuery.param({command: 'delete_order', id: id}),
+            success: function (responseJson) {
+                responseJson = responseJson.toString();
+                console.log(responseJson);
+                if (responseJson.includes('false') || responseJson.includes('error')) {
+                    $(elem).closest('tr')[0].style.border = '1px solid red';
+                } else {
+                    showOrders('history');
+                }
             }
         })
     }

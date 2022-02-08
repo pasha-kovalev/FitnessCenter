@@ -150,4 +150,13 @@ public interface UserService extends EntityService<User> {
      * @throws ServiceException while unable to perform a service action
      */
     void updateUserDetailsTrainerId(UserDetails userDetails, long trainerId) throws ServiceException;
+
+    /**Updates user discount for all users with the role as given user has.
+     * @param userId user id
+     * @param discount discount value
+     * @throws ServiceException while unable to perform a service action
+     */
+    void updateUserDiscountByRole(long userId, String discount) throws ServiceException;
+
+    boolean deleteUser(long userId) throws ServiceException;
 }

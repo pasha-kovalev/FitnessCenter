@@ -58,6 +58,21 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public boolean delete(long orderId) throws ServiceException {
+        Optional<Order> optionalOrder = findOrderById(orderId);
+        Order order = optionalOrder.orElseThrow(() -> new ServiceException("Order not found. ID: " + orderId));
+        OrderStatus status = order.getOrderStatus();
+        try {
+            if(status == OrderStatus.COMPLETED || status == OrderStatus.CANCELLED) {
+                return orderDao.delete(orderId);
+            }
+            return false;
+        } catch (DaoException e) {
+            throw new ServiceException("Unable to delete order", e);
+        }
+    }
+
+    @Override
     public Order insert(long userDetailsId, OrderStatus status, long itemId, long trainerId, long period,
                         String comment) throws ServiceException {
         String commentEscaped = TextEscapeUtil.escapeHtml(comment);
