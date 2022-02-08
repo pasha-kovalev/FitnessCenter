@@ -43,9 +43,11 @@
         th {
             text-align: inherit;
         }
+
         a {
             cursor: pointer;
         }
+
         #send-button {
             width: 100px;
             text-align: center;
@@ -124,7 +126,7 @@
                             lastTd = "<a " +
                                 "href=\"${pageContext.request.contextPath}/controller?command=show_payment&orderId="
                                 + order.id + "\" class=\"btn btn-success\">${pay}</a>" + `<a style="margin-left: 16px"` +
-                                "onclick='refusePayment("+order.id+")'"+
+                                "onclick='refusePayment(" + order.id + ")'" +
                                 " class=\"btn btn-danger\">${refuse}</a>";
                             break;
                         case "${OrderStatus.PENDING_CLIENT.name()}":
@@ -179,26 +181,27 @@
             }
         })
     }
-        function sendReview(elem) {
-            var form = $("#reviewForm")[0];
-            console.log();
-            jQuery.ajax({
-                type: 'POST',
-                url:  $(form).attr('action'),
-                data: jQuery.param({
-                    review: $(form).find("textarea").first().val()
-                }),
-                success: function (responseJson) {
-                    if (responseJson.includes('error')) {
-                        console.log($(form).attr('action').toString());
-                        elem.style.border = '1px solid red';
-                    } else {
-                        console.log($(form).attr('action').toString());
-                        showReview();
-                        showOrders(false);
-                    }
+
+    function sendReview(elem) {
+        var form = $("#reviewForm")[0];
+        console.log();
+        jQuery.ajax({
+            type: 'POST',
+            url: $(form).attr('action'),
+            data: jQuery.param({
+                review: $(form).find("textarea").first().val()
+            }),
+            success: function (responseJson) {
+                if (responseJson.includes('error')) {
+                    console.log($(form).attr('action').toString());
+                    elem.style.border = '1px solid red';
+                } else {
+                    console.log($(form).attr('action').toString());
+                    showReview();
+                    showOrders(false);
                 }
-            })
+            }
+        })
     }
 
     function showProgram(el) {
@@ -239,14 +242,14 @@
         var form = document.getElementById("reviewForm");
         if (reviewLoaded) {
             form.style.visibility = 'hidden';
-            jQuery.each( $(".btn-warning"), function(index, item) {
-                    $(item).css("pointer-events","auto");
+            jQuery.each($(".btn-warning"), function (index, item) {
+                $(item).css("pointer-events", "auto");
             });
             reviewLoaded = false;
         } else {
-            jQuery.each( $(".btn-warning"), function(index, item) {
-                if(item != el) {
-                    $(item).css("pointer-events","none");
+            jQuery.each($(".btn-warning"), function (index, item) {
+                if (item != el) {
+                    $(item).css("pointer-events", "none");
                 }
             });
             var buttonTd = $(el).closest("td");

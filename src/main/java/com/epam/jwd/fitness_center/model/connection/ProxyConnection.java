@@ -18,20 +18,23 @@ public class ProxyConnection implements Connection {
         lastTakeDate = LocalDateTime.now();
     }
 
-    /**Sets the time when connection was released
-     * @param lastTakeDate local date time
-     */
-    public void setLastTakeDate(LocalDateTime lastTakeDate) {
-        this.lastTakeDate = lastTakeDate;
-    }
-
-    /**Gets the time when connection was released
+    /**
+     * Gets the time when connection was released
+     *
      * @return local date time
      */
     public LocalDateTime getLastTakeDate() {
         return lastTakeDate;
     }
 
+    /**
+     * Sets the time when connection was released
+     *
+     * @param lastTakeDate local date time
+     */
+    public void setLastTakeDate(LocalDateTime lastTakeDate) {
+        this.lastTakeDate = lastTakeDate;
+    }
 
     @Override
     public Statement createStatement() throws SQLException {

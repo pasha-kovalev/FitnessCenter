@@ -11,47 +11,59 @@ import java.util.Optional;
  * The interface represents order service
  */
 public interface OrderService extends EntityService<Order> {
-    /**Finds all orders with given status
+    /**
+     * Finds all orders with given status
+     *
      * @param status order status
      * @return list of found orders
      * @throws ServiceException while unable to perform a service action
      */
     List<Order> findOrderByStatus(OrderStatus status) throws ServiceException;
 
-    /**Finds all orders with given user id
+    /**
+     * Finds all orders with given user id
+     *
      * @param userId user id
      * @return list of found orders
      * @throws ServiceException while unable to perform a service action
      */
     List<Order> findOrderByUserId(Long userId) throws ServiceException;
 
-    /**Finds order by id
+    /**
+     * Finds order by id
+     *
      * @param id order id
      * @return optional with order or optional empty
      * @throws ServiceException while unable to perform a service action
      */
     Optional<Order> findOrderById(Long id) throws ServiceException;
 
-    /**Finds all orders with given assignment trainer id
+    /**
+     * Finds all orders with given assignment trainer id
+     *
      * @param trainerId assignment trainer id
      * @return list of found orders
      * @throws ServiceException while unable to perform a service action
      */
     List<Order> findOrderByAssignmentTrainerId(Long trainerId) throws ServiceException;
 
-    /**Finds all orders with given assignment trainer id and order status(-es)
+    /**
+     * Finds all orders with given assignment trainer id and order status(-es)
+     *
      * @param trainerId assignment trainer id
-     * @param status order status
-     * @param statuses order statuses
+     * @param status    order status
+     * @param statuses  order statuses
      * @return list of found orders
      * @throws ServiceException while unable to perform a service action
      */
     List<Order> findOrderByAssignmentTrainerIdAndStatus(Long trainerId, OrderStatus status, OrderStatus... statuses)
             throws ServiceException;
 
-    /**Finds all orders with given user id and order status(-es)
-     * @param userId user id
-     * @param status order status
+    /**
+     * Finds all orders with given user id and order status(-es)
+     *
+     * @param userId   user id
+     * @param status   order status
      * @param statuses order statuses
      * @return list of found orders
      * @throws ServiceException while unable to perform a service action
@@ -59,28 +71,34 @@ public interface OrderService extends EntityService<Order> {
     List<Order> findOrderByUserIdAndStatus(Long userId, OrderStatus status, OrderStatus... statuses)
             throws ServiceException;
 
-    /**Updates order status
+    /**
+     * Updates order status
+     *
      * @param status order status
-     * @param id order id
+     * @param id     order id
      * @throws ServiceException while unable to perform a service action
      */
     void updateOrderStatus(OrderStatus status, long id) throws ServiceException;
 
-    /**Adds review to order
+    /**
+     * Adds review to order
+     *
      * @param review review
-     * @param id order id
+     * @param id     order id
      * @return true if added
      * @throws ServiceException while unable to perform a service action
      */
     boolean addOrderReview(String review, long id) throws ServiceException;
 
-    /**Inserts new orders
+    /**
+     * Inserts new orders
+     *
      * @param userDetailsId user details id
-     * @param status order status
-     * @param itemId item id
-     * @param trainerId trainer id
-     * @param period order period
-     * @param comment order comment
+     * @param status        order status
+     * @param itemId        item id
+     * @param trainerId     trainer id
+     * @param period        order period
+     * @param comment       order comment
      * @return inserted order
      * @throws ServiceException while unable to perform a service action
      */

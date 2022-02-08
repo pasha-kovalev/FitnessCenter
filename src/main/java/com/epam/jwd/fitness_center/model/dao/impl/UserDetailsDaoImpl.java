@@ -3,6 +3,7 @@ package com.epam.jwd.fitness_center.model.dao.impl;
 import com.epam.jwd.fitness_center.exception.DaoException;
 import com.epam.jwd.fitness_center.model.connection.ConnectionPool;
 import com.epam.jwd.fitness_center.model.dao.BaseDao;
+import com.epam.jwd.fitness_center.model.dao.UserDetailsDao;
 import com.epam.jwd.fitness_center.model.entity.UserDetails;
 import com.epam.jwd.fitness_center.model.entity.UserRole;
 import org.apache.logging.log4j.LogManager;
@@ -17,7 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-public class UserDetailsDaoImpl extends BaseDao<UserDetails> {
+public class UserDetailsDaoImpl extends BaseDao<UserDetails> implements UserDetailsDao {
     private static final Logger LOG = LogManager.getLogger(UserDetailsDaoImpl.class);
     private static final String TABLE_NAME = "user_details";
     private static final String USER_ID_FIELD_NAME = "user_id";
@@ -33,13 +34,12 @@ public class UserDetailsDaoImpl extends BaseDao<UserDetails> {
             "    VALUE (?, ?, ?)";
     private static final String UPDATE_QUERY = "update " + TABLE_NAME + " set discount = ?, " +
             "personal_trainer_id = ? where user_id = ?";
-    private final String SELECT_BY_USER_ID_QUERY = selectAllQuery + " WHERE "
-            + USER_ID_FIELD_NAME + " = ?";
-
     private static final String UPDATE_DISCOUNT_BY_ROLE_QUERY = "update user_details\n" +
             "join user u on u.id = user_id\n" +
             "set discount = ?\n" +
             "where role_id = (SELECT id FROM user_role WHERE account_role = ?)";
+    private final String SELECT_BY_USER_ID_QUERY = selectAllQuery + " WHERE "
+            + USER_ID_FIELD_NAME + " = ?";
 
     UserDetailsDaoImpl(ConnectionPool pool) {
         super(pool, LOG);
@@ -96,6 +96,7 @@ public class UserDetailsDaoImpl extends BaseDao<UserDetails> {
         return rows > 0;
     }
 
+    @Override
     public boolean updateDiscountByRole(BigDecimal discount, UserRole role) throws DaoException {
         int rows = executeUpdate(UPDATE_DISCOUNT_BY_ROLE_QUERY, st -> {
             st.setBigDecimal(1, discount);
@@ -115,6 +116,7 @@ public class UserDetailsDaoImpl extends BaseDao<UserDetails> {
         }
     }
 
+    @Override
     public List<UserDetails> findByUserId(Long userId) throws DaoException {
         return executePrepared(SELECT_BY_USER_ID_QUERY, this::extractResult, st -> st.setLong(1, userId));
     }

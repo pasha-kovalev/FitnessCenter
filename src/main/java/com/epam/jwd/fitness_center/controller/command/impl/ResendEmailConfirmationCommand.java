@@ -53,7 +53,6 @@ public class ResendEmailConfirmationCommand implements Command {
             request.addToSession(Attribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_ERROR_USER_CONFIRMED);
             return responseCreator.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
         }
-
         try {
             mailService.sendConfirmationEmail(user.getId(), user.getEmail(),
                     (String) request.retrieveFromSession(RequestParameter.LOCALE)

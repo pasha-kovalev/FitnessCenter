@@ -1,6 +1,7 @@
 package com.epam.jwd.fitness_center.controller;
 
-/**The enum represents paths for redirect and forward routing types
+/**
+ * The enum represents paths for redirect and forward routing types
  *
  * @author Pavel Kovalev
  * @version 1.0
@@ -50,7 +51,9 @@ public enum PagePath {
         this.path = path;
     }
 
-    /**Gets PagePath by its string representation
+    /**
+     * Gets PagePath by its string representation
+     *
      * @param name name of enum or path value
      * @return page path
      */
@@ -68,7 +71,9 @@ public enum PagePath {
         return MAIN_REDIRECT;
     }
 
-    /**Checks if enum with given name exists
+    /**
+     * Checks if enum with given name exists
+     *
      * @param test name of enum
      * @return true if enum with given name exists
      */
@@ -81,7 +86,9 @@ public enum PagePath {
         return false;
     }
 
-    /**Gets the path
+    /**
+     * Gets the path
+     *
      * @return path
      */
     public String getPath() {

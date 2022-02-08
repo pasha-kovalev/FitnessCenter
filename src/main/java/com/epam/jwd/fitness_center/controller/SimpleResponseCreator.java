@@ -5,6 +5,7 @@ import com.epam.jwd.fitness_center.controller.command.PlainCommandResponse;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
 //todo javadocs for class name
 public class SimpleResponseCreator implements ResponseCreator {
     private final Map<String, CommandResponse> forwardResponseCache = new ConcurrentHashMap<>();
@@ -13,7 +14,7 @@ public class SimpleResponseCreator implements ResponseCreator {
     private SimpleResponseCreator() {
     }
 
-    static SimpleResponseCreator getInstance() {
+    public static SimpleResponseCreator getInstance() {
         return SimpleRequestFactoryHolder.instance;
     }
 
@@ -39,12 +40,6 @@ public class SimpleResponseCreator implements ResponseCreator {
                 new PlainCommandResponse(true, path));
     }
 
-    /*//create refresh
-    @Override
-    public CommandResponse createRedirectResponse(PagePath page) {
-        return redirectResponseCache.computeIfAbsent(page.getPath(), p ->
-                new PlainCommandResponse(true, page.getPath()));
-    }*/
 
     private static class SimpleRequestFactoryHolder {
         private static final SimpleResponseCreator instance = new SimpleResponseCreator();

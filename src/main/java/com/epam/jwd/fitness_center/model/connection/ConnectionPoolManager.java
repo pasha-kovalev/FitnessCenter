@@ -19,7 +19,8 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-/** Represents connection pool
+/**
+ * Represents connection pool
  *
  * @author Pavel Kovalev
  * @version 1.0
@@ -95,7 +96,9 @@ public final class ConnectionPoolManager implements ConnectionPool {
         }
     }
 
-    /**Gets the instance of connection pool manager
+    /**
+     * Gets the instance of connection pool manager
+     *
      * @return connection pool manager
      */
     public static ConnectionPoolManager getInstance() {
@@ -121,7 +124,9 @@ public final class ConnectionPoolManager implements ConnectionPool {
         }
     }
 
-    /**Gets current size of pool
+    /**
+     * Gets current size of pool
+     *
      * @return number of all connections in pool
      */
     public int getCurrentSize() {
@@ -133,7 +138,9 @@ public final class ConnectionPoolManager implements ConnectionPool {
         }
     }
 
-    /**Gets number of used connections
+    /**
+     * Gets number of used connections
+     *
      * @return number of used connections
      */
     public int getUsedConnectionsSize() {
@@ -198,7 +205,9 @@ public final class ConnectionPoolManager implements ConnectionPool {
         }
     }
 
-    /**Checks is has available connection to take from pool or is need to increase pool size
+    /**
+     * Checks is has available connection to take from pool or is need to increase pool size
+     *
      * @throws DatabaseConnectionException if thread is interrupted
      */
     private void checkCondition() throws DatabaseConnectionException {
@@ -264,7 +273,9 @@ public final class ConnectionPoolManager implements ConnectionPool {
         maxConnectionDowntime = DEFAULT_MAX_CONNECTION_DOWNTIME;
     }
 
-    /**Adds new connection to pool
+    /**
+     * Adds new connection to pool
+     *
      * @throws DatabaseConnectionException if error while creating connection occurred
      */
     private void addConnection() throws DatabaseConnectionException {
@@ -281,7 +292,9 @@ public final class ConnectionPoolManager implements ConnectionPool {
         }
     }
 
-    /**Adds existed proxy connection to pool
+    /**
+     * Adds existed proxy connection to pool
+     *
      * @param proxyConnection proxy connection
      */
     private void addConnection(ProxyConnection proxyConnection) {
@@ -311,7 +324,9 @@ public final class ConnectionPoolManager implements ConnectionPool {
         closeConnections(usedConnections);
     }
 
-    /**Closes all connections in given collection
+    /**
+     * Closes all connections in given collection
+     *
      * @param collection collection of connections
      */
     private void closeConnections(Collection<ProxyConnection> collection) {
@@ -394,7 +409,9 @@ public final class ConnectionPoolManager implements ConnectionPool {
             }
         }
 
-        /**Increases amount of pool available connections by given connections in list
+        /**
+         * Increases amount of pool available connections by given connections in list
+         *
          * @param proxyConnections list of connections
          */
         private void addConnections(List<ProxyConnection> proxyConnections) {
@@ -449,7 +466,9 @@ public final class ConnectionPoolManager implements ConnectionPool {
             }
         }
 
-        /**Removes given connection from pool
+        /**
+         * Removes given connection from pool
+         *
          * @param conn proxy connection
          */
         private void deleteConnection(ProxyConnection conn) {

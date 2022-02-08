@@ -5,7 +5,8 @@ public final class OrderValidator {
     private static final int MAX_PERIOD = 3;
     private static final String CARD_NUMBER_REGEX = "[0-9]{16}";
 
-    private OrderValidator(){}
+    private OrderValidator() {
+    }
 
     public static boolean isValidPeriod(long period) {
         return period >= MIN_PERIOD && period <= MAX_PERIOD;

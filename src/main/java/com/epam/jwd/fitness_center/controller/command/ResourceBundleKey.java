@@ -1,6 +1,7 @@
 package com.epam.jwd.fitness_center.controller.command;
 
-/**The class provides string constant represents keys in resource bundle
+/**
+ * The class provides string constant represents keys in resource bundle
  *
  * @author Pavel Kovalev
  * @version 1.0

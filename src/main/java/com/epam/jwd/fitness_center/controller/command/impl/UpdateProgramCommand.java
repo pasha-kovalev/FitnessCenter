@@ -14,9 +14,9 @@ import org.apache.logging.log4j.Logger;
 import java.util.Optional;
 
 public class UpdateProgramCommand implements Command {
-    private static final Logger LOG = LogManager.getLogger(UpdateProgramCommand.class);
     public static final String PROGRAM_NOT_CHANGED_MARKER = "false";
     public static final String PROGRAM_REFUSED_MARKER = "refused";
+    private static final Logger LOG = LogManager.getLogger(UpdateProgramCommand.class);
     private final ResponseCreator responseCreator;
     private final OrderService orderService;
     private final ProgramService programService;
@@ -60,32 +60,42 @@ public class UpdateProgramCommand implements Command {
             if (!programOptional.isPresent()) {
                 return CommandHelper.createInfoErrorResponse(responseCreator, request);
             }
-            Program program = programOptional.get();
-            request.addToSession(Attribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_SUCCESS);
-            if (programChangeMarker.equals(PROGRAM_NOT_CHANGED_MARKER)) {
-                orderService.updateOrderStatus(OrderStatus.ACTIVE, orderId);
-                return responseCreator.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
+            Optional<CommandResponse> optionalCommandResponse = processProgram(request, programChangeMarker, comment,
+                    orderId, order, user, programOptional.get());
+            if (optionalCommandResponse.isPresent()) {
+                return optionalCommandResponse.get();
             }
-            if (programChangeMarker.equals(PROGRAM_REFUSED_MARKER)) {
-                program.setProgramStatus(ProgramStatus.REFUSED);
-                programService.update(program);
-                order.setComment(comment);
-            } else {
-                if (!updateProgram(request, program, user.getRole())) {
-                    return responseCreator.createRedirectResponse(PagePath.ERROR);
-                }
-            }
-            if (user.getRole() == UserRole.TRAINER) {
-                order.setOrderStatus(OrderStatus.PENDING_CLIENT);
-            } else {
-                order.setOrderStatus(OrderStatus.PENDING_TRAINER);
-            }
-            orderService.update(order);
         } catch (ServiceException e) {
             LOG.error("Error during order confirmation", e);
             return responseCreator.createRedirectResponse(PagePath.ERROR500);
         }
         return responseCreator.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT);
+    }
+
+    private Optional<CommandResponse> processProgram(CommandRequest request, String programChangeMarker, String comment,
+                                                     long orderId, Order order, User user,
+                                                     Program program) throws ServiceException {
+        request.addToSession(Attribute.INFO_BUNDLE_KEY, ResourceBundleKey.INFO_SUCCESS);
+        if (programChangeMarker.equals(PROGRAM_NOT_CHANGED_MARKER)) {
+            orderService.updateOrderStatus(OrderStatus.ACTIVE, orderId);
+            return Optional.of(responseCreator.createRedirectResponse(PagePath.SHOW_INFO_REDIRECT));
+        }
+        if (programChangeMarker.equals(PROGRAM_REFUSED_MARKER)) {
+            program.setProgramStatus(ProgramStatus.REFUSED);
+            programService.update(program);
+            order.setComment(comment);
+        } else {
+            if (!updateProgram(request, program, user.getRole())) {
+                return Optional.of(responseCreator.createRedirectResponse(PagePath.ERROR));
+            }
+        }
+        if (user.getRole() == UserRole.TRAINER) {
+            order.setOrderStatus(OrderStatus.PENDING_CLIENT);
+        } else {
+            order.setOrderStatus(OrderStatus.PENDING_TRAINER);
+        }
+        orderService.update(order);
+        return Optional.empty();
     }
 
     private boolean updateProgram(CommandRequest request, Program program, UserRole role) {

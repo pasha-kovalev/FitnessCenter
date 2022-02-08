@@ -43,7 +43,7 @@
 <body style="background-color: #F5F5F5; color: black">>
 <c:set var="item" scope="page" value="${requestScope.item}"/>
 <c:if test="${requestScope.item.isArchive eq 'true'}">
-    <jsp:forward page="error/error.jsp" />
+    <jsp:forward page="error/error.jsp"/>
 </c:if>
 <jsp:include page="component/header.jsp" flush="true"/>
 <div class="w3-content" style="max-width:1100px;margin-top:40px;margin-bottom:80px">
@@ -76,29 +76,37 @@
         <div class="w3-center w3-padding-16">
             <h3>${PlanTitle}</h3>
         </div>
-    <div class="w3-third w3-margin-bottom" style="margin-left: 33.3%">
+        <div class="w3-third w3-margin-bottom" style="margin-left: 33.3%">
             <ul class="w3-ul w3-border w3-center w3-hover-shadow">
                 <li class="w3-black w3-xlarge w3-padding-32">
                     ${fn:toUpperCase(fn:substring(item.name, 0, 1))}${fn:substring(item.name, 1, item.name.length())}
                 </li>
-                <c:forEach var="li" items="${fn:split(item.description, '\\\\')}" >
+                <c:forEach var="li" items="${fn:split(item.description, '\\\\')}">
                     <li class="w3-padding-16">${li}</li>
                 </c:forEach>
                 <li class="w3-padding-16">
-                    <h2>${item.price}BYN</h2>
+                    <c:choose>
+                        <c:when test="${empty requestScope.productListDiscount}">
+                            <h2>${item.price}BYN</h2>
+                        </c:when>
+                        <c:otherwise>
+                            <h2><span id="price" style="text-decoration: line-through;">${item.price}</span>
+                                <span id="total">${requestScope.productListDiscount[0].price}</span>BYN</h2>
+                        </c:otherwise>
+                    </c:choose>
                     <span class="w3-opacity">${permonth}</span>
                 </li>
                 <li class="w3-light-grey w3-padding-24">
-                <c:choose>
-                    <c:when test="${empty sessionScope.user}">
-                        <a href="${pageContext.request.contextPath}/controller?command=show_signup"
-                           class="w3-button w3-white w3-padding-large">${sign}</a>
-                    </c:when>
-                    <c:otherwise>
-                        <a href="${pageContext.request.contextPath}/controller?command=show_order&id=${item.id}"
-                           class="w3-button w3-white w3-padding-large">${buy}</a>
-                    </c:otherwise>
-                </c:choose>
+                    <c:choose>
+                        <c:when test="${empty sessionScope.user}">
+                            <a href="${pageContext.request.contextPath}/controller?command=show_signup"
+                               class="w3-button w3-white w3-padding-large">${sign}</a>
+                        </c:when>
+                        <c:otherwise>
+                            <a href="${pageContext.request.contextPath}/controller?command=show_order&id=${item.id}"
+                               class="w3-button w3-white w3-padding-large">${buy}</a>
+                        </c:otherwise>
+                    </c:choose>
                 </li>
             </ul>
         </div>

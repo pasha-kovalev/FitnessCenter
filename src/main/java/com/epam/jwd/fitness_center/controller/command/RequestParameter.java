@@ -1,6 +1,7 @@
 package com.epam.jwd.fitness_center.controller.command;
 
-/**The class represents request parameter
+/**
+ * The class represents request parameter
  *
  * @author Pavel Kovalev
  * @version 1.0

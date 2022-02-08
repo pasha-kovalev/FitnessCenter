@@ -4,7 +4,8 @@ import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import java.io.IOException;
 
-/**The class represents encoding filter
+/**
+ * The class represents encoding filter
  *
  * @author Pavel Kovalev
  * @version 1.0

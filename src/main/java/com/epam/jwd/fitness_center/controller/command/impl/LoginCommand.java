@@ -43,13 +43,11 @@ public class LoginCommand implements Command {
             return responseCreator.createRedirectResponse(PagePath.LOGIN_REDIRECT);
         }
         User user = optionalUser.get();
-        if(user.getStatus() == UserStatus.BANNED) {
+        if (user.getStatus() == UserStatus.BANNED) {
             request.addToSession(Attribute.ERROR_LOGIN_BUNDLE_KEY, ResourceBundleKey.BANNED_ERROR);
             return responseCreator.createRedirectResponse(PagePath.LOGIN_REDIRECT);
         }
-        request.createSession();
-        request.addToSession(Attribute.USER, user);
-        HttpSessionListenerImpl.getSessionMap(request.getServletContext()).put(user.getId(), request.getSession());
+        handleSession(request, user);
         try {
             userDetails = userService.findUserDetails(user.getId());
         } catch (ServiceException e) {
@@ -59,11 +57,17 @@ public class LoginCommand implements Command {
             request.addToSession(Attribute.USER_DETAILS, userDetails);
             try {
                 userService.findUserById(userDetails.getPersonalTrainerId())
-                           .ifPresent(u -> request.addToSession(Attribute.TRAINER_EMAIL, u.getEmail()));
+                        .ifPresent(u -> request.addToSession(Attribute.TRAINER_EMAIL, u.getEmail()));
             } catch (ServiceException e) {
                 LOG.error("Unable to find personal trainer for user with id {}", user.getId());
             }
         }
         return responseCreator.createRedirectResponse(PagePath.MAIN_REDIRECT);
+    }
+
+    private void handleSession(CommandRequest request, User user) {
+        request.createSession();
+        request.addToSession(Attribute.USER, user);
+        HttpSessionListenerImpl.getSessionMap(request.getServletContext()).put(user.getId(), request.getSession());
     }
 }

@@ -4,10 +4,10 @@ import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.epam.jwd.fitness_center.exception.DaoException;
 import com.epam.jwd.fitness_center.exception.ServiceException;
 import com.epam.jwd.fitness_center.model.dao.OrderDao;
+import com.epam.jwd.fitness_center.model.dao.TokenDao;
+import com.epam.jwd.fitness_center.model.dao.UserDao;
+import com.epam.jwd.fitness_center.model.dao.UserDetailsDao;
 import com.epam.jwd.fitness_center.model.dao.impl.DaoProvider;
-import com.epam.jwd.fitness_center.model.dao.impl.TokenDaoImpl;
-import com.epam.jwd.fitness_center.model.dao.impl.UserDaoImpl;
-import com.epam.jwd.fitness_center.model.dao.impl.UserDetailsDaoImpl;
 import com.epam.jwd.fitness_center.model.entity.*;
 import com.epam.jwd.fitness_center.model.service.MailService;
 import com.epam.jwd.fitness_center.model.service.UserService;
@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
     private static final String LASTNAME_FIELD_NAME = "lastname";
     private static final String DESCRIPTION_FIELD_NAME = "description";
 
-    private final UserDaoImpl userDao;
+    private final UserDao userDao;
     private final BCrypt.Hasher hasher = BCrypt.withDefaults();
     private final BCrypt.Verifyer verifier = BCrypt.verifyer();
 
@@ -157,7 +157,7 @@ public class UserServiceImpl implements UserService {
     private boolean hasValidToken(User user) {
         if (user.getStatus() == UserStatus.UNCONFIRMED) {
             try {
-                TokenDaoImpl tokenDao = DaoProvider.getInstance().getTokenDao();
+                TokenDao tokenDao = DaoProvider.getInstance().getTokenDao();
                 tokenDao.removeExpiredToken(TOKEN_EXPIRATION_DAYS);
                 if (!tokenDao.findByUserId(user.getId()).isEmpty()) {
                     return true;
@@ -220,7 +220,7 @@ public class UserServiceImpl implements UserService {
 
 
     private void removeUserTokens(Long userId) {
-        final TokenDaoImpl tokenDao = DaoProvider.getInstance().getTokenDao();
+        final TokenDao tokenDao = DaoProvider.getInstance().getTokenDao();
         try {
             tokenDao.removeByUserId(userId);
         } catch (DaoException e) {
@@ -230,7 +230,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<Token> retrieveUserToken(long tokenId) throws ServiceException {
-        final TokenDaoImpl tokenDao = DaoProvider.getInstance().getTokenDao();
+        final TokenDao tokenDao = DaoProvider.getInstance().getTokenDao();
         final Optional<Token> token;
         try {
             token = tokenDao.read(tokenId);
@@ -261,7 +261,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDetails> findAllUserDetails() throws ServiceException {
-        final UserDetailsDaoImpl userDetailsDao = DaoProvider.getInstance().getUserDetailsDao();
+        final UserDetailsDao userDetailsDao = DaoProvider.getInstance().getUserDetailsDao();
         try {
             return userDetailsDao.read();
         } catch (DaoException e) {
@@ -271,7 +271,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDetails findUserDetails(long userId) throws ServiceException {
-        final UserDetailsDaoImpl userDetailsDao = DaoProvider.getInstance().getUserDetailsDao();
+        final UserDetailsDao userDetailsDao = DaoProvider.getInstance().getUserDetailsDao();
         List<UserDetails> userDetailsList;
         try {
             userDetailsList = userDetailsDao.findByUserId(userId);
@@ -287,7 +287,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDetails addUserDetails(User user)
             throws ServiceException {
-        final UserDetailsDaoImpl userDetailsDao = DaoProvider.getInstance().getUserDetailsDao();
+        final UserDetailsDao userDetailsDao = DaoProvider.getInstance().getUserDetailsDao();
         UserDetails userDetails = new UserDetails(user.getId(), BigDecimal.ZERO, null);
         try {
             return userDetailsDao.create(userDetails);
@@ -299,7 +299,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateUserDetails(UserDetails userDetails) throws ServiceException {
         try {
-            final UserDetailsDaoImpl userDetailsDao = DaoProvider.getInstance().getUserDetailsDao();
+            final UserDetailsDao userDetailsDao = DaoProvider.getInstance().getUserDetailsDao();
             userDetailsDao.update(userDetails);
         } catch (DaoException e) {
             throw new ServiceException("Unable to update user details", e);
@@ -345,17 +345,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateUserDiscountByRole(long userId, String discount) throws ServiceException {
-        final UserDetailsDaoImpl userDetailsDao = DaoProvider.getInstance().getUserDetailsDao();
+        final UserDetailsDao userDetailsDao = DaoProvider.getInstance().getUserDetailsDao();
         BigDecimal discountNumber = new BigDecimal(TextEscapeUtil.escapeHtml(discount));
         UserRole role = findUserById(userId)
-                        .orElseThrow(() -> new ServiceException("User not found. ID: " + userId))
-                        .getRole();
+                .orElseThrow(() -> new ServiceException("User not found. ID: " + userId))
+                .getRole();
         try {
             userDetailsDao.updateDiscountByRole(discountNumber, role);
         } catch (DaoException e) {
             throw new ServiceException("Unable to update user discount", e);
         }
     }
+
     @Override
     public void updateUserDetailsTrainerId(UserDetails userDetails, long trainerId) throws ServiceException {
         userDetails.setPersonalTrainerId(trainerId);

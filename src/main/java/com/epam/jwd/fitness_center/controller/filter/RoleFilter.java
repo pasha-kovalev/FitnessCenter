@@ -14,7 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
 
-/**The class represents role access filter
+/**
+ * The class represents role access filter
  *
  * @author Pavel Kovalev
  * @version 1.0
@@ -51,19 +52,23 @@ public class RoleFilter implements Filter {
         }
     }
 
-    /** Checks is user have permission to execute command
+    /**
+     * Checks is user have permission to execute command
+     *
      * @param commandName name of command
-     * @param request http request
+     * @param request     http request
      * @return true if user has permission
      */
     private boolean hasPermissionForCommand(String commandName, HttpServletRequest request) {
         UserRole currentUserRole = retrieveCurrentUserRole(request);
-        final Command command = Command.of(commandName);
+        final Command command = CommandProvider.getInstance().of(commandName);
         final Set<Command> allowedCommands = commandsByRoles.get(currentUserRole);
         return allowedCommands.contains(command);
     }
 
-    /**Retrieves user role from session
+    /**
+     * Retrieves user role from session
+     *
      * @param request http request
      * @return user role
      */

@@ -30,7 +30,6 @@ public class MakeProgramCommand implements Command {
         final String diet = request.getParameter(RequestParameter.DIET);
         final String equipment = request.getParameter(RequestParameter.EQUIPMENT);
         long orderId;
-        System.out.println(request.getParameter(Attribute.ORDER));
         Optional<Long> orderIdOptional = CommandHelper.retrievePositiveLongParameter(request, RequestParameter.ORDER_ID);
         if (orderIdOptional.isPresent()) {
             orderId = orderIdOptional.get();

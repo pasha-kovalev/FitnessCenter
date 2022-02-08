@@ -1,6 +1,7 @@
 package com.epam.jwd.fitness_center.exception;
 
-/**The class represents database connection exception
+/**
+ * The class represents database connection exception
  *
  * @author Pavel Kovalev
  * @version 1.0

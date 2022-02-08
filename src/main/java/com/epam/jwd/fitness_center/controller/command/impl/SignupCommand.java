@@ -33,15 +33,15 @@ public class SignupCommand implements Command {
         final String passwordRepeat = request.getParameter(RequestParameter.PASSWORD_REPEAT);
         final String firstName = request.getParameter(RequestParameter.FIRSTNAME);
         final String lastname = request.getParameter(RequestParameter.LASTNAME);
-        Optional<CommandResponse> response = registerUser(request, login, password, passwordRepeat, firstName, lastname);
+        Optional<CommandResponse> response = processUserRegistration(request, login, password, passwordRepeat, firstName, lastname);
         if (response.isPresent()) return response.get();
         request.createSession();
         request.addToSession(RequestParameter.LOGIN, login);
         return responseCreator.createRedirectResponse(PagePath.MAIL_INFO_REDIRECT);
     }
 
-    private Optional<CommandResponse> registerUser(CommandRequest request, String login, String password,
-                                                   String passwordRepeat, String firstName, String lastname) {
+    private Optional<CommandResponse> processUserRegistration(CommandRequest request, String login, String password,
+                                                              String passwordRepeat, String firstName, String lastname) {
         Optional<User> user;
         try {
             user = userService.register(login, password, passwordRepeat, firstName, lastname, UserRole.USER,

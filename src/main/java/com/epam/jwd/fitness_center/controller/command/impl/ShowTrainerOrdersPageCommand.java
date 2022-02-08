@@ -39,7 +39,6 @@ public class ShowTrainerOrdersPageCommand implements Command {
                         OrderStatus.PENDING_TRAINER,
                         OrderStatus.PENDING_CLIENT,
                         OrderStatus.TAKEN);
-
             } else if (orderStatusesValue.equalsIgnoreCase(OrderStatus.UNTAKEN.name())) {
                 orders = orderService.findOrderByStatus(OrderStatus.UNTAKEN);
             } else {

@@ -39,18 +39,15 @@ public class MakeOrderCommand implements Command {
         UserDetails userDetails = userDetailsOptional.get();
         itemIdOptional = parseLongRequestParameter(request, RequestParameter.PROGRAM);
         periodOptional = parseLongRequestParameter(request, RequestParameter.PERIOD);
-        if (!itemIdOptional.isPresent()) return responseCreator.createRedirectResponse(PagePath.ERROR);
-        if (!periodOptional.isPresent()) periodOptional = Optional.of(DEFAULT_PERIOD);
-        if (request.getParameter("trainer") != null) {
-            trainerIdOptional = parseLongRequestParameter(request, Attribute.TRAINER);
-            if (!trainerIdOptional.isPresent()) return responseCreator.createRedirectResponse(PagePath.ERROR);
-            try {
-                userService.updateUserStatus(UserStatus.ACTIVE, userDetails.getUserId());
-                userService.updateUserDetailsTrainerId(userDetails, trainerIdOptional.get());
-            } catch (ServiceException e) {
-                LOG.error(e);
-                return responseCreator.createRedirectResponse(PagePath.ERROR500);
-            }
+        if (!itemIdOptional.isPresent()) {
+            return responseCreator.createRedirectResponse(PagePath.ERROR);
+        }
+        if (!periodOptional.isPresent()) {
+            periodOptional = Optional.of(DEFAULT_PERIOD);
+        }
+        Optional<CommandResponse> optionalCommandResponse = processTrainerParameter(request, userDetails);
+        if (optionalCommandResponse.isPresent()) {
+            return optionalCommandResponse.get();
         }
         Order order;
         try {
@@ -64,6 +61,24 @@ public class MakeOrderCommand implements Command {
         request.addToSession(Attribute.CREDIT_PERCENTAGE, PaymentService.DEFAULT_CREDIT_PERCENTAGE);
         request.addToSession(Attribute.CREDIT_PERIOD, PaymentService.DEFAULT_CREDIT_PERIOD);
         return responseCreator.createRedirectResponse(PagePath.SHOW_PAYMENT_REDIRECT);
+    }
+
+    private Optional<CommandResponse> processTrainerParameter(CommandRequest request, UserDetails userDetails) {
+        Optional<Long> trainerIdOptional;
+        if (request.getParameter("trainer") != null) {
+            trainerIdOptional = parseLongRequestParameter(request, Attribute.TRAINER);
+            if (!trainerIdOptional.isPresent()) {
+                return Optional.of(responseCreator.createRedirectResponse(PagePath.ERROR));
+            }
+            try {
+                userService.updateUserStatus(UserStatus.ACTIVE, userDetails.getUserId());
+                userService.updateUserDetailsTrainerId(userDetails, trainerIdOptional.get());
+            } catch (ServiceException e) {
+                LOG.error(e);
+                return Optional.of(responseCreator.createRedirectResponse(PagePath.ERROR500));
+            }
+        }
+        return Optional.empty();
     }
 
     private String composeCommentForTrainer(CommandRequest request) {

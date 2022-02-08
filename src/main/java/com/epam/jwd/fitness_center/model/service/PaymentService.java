@@ -12,33 +12,41 @@ public interface PaymentService {
     BigDecimal DEFAULT_CREDIT_PERCENTAGE = BigDecimal.valueOf(5);
     int DEFAULT_CREDIT_PERIOD = 3;
 
-    /**Establishes a credit
+    /**
+     * Establishes a credit
+     *
      * @param cardNumber card number
-     * @param order order
+     * @param order      order
      * @throws ServiceException while unable to perform a service action
      */
     void establishCredit(String cardNumber, Order order)
             throws ServiceException;
 
-    /**Performs payment
+    /**
+     * Performs payment
+     *
      * @param cardNumber card number
-     * @param order order
+     * @param order      order
      * @return true if performed
      * @throws ServiceException while unable to perform a service action
      */
     boolean doPayment(String cardNumber, Order order) throws ServiceException;
 
-    /**Check is given card number exists
+    /**
+     * Check is given card number exists
+     *
      * @param cardNumber card number
      * @return true if exists
      * @throws ServiceException while unable to perform a service action
      */
     boolean checkCardExistence(String cardNumber) throws ServiceException;
 
-    /**Check is given card has enough money
+    /**
+     * Check is given card has enough money
+     *
      * @param cardNumber card number
-     * @param amount amount of money
-     * @param isCredit is user took out a credit
+     * @param amount     amount of money
+     * @param isCredit   is user took out a credit
      * @return true if enough money
      * @throws ServiceException while unable to perform a service action
      */

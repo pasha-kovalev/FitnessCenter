@@ -31,7 +31,7 @@ public class ShowProgramDetails implements Command {
         Optional<Program> optionalProgram;
         Optional<Long> orderIdOptional = CommandHelper.retrievePositiveLongParameter(request, RequestParameter.ORDER_ID);
         if (!orderIdOptional.isPresent()) {
-            return responseCreator.createRedirectResponse(PagePath.ERROR404);
+            return responseCreator.createRedirectResponse(PagePath.ERROR);
         }
         long orderId = orderIdOptional.get();
         Optional<Object> optionalUser = request.retrieveFromSession(Attribute.USER);

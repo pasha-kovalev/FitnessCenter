@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class ShowUserOrdersPageCommand implements Command {
-    public static final String TRUE_STR = "true";
+    public static final String TRUE_VALUE = "true";
     private static final Logger LOG = LogManager.getLogger(ShowUserOrdersPageCommand.class);
     private final ResponseCreator responseCreator;
     private final OrderService orderService;
@@ -38,7 +38,7 @@ public class ShowUserOrdersPageCommand implements Command {
         UserDetails userDetails = userDetailsOptional.get();
         long userId = userDetails.getUserId();
         try {
-            if (isCurrentOrdersParam.equals(TRUE_STR)) {
+            if (isCurrentOrdersParam.equals(TRUE_VALUE)) {
                 orders = orderService.findOrderByUserIdAndStatus(userId, OrderStatus.ACTIVE,
                         OrderStatus.TAKEN, OrderStatus.PENDING_TRAINER, OrderStatus.PENDING_CLIENT,
                         OrderStatus.UNTAKEN, OrderStatus.PAYMENT_AWAITING);

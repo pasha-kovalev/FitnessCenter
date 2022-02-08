@@ -22,7 +22,7 @@ public class ShowErrorCommand implements Command {
     @Override
     public CommandResponse execute(CommandRequest request) {
         String value = request.getParameter(RequestParameter.VALUE);
-        if(value == null) {
+        if (value == null) {
             return responseCreator.createForwardResponse(PagePath.SHOW_ERROR);
         }
         switch (value) {

@@ -26,13 +26,13 @@ public class DeleteOrderCommand implements Command {
     public CommandResponse execute(CommandRequest request) {
         Optional<Long> orderIdOptional = CommandHelper.retrievePositiveLongParameter(request, RequestParameter.ID);
         boolean isDeleted;
-        if(!orderIdOptional.isPresent()) {
+        if (!orderIdOptional.isPresent()) {
             return CommandHelper.createInfoErrorResponse(responseCreator, request);
         }
         try {
             isDeleted = orderService.delete(orderIdOptional.get());
         } catch (ServiceException e) {
-            LOG.error(e);
+            LOG.error("Unable to delete order", e);
             return responseCreator.createRedirectResponse(PagePath.ERROR500);
         }
         String json = new Gson().toJson(isDeleted);

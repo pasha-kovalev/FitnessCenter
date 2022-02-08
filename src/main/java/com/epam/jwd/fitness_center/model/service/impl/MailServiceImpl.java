@@ -2,8 +2,8 @@ package com.epam.jwd.fitness_center.model.service.impl;
 
 import com.epam.jwd.fitness_center.exception.DaoException;
 import com.epam.jwd.fitness_center.exception.ServiceException;
+import com.epam.jwd.fitness_center.model.dao.TokenDao;
 import com.epam.jwd.fitness_center.model.dao.impl.DaoProvider;
-import com.epam.jwd.fitness_center.model.dao.impl.TokenDaoImpl;
 import com.epam.jwd.fitness_center.model.entity.Token;
 import com.epam.jwd.fitness_center.model.service.MailService;
 import org.apache.logging.log4j.LogManager;
@@ -80,7 +80,7 @@ public class MailServiceImpl implements MailService {
     }
 
     private long sendToDatabase(long userId, String token) throws ServiceException {
-        final TokenDaoImpl tokenDao = DaoProvider.getInstance().getTokenDao();
+        final TokenDao tokenDao = DaoProvider.getInstance().getTokenDao();
         try {
             return tokenDao.create(new Token(userId, token)).getId();
         } catch (DaoException e) {
