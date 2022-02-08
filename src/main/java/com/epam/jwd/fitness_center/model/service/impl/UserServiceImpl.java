@@ -3,6 +3,7 @@ package com.epam.jwd.fitness_center.model.service.impl;
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.epam.jwd.fitness_center.exception.DaoException;
 import com.epam.jwd.fitness_center.exception.ServiceException;
+import com.epam.jwd.fitness_center.model.dao.OrderDao;
 import com.epam.jwd.fitness_center.model.dao.impl.DaoProvider;
 import com.epam.jwd.fitness_center.model.dao.impl.TokenDaoImpl;
 import com.epam.jwd.fitness_center.model.dao.impl.UserDaoImpl;
@@ -172,6 +173,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public boolean deleteUser(long userId) throws ServiceException {
+        OrderDao orderDao = DaoProvider.getInstance().getOrderDao();
+        try {
+            List<Order> activeByUserId = orderDao.findActiveByUserId(userId);
+            if (activeByUserId.isEmpty()) {
+                userDao.delete(userId);
+                return true;
+            } else {
+                return false;
+            }
+        } catch (DaoException e) {
+            throw new ServiceException(e);
+        }
+    }
+
+    @Override
     public Optional<User> findUserByTokenId(long tokenId) throws ServiceException {
         Optional<Token> optionalToken = retrieveUserToken(tokenId);
         return optionalToken.isPresent() ? findUserById(optionalToken.get().getUserId()) : Optional.empty();
@@ -326,6 +343,19 @@ public class UserServiceImpl implements UserService {
         updateUserDetails(userDetails);
     }
 
+    @Override
+    public void updateUserDiscountByRole(long userId, String discount) throws ServiceException {
+        final UserDetailsDaoImpl userDetailsDao = DaoProvider.getInstance().getUserDetailsDao();
+        BigDecimal discountNumber = new BigDecimal(TextEscapeUtil.escapeHtml(discount));
+        UserRole role = findUserById(userId)
+                        .orElseThrow(() -> new ServiceException("User not found. ID: " + userId))
+                        .getRole();
+        try {
+            userDetailsDao.updateDiscountByRole(discountNumber, role);
+        } catch (DaoException e) {
+            throw new ServiceException("Unable to update user discount", e);
+        }
+    }
     @Override
     public void updateUserDetailsTrainerId(UserDetails userDetails, long trainerId) throws ServiceException {
         userDetails.setPersonalTrainerId(trainerId);

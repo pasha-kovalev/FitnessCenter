@@ -86,4 +86,6 @@ public interface OrderService extends EntityService<Order> {
      */
     Order insert(long userDetailsId, OrderStatus status, long itemId, long trainerId, long period,
                  String comment) throws ServiceException;
+
+    boolean delete(long orderId) throws ServiceException;
 }

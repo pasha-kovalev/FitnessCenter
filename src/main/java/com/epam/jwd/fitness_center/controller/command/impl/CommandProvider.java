@@ -55,6 +55,9 @@ public class CommandProvider {
         commands.put(MANAGE_ITEM_ARCHIVE, new ManageItemArchivingCommand(responseCreator));
         commands.put(SHOW_MANAGE_DISCOUNT, new ShowManageDiscountPageCommand(responseCreator));
         commands.put(MANAGE_NEW_DISCOUNT, new ManageNewDiscountCommand(responseCreator));
+        commands.put(DELETE_USER, new DeleteUserCommand(responseCreator));
+        commands.put(DELETE_ORDER, new DeleteOrderCommand(responseCreator));
+
     }
 
     public static CommandProvider getInstance() {

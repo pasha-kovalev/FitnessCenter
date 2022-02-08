@@ -20,7 +20,7 @@ import java.util.List;
 
 public class OrderDaoImpl extends BaseDao<Order> implements OrderDao {
     private static final Logger LOG = LogManager.getLogger(OrderDaoImpl.class);
-    private static final String ORDER_TABLE_NAME = "order";
+    private static final String ORDER_TABLE_NAME = "`order`";
     private static final String ID_FIELD_NAME = "id";
     private static final String USER_DETAILS_ID_FIELD_NAME = "user_details_id";
     private static final String ORDER_STATUS_FIELD_NAME = "order_status";
@@ -78,6 +78,16 @@ public class OrderDaoImpl extends BaseDao<Order> implements OrderDao {
             "JOIN user u on u.id = order.trainer_id\n" +
             "WHERE user_details_id = ?";
 
+    private static final String SELECT_ACTIVE_ORDER_BY_USER_ID = "SELECT order.id, user_details_id, order_status, \n" +
+            "item_id, assignment_trainer_id, trainer_id, second_name as trainer_name, price, comment, " +
+            "created_at, review, period\n" +
+            "FROM `order`\n" +
+            "JOIN order_status s on s.id = order.order_status_id\n" +
+            "JOIN user u on u.id = order.trainer_id\n" +
+            "WHERE user_details_id = ? " +
+            "and (order_status = 'active' or order_status = 'pending_client' or order_status = 'pending_trainer'" +
+            "     or order_status = 'taken' or order_status = 'untaken')";
+
     private static final String SELECT_ORDER_BY_ASSIGNMENT_TRAINER_ID = "SELECT order.id, user_details_id, \n" +
             "order_status, item_id, assignment_trainer_id, trainer_id, second_name as trainer_name, price, " +
             "comment, created_at, review, period\n" +
@@ -103,6 +113,10 @@ public class OrderDaoImpl extends BaseDao<Order> implements OrderDao {
     private static final String UPDATE_ORDER_STATUS_BY_ID = "UPDATE `order`\n" +
             "SET order_status_id = (SELECT id FROM order_status WHERE order_status=?)\n" +
             "WHERE `order`.id = ?";
+
+    private static final String DELETE_ORDER_BY_ID = "delete\n" +
+            "from `order`\n" +
+            "where id = ?";
 
     OrderDaoImpl(ConnectionPool pool) {
         super(pool, LOG);
@@ -205,6 +219,12 @@ public class OrderDaoImpl extends BaseDao<Order> implements OrderDao {
     @Override
     public List<Order> findByUserId(Long userId) throws DaoException {
         return executePrepared(SELECT_ORDER_BY_USER_ID, this::extractResult,
+                st -> st.setLong(1, userId));
+    }
+
+    @Override
+    public List<Order> findActiveByUserId(Long userId) throws DaoException {
+        return executePrepared(SELECT_ACTIVE_ORDER_BY_USER_ID, this::extractResult,
                 st -> st.setLong(1, userId));
     }
 

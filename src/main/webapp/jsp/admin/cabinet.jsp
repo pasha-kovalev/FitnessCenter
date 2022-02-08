@@ -28,6 +28,7 @@
 <fmt:message var="archive" key="admin.cabinet.button.archive"/>
 <fmt:message var="unarchive" key="admin.cabinet.button.unarchive"/>
 <fmt:message var="add" key="admin.cabinet.button.add"/>
+<fmt:message var="delete" key="admin.cabinet.button.delete"/>
 <fmt:message var="save" key="admin.cabinet.button.save"/>
 
 
@@ -46,6 +47,9 @@
 
         th {
             text-align: inherit;
+        }
+        .for-all {
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -92,6 +96,12 @@
     var editingElem = "";
     var statusArrCurrentPos = 0;
 
+    function reset() {
+        isFiltered = false;
+        reviewLoaded = false;
+        isFormEditing = false;
+        editingElem = "";
+    }
     function w3_open() {
         if (mySidebar.style.display === 'block') {
             mySidebar.style.display = 'none';
@@ -108,6 +118,7 @@
     }
 
     function showUsers(rowId, pageNum) {
+        reset();
         document.getElementById("myInput").style.display = "";
         jQuery.ajax({
             type: 'GET',
@@ -141,7 +152,9 @@
                             .append(`<select name="role-select" class="role-select">`))
                         .append($(`<td class="status-select-td" style="display: none">`)
                             .append(`<select name="status-select" class="status-select">`))
-                        .append($("<td>").append(lastTd));
+                        .append($("<td>").append(lastTd))
+                        .append($("<td>").append(`<button onclick="deleteUser(`+ user.id +`, this)" ` +
+                            `class="btn btn-danger">${delete}</button>`));
                 });
                 insertOptions(getRoles(), 'role-select');
                 insertOptions(getStatuses(), 'status-select');
@@ -155,7 +168,25 @@
         });
     }
 
+    function deleteUser(id, elem) {
+        jQuery.ajax({
+            type: 'POST',
+            url: '${pageContext.request.contextPath}/controller',
+            data: jQuery.param({command: 'delete_user', id: id}),
+            success: function (responseJson) {
+                responseJson = responseJson.toString();
+                console.log(responseJson);
+                if (responseJson.includes('false') || responseJson.includes('error')) {
+                    $(elem).closest('tr')[0].style.border = '1px solid red';
+                } else {
+                    hideTr(id);
+                }
+            }
+        })
+    }
+
     function showUsersDiscount(rowId) {
+        reset();
         document.getElementById("myInput").style.display  = "none";
         jQuery.ajax({
             type: 'GET',
@@ -173,7 +204,6 @@
                                    <th>${status}</th>
                                    <th>${discount}</th>
                                </tr>`));
-                console.log(responseJson);
                 $.each(responseJson.users, function (index, user) {
                     var lastTd = `<button onclick="editDiscount(this)" ` +
                         `class="btn btn-warning">${change}</button>`;
@@ -188,8 +218,10 @@
                                               min="0" max="99"
                                               value="` + getDetailsById(responseJson.userDetails, user.id) +
                             `" step=".5"></td>`))
-                        .append($("<td>").append(lastTd));
-                    console.log(getDetailsById(responseJson.userDetails, user.id));
+                        .append($("<td>").append(lastTd))
+                        .append($("<td class='for-all-td' style='display: none'>")
+                            .append(`<input type="checkbox" class="for-all" name="for-all">
+                                     <label for="for-all">For all `+ user.role +` </label>`));
                 });
             },
             complete: function () {
@@ -209,6 +241,7 @@
     }
 
     function showItems(rowId) {
+        reset();
         document.getElementById("myInput").style.display = "none";
         jQuery.ajax({
             type: 'GET',
@@ -304,7 +337,6 @@
             url: '${pageContext.request.contextPath}/controller',
             data: jQuery.param({command: 'manage_item_data', id: id, name: name, price: price, description: desc}),
             success: function (responseJson) {
-                console.log(responseJson);
                 if (responseJson.includes('error')) {
                     elem.style.border = '1px solid red';
                 } else {
@@ -320,7 +352,6 @@
             url: '${pageContext.request.contextPath}/controller',
             data: jQuery.param({command: 'manage_item_archive', id: id}),
             success: function (responseJson) {
-                console.log(responseJson);
                 if (responseJson.toString().includes('error')) {
                     elem.style.border = '1px solid red';
                 } else {
@@ -335,13 +366,11 @@
             elem.style.border = '1px solid red';
             return;
         }
-        console.log("hi")
         jQuery.ajax({
             type: 'POST',
             url: '${pageContext.request.contextPath}/controller',
             data: jQuery.param({command: 'manage_new_item_data', name: name, price: price, description: desc}),
             success: function (responseJson) {
-                console.log(responseJson);
                 if (responseJson.includes('error')) {
                     elem.style.border = '1px solid red';
                 } else {
@@ -359,9 +388,13 @@
         jQuery.ajax({
             type: 'POST',
             url: '${pageContext.request.contextPath}/controller',
-            data: jQuery.param({command: 'manage_new_discount', id: id, discount: discount}),
+            data: jQuery.param({
+                command: 'manage_new_discount',
+                id: id,
+                discount: discount,
+                changeAll: $(elem).find('.for-all').first().is(":checked")
+            }),
             success: function (responseJson) {
-                console.log(responseJson);
                 if (responseJson.includes('error')) {
                     elem.style.border = '1px solid red';
                 } else {
@@ -372,7 +405,6 @@
     }
 
     function addNewItem(el) {
-        console.log("hi")
         var trClosest = $(el).closest('tr');
         var textArea1 = trClosest.find('textarea')[0];
         var textArea2 = trClosest.find('textarea')[1];
@@ -384,7 +416,6 @@
     }
 
     function editItem(el, isToDelete = false) {
-        console.log(isToDelete);
         var trClosest = $(el).closest('tr');
         var id = trClosest.find('.item-id')[0].innerHTML;
         if(isFormEditing === true && ("item" + id) !== editingElem) {
@@ -413,6 +444,8 @@
             $(textArea2).attr('rows', 15)
             input.readOnly = false;
             $(el).closest('button')[0].innerText = "${save}"
+            $('.btn').css("pointer-events","none");
+            $(el).closest('button').first().css("pointer-events","auto");
             isFormEditing = true;
             editingElem = "item" + id;
         }
@@ -421,6 +454,7 @@
     function editDiscount(el) {
         var trClosest = $(el).closest('tr');
         var id = trClosest.find('.user-id')[0].innerHTML;
+        var checkboxTd = trClosest.find('.for-all-td')[0];
         if(isFormEditing === true && ("disc" + id) !== editingElem) {
             isFormEditing = false;
         }
@@ -428,12 +462,19 @@
         var discount = input.value;
         if (isFormEditing) {
             sendNewDiscount(id, discount, trClosest[0]);
-            $(el).closest('button')[0].innerText = "${change}"
+            $(el).closest('button')[0].innerText = "${change}";
+            $('.btn-warning').css("pointer-events","auto");
+            input.style.border = "";
+            checkboxTd.style.display = 'none';
             input.readOnly = true;
             isFormEditing = false;
             editingElem = "";
         } else {
             input.readOnly = false;
+            input.style.border = "1px solid gray";
+            checkboxTd.style.display = '';
+            $('.btn-warning').css("pointer-events","none");
+            $(el).closest('button').first().css("pointer-events","auto");
             $(el).closest('button')[0].innerText = "${save}"
             isFormEditing = true;
             editingElem = "disc" + id;
@@ -445,6 +486,7 @@
         var id = trClosest.find('.user-id')[0].innerHTML;
         if(isFormEditing === true && ("user" + id) !== editingElem) {
             isFormEditing = false;
+            $('.btn').css("pointer-events","auto");
         }
         var roleTd = trClosest.find('.role-td')[0];
         var statusTd = trClosest.find('.status-td')[0];
@@ -457,13 +499,16 @@
             displayByElem(statusSelectTd, true);
             displayByElem(roleTd);
             displayByElem(statusTd);
-            $(el).closest('button')[0].innerText = "${change}"
+            $(el).closest('button')[0].innerText = "${change}";
+            $('.btn').css("pointer-events","auto");
             $(el).attr('class', 'btn btn-warning');
             isFormEditing = false;
             editingElem = "";
         } else {
             $(roleSelectTd.firstChild).val(roleTd.innerText);
             $(statusSelectTd.firstChild).val(statusTd.innerText);
+            $('.btn').css("pointer-events","none");
+            $(el).closest('button').first().css("pointer-events","auto");
             displayByElem(roleTd, true);
             displayByElem(statusTd, true);
             displayByElem(roleSelectTd);
@@ -561,7 +606,6 @@
             return $(this).text() == id;
         });
         el = el[0].parentNode;
-        console.log();
         if(document.getElementsByClassName("paging-nav")[0] !== undefined) {
             $(document.getElementsByClassName("paging-nav")[0]).find('[data-page="' + (Math.ceil(el.rowIndex / 10) - 1) +'"]')[0].click();
             $(".paging-nav").click();
