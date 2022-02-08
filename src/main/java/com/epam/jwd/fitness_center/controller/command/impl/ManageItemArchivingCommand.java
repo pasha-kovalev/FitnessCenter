@@ -12,13 +12,13 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Optional;
 
-public class DeleteItemCommand implements Command {
-    private static final Logger LOG = LogManager.getLogger(DeleteItemCommand.class);
+public class ManageItemArchivingCommand implements Command {
+    private static final Logger LOG = LogManager.getLogger(ManageItemArchivingCommand.class);
 
     private final ResponseCreator responseCreator;
     private final ItemServiceImpl itemService;
 
-    DeleteItemCommand(ResponseCreator responseCreator) {
+    ManageItemArchivingCommand(ResponseCreator responseCreator) {
         this.responseCreator = responseCreator;
         itemService = ServiceProvider.getInstance().getItemService();
     }
@@ -31,7 +31,7 @@ public class DeleteItemCommand implements Command {
         }
         long itemId = itemIdOptional.get();
         try {
-            itemService.delete(itemId);
+            itemService.changeIsArchive(itemId);
         } catch (ServiceException e) {
             LOG.error(e);
             return responseCreator.createRedirectResponse(PagePath.ERROR);
