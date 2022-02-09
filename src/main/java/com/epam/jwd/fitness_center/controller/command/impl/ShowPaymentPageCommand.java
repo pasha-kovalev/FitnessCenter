@@ -15,7 +15,6 @@ import org.apache.logging.log4j.Logger;
 import java.util.Optional;
 
 public class ShowPaymentPageCommand implements Command {
-    //todo add button pay later and refuse to form
     private static final Logger LOG = LogManager.getLogger(ShowPaymentPageCommand.class);
     private final ResponseCreator responseCreator;
     private final OrderService orderService;

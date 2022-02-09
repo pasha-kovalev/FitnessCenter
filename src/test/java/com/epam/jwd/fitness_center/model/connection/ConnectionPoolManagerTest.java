@@ -15,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ConnectionPoolManagerTest {
     public static final int TIMEOUT = 1;
-    public static final double INCREASE_COEFF = 0.75;
     ConnectionPoolManager cp = ConnectionPoolManager.getInstance();
 
     @BeforeAll
