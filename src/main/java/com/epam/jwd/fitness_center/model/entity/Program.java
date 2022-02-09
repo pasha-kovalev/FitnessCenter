@@ -1,7 +1,6 @@
 package com.epam.jwd.fitness_center.model.entity;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 public class Program implements Entity {
     private static final long serialVersionUID = 2161643738559409089L;
@@ -136,13 +135,36 @@ public class Program implements Entity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         Program program = (Program) o;
-        return order.equals(program.order) && programStatus == program.programStatus && Objects.equals(intensity, program.intensity) && Objects.equals(schedule, program.schedule) && Objects.equals(exercises, program.exercises) && Objects.equals(diet, program.diet) && Objects.equals(equipment, program.equipment) && Objects.equals(startsAt, program.startsAt) && Objects.equals(endsAt, program.endsAt) && roleUpdatedBy == program.roleUpdatedBy && Objects.equals(updatedAt, program.updatedAt);
+
+        if (order != null ? !order.equals(program.order) : program.order != null) return false;
+        if (programStatus != program.programStatus) return false;
+        if (intensity != null ? !intensity.equals(program.intensity) : program.intensity != null) return false;
+        if (schedule != null ? !schedule.equals(program.schedule) : program.schedule != null) return false;
+        if (exercises != null ? !exercises.equals(program.exercises) : program.exercises != null) return false;
+        if (diet != null ? !diet.equals(program.diet) : program.diet != null) return false;
+        if (equipment != null ? !equipment.equals(program.equipment) : program.equipment != null) return false;
+        if (startsAt != null ? !startsAt.equals(program.startsAt) : program.startsAt != null) return false;
+        if (endsAt != null ? !endsAt.equals(program.endsAt) : program.endsAt != null) return false;
+        if (roleUpdatedBy != program.roleUpdatedBy) return false;
+        return updatedAt != null ? updatedAt.equals(program.updatedAt) : program.updatedAt == null;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(order, programStatus, intensity, schedule, exercises, diet, equipment, startsAt, endsAt, roleUpdatedBy, updatedAt);
+        int result = order != null ? order.hashCode() : 0;
+        result = 31 * result + (programStatus != null ? programStatus.hashCode() : 0);
+        result = 31 * result + (intensity != null ? intensity.hashCode() : 0);
+        result = 31 * result + (schedule != null ? schedule.hashCode() : 0);
+        result = 31 * result + (exercises != null ? exercises.hashCode() : 0);
+        result = 31 * result + (diet != null ? diet.hashCode() : 0);
+        result = 31 * result + (equipment != null ? equipment.hashCode() : 0);
+        result = 31 * result + (startsAt != null ? startsAt.hashCode() : 0);
+        result = 31 * result + (endsAt != null ? endsAt.hashCode() : 0);
+        result = 31 * result + (roleUpdatedBy != null ? roleUpdatedBy.hashCode() : 0);
+        result = 31 * result + (updatedAt != null ? updatedAt.hashCode() : 0);
+        return result;
     }
 
     public static class Builder {
