@@ -198,7 +198,6 @@ public final class ConnectionPoolManager implements ConnectionPool {
             checkCondition();
             final ProxyConnection connection = availableConnections.poll();
             usedConnections.add(connection);
-            LOG.trace("Connection taken: {}", connection);
             return connection;
         } finally {
             writeLock.unlock();
@@ -231,7 +230,6 @@ public final class ConnectionPoolManager implements ConnectionPool {
                     availableConnections.add((ProxyConnection) connection);
                     ((ProxyConnection) connection).setLastTakeDate(LocalDateTime.now());
                     hasAvailableConnections.signalAll();
-                    LOG.trace("Connection released: {}", connection);
                     return true;
                 }
             } else {
@@ -285,7 +283,6 @@ public final class ConnectionPoolManager implements ConnectionPool {
                 ProxyConnection proxyConnection = ConnectionFactory.createProxyConnection();
                 availableConnections.add(proxyConnection);
                 hasAvailableConnections.signalAll();
-                LOG.trace("added a new connection: {}", proxyConnection);
             }
         } finally {
             writeLock.unlock();
@@ -307,7 +304,6 @@ public final class ConnectionPoolManager implements ConnectionPool {
                 }
                 availableConnections.add(proxyConnection);
                 hasAvailableConnections.signalAll();
-                LOG.trace("added existing connection: {}", proxyConnection);
             } else {
                 LOG.warn("Unable to add connection because pool is full");
             }
@@ -334,7 +330,6 @@ public final class ConnectionPoolManager implements ConnectionPool {
         try {
             for (ProxyConnection proxyConnection : collection) {
                 proxyConnection.realClose();
-                LOG.trace("Connection {} closed", proxyConnection);
             }
             collection.clear();
         } catch (SQLException e) {
@@ -476,7 +471,6 @@ public final class ConnectionPoolManager implements ConnectionPool {
             writeLock.lock();
             try {
                 if (availableConnections.remove(conn)) {
-                    LOG.info("Closing connection in CleanPoolThread: {}", conn);
                     conn.realClose();
                 }
             } catch (SQLException e) {

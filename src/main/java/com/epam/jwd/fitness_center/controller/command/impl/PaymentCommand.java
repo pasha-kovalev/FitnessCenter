@@ -77,7 +77,6 @@ public class PaymentCommand implements Command {
     }
 
     private Optional<CommandResponse> processCredit(CommandRequest request, Order order, String cardNumber) {
-        LOG.info("Credit selected");
         try {
             if (!paymentService.checkCardExistence(cardNumber)) {
                 request.addToSession(Attribute.ERROR_PAYMENT_BUNDLE_KEY,
