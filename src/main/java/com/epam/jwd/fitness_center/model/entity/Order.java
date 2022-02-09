@@ -155,6 +155,46 @@ public class Order implements Entity {
         return sb.toString();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Order order = (Order) o;
+
+        if (creationDate != null ? !creationDate.equals(order.creationDate) : order.creationDate != null) return false;
+        if (id != null ? !id.equals(order.id) : order.id != null) return false;
+        if (userDetailsId != null ? !userDetailsId.equals(order.userDetailsId) : order.userDetailsId != null)
+            return false;
+        if (orderStatus != order.orderStatus) return false;
+        if (item != null ? !item.equals(order.item) : order.item != null) return false;
+        if (assignmentTrainerId != null ? !assignmentTrainerId.equals(order.assignmentTrainerId) : order.assignmentTrainerId != null)
+            return false;
+        if (trainerId != null ? !trainerId.equals(order.trainerId) : order.trainerId != null) return false;
+        if (trainerName != null ? !trainerName.equals(order.trainerName) : order.trainerName != null) return false;
+        if (price != null ? !price.equals(order.price) : order.price != null) return false;
+        if (comment != null ? !comment.equals(order.comment) : order.comment != null) return false;
+        if (review != null ? !review.equals(order.review) : order.review != null) return false;
+        return period != null ? period.equals(order.period) : order.period == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = creationDate != null ? creationDate.hashCode() : 0;
+        result = 31 * result + (id != null ? id.hashCode() : 0);
+        result = 31 * result + (userDetailsId != null ? userDetailsId.hashCode() : 0);
+        result = 31 * result + (orderStatus != null ? orderStatus.hashCode() : 0);
+        result = 31 * result + (item != null ? item.hashCode() : 0);
+        result = 31 * result + (assignmentTrainerId != null ? assignmentTrainerId.hashCode() : 0);
+        result = 31 * result + (trainerId != null ? trainerId.hashCode() : 0);
+        result = 31 * result + (trainerName != null ? trainerName.hashCode() : 0);
+        result = 31 * result + (price != null ? price.hashCode() : 0);
+        result = 31 * result + (comment != null ? comment.hashCode() : 0);
+        result = 31 * result + (review != null ? review.hashCode() : 0);
+        result = 31 * result + (period != null ? period.hashCode() : 0);
+        return result;
+    }
+
     public static class Builder {
         private Long id;
         private Long userDetailsId;

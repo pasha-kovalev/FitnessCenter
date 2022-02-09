@@ -47,4 +47,24 @@ public final class UserDetails implements Entity {
         sb.append('}');
         return sb.toString();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        UserDetails that = (UserDetails) o;
+
+        if (userId != that.userId) return false;
+        if (discount != null ? !discount.equals(that.discount) : that.discount != null) return false;
+        return personalTrainerId != null ? personalTrainerId.equals(that.personalTrainerId) : that.personalTrainerId == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (userId ^ (userId >>> 32));
+        result = 31 * result + (discount != null ? discount.hashCode() : 0);
+        result = 31 * result + (personalTrainerId != null ? personalTrainerId.hashCode() : 0);
+        return result;
+    }
 }
