@@ -19,16 +19,6 @@
             ${sessionScope.additionalInfo}
         </c:if>
     </c:if>
-    <%--<p>
-        <ct:pullSessionAttribute attribute="info" msg="msg"/>
-        <c:if test="${pageScope.msg != null}">
-            <fmt:message key="${msg}"/>
-        </c:if>
-    </p>
-    <ct:pullSessionAttribute attribute="additionalInfo" msg="msg2"/>
-    <c:if test="${pageScope.msg2 != null}">
-        ${msg2}
-    </c:if>--%>
 </div>
 <jsp:include page="../component/footer.jsp" flush="true"/>
 </div>
