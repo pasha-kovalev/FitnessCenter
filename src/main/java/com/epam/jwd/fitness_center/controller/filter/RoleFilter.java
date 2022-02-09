@@ -26,7 +26,6 @@ public class RoleFilter implements Filter {
     private static final String USER_SESSION_ATTRIBUTE_NAME = "user";
     private final Map<UserRole, Set<Command>> commandsByRoles;
 
-
     public RoleFilter() {
         commandsByRoles = new EnumMap<>(UserRole.class);
     }

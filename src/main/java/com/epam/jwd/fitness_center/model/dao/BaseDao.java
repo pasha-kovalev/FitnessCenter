@@ -34,17 +34,14 @@ public abstract class BaseDao<T extends Entity> implements EntityDao<T> {
     protected String selectAllQuery;
     protected String selectByIdQuery;
 
-    {
+    protected BaseDao(ConnectionPool pool, Logger logger) {
+        this.pool = pool;
+        this.logger = logger;
         insertQuery = String.format(INSERT_INTO, getTableName(), String.join(COMMA, getFields()));
         selectAllQuery = String.format(SELECT_ALL_FROM, String.join(COMMA, getFields())) + getTableName();
         selectByIdQuery = selectAllQuery + SPACE + WHERE_ID;
         updateQuery = UPDATE + getTableName() + SPACE + SET + "%s" + WHERE_ID;
         deleteById = DELETE_FROM + getTableName() + SPACE + WHERE_ID;
-    }
-
-    protected BaseDao(ConnectionPool pool, Logger logger) {
-        this.pool = pool;
-        this.logger = logger;
     }
 
     /**
