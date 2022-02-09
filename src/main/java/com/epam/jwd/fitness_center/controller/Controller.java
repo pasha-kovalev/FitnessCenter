@@ -2,6 +2,7 @@ package com.epam.jwd.fitness_center.controller;
 
 import com.epam.jwd.fitness_center.controller.command.*;
 import com.epam.jwd.fitness_center.controller.command.impl.CommandProvider;
+import com.epam.jwd.fitness_center.model.connection.ConnectionPoolManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -115,6 +116,6 @@ public class Controller extends HttpServlet {
     @Override
     public void destroy() {
         super.destroy();
-        //todo ConnectionPoolManager.getInstance().shutDown();
+        ConnectionPoolManager.getInstance().shutDown();
     }
 }
