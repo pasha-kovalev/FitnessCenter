@@ -92,13 +92,13 @@ public class MakeOrderCommand implements Command {
         Optional<Long> result;
         String paramValue = request.getParameter(parameter);
         if (paramValue == null) {
-            LOG.warn("Unable to parse order params: {}, because value is null.", parameter);
+            LOG.warn("Unable to parse params: {}, because value is null.", parameter);
             return Optional.empty();
         }
         try {
             result = Optional.of(Long.parseLong(paramValue));
         } catch (NumberFormatException e) {
-            LOG.warn("Unable to parse order params: {}, value: {}. {}", parameter, paramValue, e.getMessage());
+            LOG.warn("Unable to parse params: {}, value: {}. {}", parameter, paramValue, e.getMessage());
             return Optional.empty();
         }
         return result;

@@ -52,7 +52,7 @@ public class ManageUserDataCommand implements Command {
                         userService.updateUserRole(UserRole.valueOf(values[i].toUpperCase()), userId);
                         break;
                     default:
-                        LOG.warn("Not found field name: {}", fieldNames[i]);
+                        LOG.error("Not found field name: {}", fieldNames[i]);
                         return responseCreator.createRedirectResponse(PagePath.ERROR);
                 }
             }
