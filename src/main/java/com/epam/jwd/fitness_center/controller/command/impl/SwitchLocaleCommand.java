@@ -10,16 +10,15 @@ import java.util.List;
 import java.util.Optional;
 
 public class SwitchLocaleCommand implements Command {
-    private final SimpleResponseCreator requestFactory;
+    private final SimpleResponseCreator responseCreator;
     private final List<String> locales = new ArrayList<>(Arrays.asList("en", "ru"));
 
-    SwitchLocaleCommand(SimpleResponseCreator requestFactory) {
-        this.requestFactory = requestFactory;
+    SwitchLocaleCommand(SimpleResponseCreator responseCreator) {
+        this.responseCreator = responseCreator;
     }
 
     @Override
     public CommandResponse execute(CommandRequest request) {
-        //todo cookie not session
         final String locale = request.getParameter(RequestParameter.LOCALE);
         if (locale != null && locales.contains(locale)) {
             request.addToSession(RequestParameter.LOCALE, locale);
@@ -28,15 +27,15 @@ public class SwitchLocaleCommand implements Command {
         if (optionalPage.isPresent()) {
             String page = (String) optionalPage.get();
             if (page.contains(PagePath.CONTROLLER.getPath())) {
-                return requestFactory.createRedirectResponse(page);
+                return responseCreator.createRedirectResponse(page);
             } else {
                 String pagePathRedirectStr = PagePath.of(page).name() + "_REDIRECT";
                 if (PagePath.contains(pagePathRedirectStr)) {
-                    return requestFactory.createRedirectResponse(PagePath.of(pagePathRedirectStr));
+                    return responseCreator.createRedirectResponse(PagePath.of(pagePathRedirectStr));
                 }
-                return requestFactory.createForwardResponse(PagePath.of(page));
+                return responseCreator.createForwardResponse(PagePath.of(page));
             }
         }
-        return requestFactory.createRedirectResponse(PagePath.MAIN_REDIRECT);
+        return responseCreator.createRedirectResponse(PagePath.MAIN_REDIRECT);
     }
 }
