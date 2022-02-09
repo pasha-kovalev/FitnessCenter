@@ -3,7 +3,7 @@ package com.epam.jwd.fitness_center.controller;
 import com.epam.jwd.fitness_center.controller.command.CommandResponse;
 
 /**
- * Interface of request factory
+ * Interface of response creator
  *
  * @author Pavel Kovalev
  * @version 1.0

@@ -76,5 +76,4 @@ public final class Item implements Entity, Cloneable {
     public Item clone() throws CloneNotSupportedException {
         return (Item) super.clone();
     }
-
 }

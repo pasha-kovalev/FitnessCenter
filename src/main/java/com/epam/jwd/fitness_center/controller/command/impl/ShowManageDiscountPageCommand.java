@@ -45,6 +45,7 @@ public class ShowManageDiscountPageCommand implements Command {
         Map<String, List<? extends Entity>> response = new HashMap<>();
         response.put(USERS_KEY, users);
         response.put(USER_DETAILS_KEY, userDetailsList);
+        System.out.println(response);
         String json = new Gson().toJson(response);
         return responseCreator.createAjaxResponse(json);
     }
