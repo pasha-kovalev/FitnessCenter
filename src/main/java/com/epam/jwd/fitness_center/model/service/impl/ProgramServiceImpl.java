@@ -40,7 +40,6 @@ public class ProgramServiceImpl implements ProgramService {
 
     @Override
     public boolean update(Program entity) throws ServiceException {
-        //todo validation on CLIENT and server
         try {
             return programDao.update(entity);
         } catch (DaoException e) {
@@ -50,7 +49,6 @@ public class ProgramServiceImpl implements ProgramService {
 
     @Override
     public Program insert(Program entity) throws ServiceException {
-        //todo validation
         try {
             return programDao.create(entity);
         } catch (DaoException e) {

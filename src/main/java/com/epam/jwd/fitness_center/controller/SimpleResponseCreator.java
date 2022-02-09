@@ -6,7 +6,6 @@ import com.epam.jwd.fitness_center.controller.command.PlainCommandResponse;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-//todo javadocs for class name
 public class SimpleResponseCreator implements ResponseCreator {
     private final Map<String, CommandResponse> forwardResponseCache = new ConcurrentHashMap<>();
     private final Map<String, CommandResponse> redirectResponseCache = new ConcurrentHashMap<>();
@@ -34,7 +33,6 @@ public class SimpleResponseCreator implements ResponseCreator {
         return PlainCommandResponse.createAjaxResponse(data);
     }
 
-    //todo why public
     public CommandResponse createRedirectResponse(String path) {
         return redirectResponseCache.computeIfAbsent(path, p ->
                 new PlainCommandResponse(true, path));
