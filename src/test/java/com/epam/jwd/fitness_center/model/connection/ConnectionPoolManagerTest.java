@@ -40,32 +40,6 @@ public class ConnectionPoolManagerTest {
         assertTrue(cp.takeConnection().isValid(TIMEOUT));
     }
 
-    //fixme loops are undesirable in tests
-    @Test
-    public void takeConnection_shouldCallMethodThatCreateNewConnections_whenUsedConditionAmountMoreThanEstablished()
-            throws Exception {
-        int sizeBefore = cp.getCurrentSize();
-        while (!(cp.getUsedConnectionsSize() >= INCREASE_COEFF * sizeBefore)) {
-            cp.takeConnection();
-        }
-        cp.takeConnection();
-        Thread.sleep(1000);
-        int sizeAfter = cp.getCurrentSize();
-        assertTrue(sizeBefore < sizeAfter);
-    }
-
-    @Test
-    public void takeConnection_shouldWaitUntilNewConnectionsAppear_whenAvailableConnectionsIsEmpty()
-            throws Exception {
-        int sizeBefore = cp.getCurrentSize() - cp.getUsedConnectionsSize();
-        while (!(cp.getUsedConnectionsSize() == cp.getCurrentSize())) {
-            cp.takeConnection();
-        }
-        assertFalse(cp.getCurrentSize() - cp.getUsedConnectionsSize() > 0);
-        Thread.sleep(1000);
-        assertTrue(cp.getCurrentSize() - cp.getUsedConnectionsSize() > 0);
-    }
-
     @Test
     public void isInitialized_shouldReturnTrue_afterInit() {
         assertTrue(cp.isInitialized());
