@@ -8,7 +8,6 @@ and/or replace part of the program. The administrator can assign trainers, disco
 new goods and block/unblock users
 
 ## User roles
-
 * Guest
     + Authenticate with login and password
     + Sign up with email confirmation
